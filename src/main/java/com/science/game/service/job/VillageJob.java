@@ -3,8 +3,11 @@ package com.science.game.service.job;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import com.science.game.App;
 import com.science.game.cache.Data;
 import com.science.game.entity.Village;
+
+import game.quick.window.UIRunnable;
 
 public abstract class VillageJob {
 	/**
@@ -16,11 +19,16 @@ public abstract class VillageJob {
 		if (Data.villages.containsKey(vid)) {
 			Village v = Data.villages.get(vid);
 			v.setJob(this.getClass().getSimpleName());
-			ScheduledFuture<?> future = Data.scheduled.schedule(new Runnable() {
+
+			ScheduledFuture<?> future = App.win.schedule(new UIRunnable() {
 
 				@Override
-				public void run() {
+				public void execute() {
 					onExecute(vid);
+				}
+
+				@Override
+				public void afterExecute() {
 					workForever(vid);
 				}
 			}, getWorkTime(), TimeUnit.SECONDS);
@@ -38,13 +46,17 @@ public abstract class VillageJob {
 	public void workOnce(int vid) {
 		if (Data.villages.containsKey(vid)) {
 			Data.villages.remove(vid);
-			ScheduledFuture<?> future = Data.scheduled.schedule(new Runnable() {
+			ScheduledFuture<?> future = App.win.schedule(new UIRunnable() {
 
 				@Override
-				public void run() {
+				public void execute() {
 					stopWork(vid);
 					Data.villageFutures.remove(vid);
 					onExecute(vid);
+				}
+
+				@Override
+				public void afterExecute() {
 				}
 			}, getWorkTime(), TimeUnit.SECONDS);
 

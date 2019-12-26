@@ -17,8 +17,6 @@ public class ScienceView implements IView {
 	@Override
 	public String render() {
 		sb.delete(0, sb.length());
-//		command();
-//		sb.append("\n");
 		village();
 		sb.append("\n");
 		item();
