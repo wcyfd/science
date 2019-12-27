@@ -51,7 +51,8 @@ public class ScienceView implements IView {
 	private void item() {
 		sb.append("Item").append("\n");
 		for (Item item : Data.itemMap.values()) {
-			sb.append(item.getItemId()).append(item.getName()).append(item.getNum()).append("\n");
+			sb.append(item.getConfig().getItemId()).append(item.getConfig().getName()).append(item.getNum())
+					.append("\n");
 		}
 	}
 }

@@ -7,6 +7,11 @@ import com.science.game.service.Service;
 public class ItemServiceImpl extends Service implements ItemService {
 
 	@Override
+	protected void initCache() {
+		
+	}
+
+	@Override
 	protected void dispatch(String cmd, List<String> args) {
 
 	}
