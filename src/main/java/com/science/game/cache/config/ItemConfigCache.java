@@ -8,7 +8,7 @@ import com.science.game.entity.config.ItemConfig;
 
 public class ItemConfigCache implements IConfigCache {
 
-	public Map<Integer, ItemConfig> itemConfig = new HashMap<>();
+	public Map<Integer, ItemConfig> itemMap = new HashMap<>();
 
 	@Override
 	public void load(List<String> values) {
@@ -18,6 +18,6 @@ public class ItemConfigCache implements IConfigCache {
 		config.setName(values.get(1));
 		config.setType(ItemConfig.ItemType.valueOf(values.get(2)));
 
-		itemConfig.put(config.getItemId(), config);
+		itemMap.put(config.getItemId(), config);
 	}
 }

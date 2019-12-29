@@ -6,6 +6,6 @@ import lombok.Data;
 
 @Data
 public class Item {
-	private ItemConfig config;
+	private ItemConfig proto;
 	private int num;
 }

@@ -1,12 +1,8 @@
 package com.science.game;
 
-import java.lang.reflect.Method;
-import java.util.List;
-
 import com.science.game.cache.Data;
 import com.science.game.entity.Item;
 import com.science.game.entity.Village;
-import com.science.game.service.Service;
 
 import game.quick.window.IView;
 
@@ -17,28 +13,19 @@ public class ScienceView implements IView {
 	@Override
 	public String render() {
 		sb.delete(0, sb.length());
+		sb.append(Data.cmd).append("\n");
+		sb.append("===========\n");
 		village();
 		sb.append("\n");
 		item();
 		sb.append("\n");
-		sb.append("resource:").append(Data.resource);
+		sb.append("area\n");
+		for (int i = 0; i < Data.areaId; i++) {
+			sb.append(Data.areaList.get(i).getName()).append(" ");
+		}
+		sb.append("\n");
 
 		return sb.toString();
-	}
-
-	private void command() {
-		sb.append("Command").append("\n");
-		List<Class<?>> list = Service.getServices();
-
-		for (Class<?> clazz : list) {
-			String name = clazz.getSimpleName().toLowerCase().replace("service", "");
-			Method[] methods = clazz.getMethods();
-			sb.append(name).append("\t");
-			for (Method method : methods) {
-				sb.append(method.getName().toLowerCase()).append("  ");
-			}
-			sb.append("\n");
-		}
 	}
 
 	private void village() {
@@ -51,8 +38,7 @@ public class ScienceView implements IView {
 	private void item() {
 		sb.append("Item").append("\n");
 		for (Item item : Data.itemMap.values()) {
-			sb.append(item.getConfig().getItemId()).append(item.getConfig().getName()).append(item.getNum())
-					.append("\n");
+			sb.append(item.getProto().getItemId()).append(item.getProto().getName()).append(item.getNum()).append("\n");
 		}
 	}
 }

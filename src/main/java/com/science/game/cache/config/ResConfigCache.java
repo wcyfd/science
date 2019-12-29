@@ -8,7 +8,7 @@ import com.science.game.entity.config.ResConfig;
 
 public class ResConfigCache implements IConfigCache {
 
-	public Map<Integer, ResConfig> res = new HashMap<>();
+	public Map<Integer, ResConfig> resMap = new HashMap<>();
 
 	@Override
 	public void load(List<String> values) {
@@ -16,7 +16,7 @@ public class ResConfigCache implements IConfigCache {
 		config.setResId(Integer.valueOf(values.get(0)));
 		config.setName(values.get(1));
 
-		res.put(config.getResId(), config);
+		resMap.put(config.getResId(), config);
 	}
 
 }
