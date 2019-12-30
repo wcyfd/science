@@ -13,6 +13,13 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<project.build.jdk>1.8</project.build.jdk>
+		<maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
+		<maven-dependency-plugin.version>2.4</maven-dependency-plugin.version>
+		<maven-jar-plugin.version>2.6</maven-jar-plugin.version>
+		<maven-resources-plugin.version>2.5</maven-resources-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -76,16 +83,87 @@
 
 	</dependencies>
 
+
+
 	<build>
 		<plugins>
+			<!-- 编译 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.6.0</version>
+				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<compilerVersion>${project.build.jdk}</compilerVersion>
+					<source>${project.build.jdk}</source>
+					<target>${project.build.jdk}</target>
+					<encoding>utf-8</encoding>
 				</configuration>
+			</plugin>
+			<!-- 打包 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>${maven-jar-plugin.version}</version>
+				<configuration>
+					<jarName>science</jarName>
+					<includes>
+						<include>**/*.class</include>
+					</includes>
+					<archive>
+						<manifest>
+							<mainClass>com.science.game.App</mainClass>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+						</manifest>
+						<manifestEntries>
+							<Class-Path>resources/</Class-Path>
+						</manifestEntries>
+					</archive>
+					<outputDirectory>${project.build.directory}/../output/</outputDirectory>
+				</configuration>
+			</plugin>
+			<!-- 关联库 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>${maven-dependency-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/../output/lib</outputDirectory>
+							<includeScope>compile</includeScope>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- 资源 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>${maven-resources-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<encoding>UTF-8</encoding>
+							<outputDirectory>${project.build.directory}/../output/resources</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/main/resources/</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

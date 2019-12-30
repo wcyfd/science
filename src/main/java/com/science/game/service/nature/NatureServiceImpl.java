@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.science.game.cache.Data;
 import com.science.game.cache.config.ConfigCache;
+import com.science.game.entity.Res;
 import com.science.game.service.AbstractService;
 
 @Service
@@ -20,7 +21,7 @@ public class NatureServiceImpl extends AbstractService implements NatureService 
 	public void initCache() {
 		int[] resArray = { 1, 3, 1, 3, 2, 1, 2, 2, 3 };
 		for (int i : resArray) {
-			Data.areaList.add(ConfigCache.res.resMap.get(i));
+			Data.areaList.add(Res.create(ConfigCache.res.resMap.get(i)));
 		}
 	}
 

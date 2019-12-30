@@ -24,7 +24,7 @@ public class ScienceView implements IView {
 		sb.append("\n");
 		sb.append("area\n");
 		for (int i = 0; i < Data.areaId; i++) {
-			sb.append(Data.areaList.get(i).getName()).append(" ");
+			sb.append(Data.areaList.get(i).getProto().getName()).append(" ");
 		}
 		sb.append("\n");
 
