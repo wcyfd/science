@@ -2,11 +2,14 @@ package com.science.game.service.village;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.science.game.cache.Data;
 import com.science.game.entity.Village;
-import com.science.game.service.Service;
+import com.science.game.service.AbstractService;
 
-public class VillageServiceImpl extends Service implements VillageService {
+@Service
+public class VillageServiceImpl extends AbstractService implements VillageService {
 
 	@Override
 	public void initCache() {

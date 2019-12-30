@@ -4,13 +4,16 @@ import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.stereotype.Service;
+
 import com.science.game.cache.Data;
 import com.science.game.entity.Village;
-import com.science.game.service.Service;
+import com.science.game.service.AbstractService;
 
 import game.quick.window.Task;
 
-public class JobServiceImpl extends Service implements JobService {
+@Service
+public class JobServiceImpl extends AbstractService implements JobService {
 
 	@Override
 	protected void dispatch(String cmd, List<String> args) {
@@ -31,16 +34,17 @@ public class JobServiceImpl extends Service implements JobService {
 	}
 
 	private void doAssart(int vid, int second) {
+		stopWork(vid);
 		if (Data.areaId < Data.areaList.size()) {
 
-			stopWork(vid);
 			Village village = Data.villages.get(vid);
 			village.setJob("assart");
 			ScheduledFuture<?> future = this.delay(new Task() {
 
 				@Override
 				public void execute() {
-					Data.areaId++;
+					if (Data.areaId < Data.areaList.size())
+						Data.areaId++;
 				}
 
 				@Override
@@ -74,7 +78,7 @@ public class JobServiceImpl extends Service implements JobService {
 
 				@Override
 				public void afterExecute() {
-					
+
 				}
 
 				@Override

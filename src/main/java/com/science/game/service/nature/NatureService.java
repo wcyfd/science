@@ -1,4 +1,6 @@
 package com.science.game.service.nature;
 
-public interface NatureService {
+import com.science.game.service.ServiceInterface;
+
+public interface NatureService extends ServiceInterface {
 }

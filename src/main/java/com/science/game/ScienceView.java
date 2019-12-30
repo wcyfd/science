@@ -1,11 +1,14 @@
 package com.science.game;
 
+import org.springframework.stereotype.Component;
+
 import com.science.game.cache.Data;
 import com.science.game.entity.Item;
 import com.science.game.entity.Village;
 
 import game.quick.window.IView;
 
+@Component
 public class ScienceView implements IView {
 
 	private StringBuilder sb = new StringBuilder();

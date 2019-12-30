@@ -1,9 +1,11 @@
 package com.science.game.service.item;
 
-public interface ItemService {
-	
+import com.science.game.service.ServiceInterface;
+
+public interface ItemService extends ServiceInterface {
+
 	void equip();
-	
+
 	void unequip();
 
 	void develop();
@@ -13,6 +15,6 @@ public interface ItemService {
 	void product();
 
 	void unproduct();
-	
+
 	void gc();
 }

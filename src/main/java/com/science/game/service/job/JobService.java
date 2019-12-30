@@ -1,12 +1,15 @@
 package com.science.game.service.job;
 
+import com.science.game.service.ServiceInterface;
+
 /**
  * 工作
  * 
  * @author aimfd
  *
  */
-public interface JobService {
+
+public interface JobService extends ServiceInterface {
 	/**
 	 * 拓荒
 	 * 

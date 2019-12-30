@@ -2,13 +2,16 @@ package com.science.game.service.item;
 
 import java.util.List;
 
-import com.science.game.service.Service;
+import org.springframework.stereotype.Service;
 
-public class ItemServiceImpl extends Service implements ItemService {
+import com.science.game.service.AbstractService;
+
+@Service
+public class ItemServiceImpl extends AbstractService implements ItemService {
 
 	@Override
-	protected void initCache() {
-		
+	public void initCache() {
+
 	}
 
 	@Override

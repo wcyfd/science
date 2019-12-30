@@ -1,6 +1,8 @@
 package com.science.game.service.village;
 
-public interface VillageService {
+import com.science.game.service.ServiceInterface;
+
+public interface VillageService extends ServiceInterface {
 	void recruite();
 
 }
