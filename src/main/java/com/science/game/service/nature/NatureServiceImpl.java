@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.science.game.cache.Data;
-import com.science.game.cache.config.ConfigCache;
 import com.science.game.entity.Res;
 import com.science.game.service.AbstractService;
 
