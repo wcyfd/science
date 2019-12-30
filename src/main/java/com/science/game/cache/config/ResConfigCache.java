@@ -15,6 +15,7 @@ public class ResConfigCache implements IConfigCache {
 		ResConfig config = new ResConfig();
 		config.setResId(Integer.valueOf(values.get(0)));
 		config.setName(values.get(1));
+		config.setItemId(Integer.valueOf(values.get(2)));
 
 		resMap.put(config.getResId(), config);
 	}

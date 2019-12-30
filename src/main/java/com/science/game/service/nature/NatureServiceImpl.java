@@ -21,7 +21,7 @@ public class NatureServiceImpl extends AbstractService implements NatureService 
 	public void initCache() {
 		int[] resArray = { 1, 3, 1, 3, 2, 1, 2, 2, 3 };
 		for (int i : resArray) {
-			Data.areaList.add(Res.create(ConfigCache.res.resMap.get(i)));
+			Data.areaList.add(Res.create(i));
 		}
 	}
 

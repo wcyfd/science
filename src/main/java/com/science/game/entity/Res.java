@@ -2,6 +2,7 @@ package com.science.game.entity;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.science.game.cache.config.ConfigCache;
 import com.science.game.entity.config.ResConfig;
 
 public class Res extends DutyPosition {
@@ -10,10 +11,10 @@ public class Res extends DutyPosition {
 	private int id;
 	private ResConfig proto;
 
-	public static Res create(ResConfig config) {
+	public static Res create(int resId) {
 		Res res = new Res();
 		res.id = ID.incrementAndGet();
-		res.proto = config;
+		res.proto = ConfigCache.res.resMap.get(resId);
 		return res;
 	}
 

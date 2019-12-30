@@ -14,8 +14,8 @@ import com.science.game.entity.Village;
 public class Data {
 	public static String cmd = null;
 
-	public static Map<Integer, Village> villages = new HashMap<>();
-	public static Map<Integer, Item> itemMap = new HashMap<>();
+	public static Map<Integer, Village> villages = new ConcurrentHashMap<>();
+	public static Map<Integer, Item> itemMap = new ConcurrentHashMap<>();
 
 	public static Map<Integer, ScheduledFuture<?>> villageFutures = new ConcurrentHashMap<>();
 	public static List<Res> areaList = new ArrayList<>();

@@ -6,4 +6,5 @@ import lombok.Data;
 public class ResConfig {
 	private int resId;
 	private String name;
+	private int itemId;
 }
