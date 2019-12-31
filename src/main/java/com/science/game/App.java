@@ -26,10 +26,4 @@ public class App {
 		return win;
 	}
 
-	@Bean
-	public GameWindows cmdWindows() {
-		GameWindows w = GameWindows.create();
-		return w;
-	}
-
 }

@@ -35,4 +35,10 @@ public class VillageServiceImpl extends AbstractService implements VillageServic
 		Village v = new Village();
 		Data.villages.put(v.getId(), v);
 	}
+
+	@Override
+	public void paper() {
+		// TODO Auto-generated method stub
+
+	}
 }

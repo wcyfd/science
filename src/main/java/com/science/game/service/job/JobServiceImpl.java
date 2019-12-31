@@ -45,7 +45,7 @@ public class JobServiceImpl extends AbstractService implements JobService {
 
 	private void doAssart(int vid, int second) {
 
-		ScheduledFuture<?> future = this.delay(new Task() {
+		Data.villageFutures.put(vid, this.delay(new Task() {
 
 			@Override
 			public void execute() {
@@ -60,9 +60,7 @@ public class JobServiceImpl extends AbstractService implements JobService {
 					stopWork(vid);
 				}
 			}
-		}, second, TimeUnit.SECONDS);
-
-		Data.villageFutures.put(vid, future);
+		}, second, TimeUnit.SECONDS));
 
 	}
 
@@ -89,13 +87,15 @@ public class JobServiceImpl extends AbstractService implements JobService {
 
 		// 解锁且资源点没有这个人
 
-		ScheduledFuture<?> f = this.delay(new Task() {
+		Data.villageFutures.put(vid, this.delay(new Task() {
 
 			@Override
 			public void execute() {
-				Item item = Item.create(res.getProto().getItemId());
-				Data.itemMap.putIfAbsent(item.getProto().getItemId(), item);
-				item = Data.itemMap.get(item.getProto().getItemId());
+
+				if (!Data.itemMap.containsKey(res.getProto().getItemId()))
+					Data.itemMap.putIfAbsent(res.getProto().getItemId(), Item.create(res.getProto().getItemId()));
+
+				Item item = Data.itemMap.get(res.getProto().getItemId());
 				item.setNum(item.getNum() + 1);
 			}
 
@@ -104,9 +104,7 @@ public class JobServiceImpl extends AbstractService implements JobService {
 				doCollect(vid, areaId, 2);
 			}
 
-		}, second, TimeUnit.SECONDS);
-
-		Data.villageFutures.put(vid, f);
+		}, second, TimeUnit.SECONDS));
 
 	}
 
@@ -120,6 +118,16 @@ public class JobServiceImpl extends AbstractService implements JobService {
 		v.setJob(null);
 		if (v.getPos() != null)
 			v.getPos().getPosition().remove((Integer) vid);
+
+	}
+
+	@Override
+	public void develop() {
+		
+	}
+
+	@Override
+	public void product() {
 
 	}
 

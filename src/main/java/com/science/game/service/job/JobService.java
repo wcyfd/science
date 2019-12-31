@@ -31,4 +31,8 @@ public interface JobService extends ServiceInterface {
 	 * @param areaId
 	 */
 	void collect(int vid, int areaId);
+
+	void develop();
+
+	void product();
 }

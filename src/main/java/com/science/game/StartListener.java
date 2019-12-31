@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +18,9 @@ import game.quick.window.GameWindows;
 
 @Component
 public class StartListener implements ApplicationListener<ContextStartedEvent>, ApplicationContextAware {
+
+	@Autowired
+	private GameWindows win;
 
 	@Override
 	public void onApplicationEvent(ContextStartedEvent event) {
@@ -33,14 +36,8 @@ public class StartListener implements ApplicationListener<ContextStartedEvent>, 
 				service.initCache();
 			}
 
-			GameWindows win = event.getApplicationContext().getBean("gameWindows", GameWindows.class);
 			win.setHandler(ctx.getBean(ScienceHandler.class));
 			win.setView(ctx.getBean(ScienceView.class));
-
-			GameWindows cmd = event.getApplicationContext().getBean("cmdWindows", GameWindows.class);
-			cmd.setView(ctx.getBean(CommandView.class));
-
-			cmd.build();
 			win.build().startConsoleThread();
 
 		} catch (InstantiationException | IllegalAccessException | IOException e) {
@@ -50,11 +47,10 @@ public class StartListener implements ApplicationListener<ContextStartedEvent>, 
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		Map<String, AbstractService> services = applicationContext.getBeansOfType(AbstractService.class);
-		GameWindows win = applicationContext.getBean("gameWindows", GameWindows.class);
-		for (AbstractService service : services.values()) {
-			service.setGameWindows(win);
-		}
+//		Map<String, AbstractService> services = applicationContext.getBeansOfType(AbstractService.class);
+//		for (AbstractService service : services.values()) {
+//			service.setGameWindows(win);
+//		}
 	}
 
 }

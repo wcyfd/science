@@ -16,6 +16,13 @@ public class ItemServiceImpl extends AbstractService implements ItemService {
 
 	@Override
 	protected void dispatch(String cmd, List<String> args) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void gc() {
+		// TODO Auto-generated method stub
 
 	}
 
@@ -27,36 +34,6 @@ public class ItemServiceImpl extends AbstractService implements ItemService {
 
 	@Override
 	public void unequip() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void develop() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void undevelop() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void product() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void unproduct() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void gc() {
 		// TODO Auto-generated method stub
 
 	}

@@ -5,4 +5,6 @@ import com.science.game.service.ServiceInterface;
 public interface VillageService extends ServiceInterface {
 	void recruite();
 
+	void paper();
+
 }

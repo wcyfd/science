@@ -10,17 +10,15 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import game.quick.window.GameWindows;
 import game.quick.window.Task;
 
 public abstract class AbstractService implements InitializingBean {
 	private final static Map<String, AbstractService> HANDLE = new HashMap<>();
+	@Autowired
 	private GameWindows gameWindows;
-
-	public void setGameWindows(GameWindows win) {
-		this.gameWindows = win;
-	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {

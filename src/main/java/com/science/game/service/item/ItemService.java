@@ -8,13 +8,5 @@ public interface ItemService extends ServiceInterface {
 
 	void unequip();
 
-	void develop();
-
-	void undevelop();
-
-	void product();
-
-	void unproduct();
-
 	void gc();
 }
