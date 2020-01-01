@@ -33,6 +33,9 @@ public class VillageServiceImpl extends AbstractService implements VillageServic
 
 	private void createVillage() {
 		Village v = new Village();
+		v.setJobId(-1);
+		v.setPlaceId(-1);
+		v.setPlaceType(null);
 		Data.villages.put(v.getId(), v);
 	}
 

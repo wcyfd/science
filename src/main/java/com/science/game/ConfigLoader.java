@@ -36,5 +36,6 @@ public class ConfigLoader {
 				cache.load(list);
 			}
 		}
+		cache.afterLoad();
 	}
 }

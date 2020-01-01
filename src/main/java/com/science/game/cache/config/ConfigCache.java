@@ -1,7 +1,9 @@
 package com.science.game.cache.config;
 
 public class ConfigCache {
-	public static final ItemConfigCache item = new ItemConfigCache();
-	public static final ResConfigCache res = new ResConfigCache();
-	public static final ConsistConfigCache consist = new ConsistConfigCache();
+	public static ItemConfigCache item;
+	public static PlaceConfigCache place;
+	public static ConsistConfigCache consist;
+	public static JobConfigCache job;
+	public static ThinkConfigCache think;
 }

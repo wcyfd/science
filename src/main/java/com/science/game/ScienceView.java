@@ -4,11 +4,13 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import com.science.game.cache.Data;
+import com.science.game.cache.config.PlaceConfigCache;
 import com.science.game.entity.Item;
 import com.science.game.entity.Village;
 import com.science.game.service.AbstractService;
@@ -21,6 +23,9 @@ public class ScienceView implements IView, ApplicationContextAware {
 
 	private StringBuilder sb = new StringBuilder();
 	private StringBuilder cmd = new StringBuilder();
+
+	@Autowired
+	private PlaceConfigCache placeConfigCache;
 
 	@Override
 	public String render() {
@@ -57,7 +62,7 @@ public class ScienceView implements IView, ApplicationContextAware {
 	private void area() {
 		sb.append("area\n");
 		for (int i = 0; i < Data.areaId; i++) {
-			sb.append(i).append(" ").append(Data.areaList.get(i).getProto().getName()).append(" ");
+			sb.append(i).append(" ").append(placeConfigCache.placeMap.get(Data.areaList.get(i)).getName()).append(" ");
 		}
 		sb.append("\n");
 	}
@@ -72,11 +77,14 @@ public class ScienceView implements IView, ApplicationContextAware {
 				if (ServiceInterface.class.isAssignableFrom(c)) {
 					String name = c.getSimpleName().toLowerCase().replace("service", "");
 					Method[] methods = c.getMethods();
-					cmd.append(name).append("\t");
-					for (Method method : methods) {
-						cmd.append(method.getName().toLowerCase()).append("  ");
+					if (methods.length != 0) {
+						cmd.append(name).append("\t");
+						for (Method method : methods) {
+							cmd.append(method.getName().toLowerCase()).append("  ");
+						}
+						cmd.append("\n");
 					}
-					cmd.append("\n");
+
 				}
 			}
 		}

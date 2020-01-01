@@ -22,7 +22,7 @@ public interface JobService extends ServiceInterface {
 	 * 
 	 * @param vid
 	 */
-	void stopWork(int vid);
+	void stop(int vid);
 
 	/**
 	 * 采集

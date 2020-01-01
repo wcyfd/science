@@ -18,6 +18,7 @@ public class App {
 	@SuppressWarnings("resource")
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, IOException {
 		new ClassPathXmlApplicationContext("classpath:applicationContext.xml").start();
+
 	}
 
 	@Bean

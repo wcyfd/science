@@ -1,6 +1,11 @@
 package com.science.game.entity;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import com.science.game.cache.config.ConfigCache;
+import com.science.game.entity.config.JobConfig;
 
 import lombok.Data;
 
@@ -8,24 +13,21 @@ import lombok.Data;
 public class Village {
 	private static AtomicInteger ID = new AtomicInteger(1);
 	private int id;
-	private String job;
-	private DutyPosition pos;
+	private int jobId;
+	private int placeId;
+	private Place.Type placeType;
+	private Set<Integer> historyResPlace = new HashSet<>();
+	private Set<Integer> historyItemPlace = new HashSet<>();
 
 	public Village() {
 		id = ID.getAndIncrement();
 	}
 
-	public int getId() {
-		return id;
-	}
-
-	public String getJob() {
-		return job;
-	}
-
 	@Override
 	public String toString() {
-		return "Village [id=" + id + ", job=" + job + "]";
+		JobConfig config = ConfigCache.job.jobMap.get(jobId);
+
+		return "Village [id=" + id + ", job=" + (config == null ? null : config.getJob()) + "]";
 	}
 
 }

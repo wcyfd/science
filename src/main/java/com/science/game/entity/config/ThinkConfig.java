@@ -3,8 +3,8 @@ package com.science.game.entity.config;
 import lombok.Data;
 
 @Data
-public class ResConfig {
-	private int resId;
-	private String name;
+public class ThinkConfig {
+	private int id;
+	private int jobId;
 	private int itemId;
 }

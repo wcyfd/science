@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.science.game.cache.config.ConfigCache;
 import com.science.game.entity.config.ItemConfig;
 
-public class Item extends DutyPosition {
+public class Item {
 
 	private static AtomicInteger ID = new AtomicInteger();
 	private ItemConfig proto;
