@@ -32,7 +32,7 @@ public class TechServiceImpl extends AbstractService implements TechService, Tec
 		Village village = Data.villages.get(vid);
 		int jobId = village.getJobId();
 		List<ThinkConfig> list = thinkConfigCache.jobThinkMap.get(jobId);
-		// 检查是否是工作地点允许
+		// 检查当前职业
 
 		// 检查目前解锁资源是否允许出现这个想法
 

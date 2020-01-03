@@ -1,7 +1,5 @@
 package com.science.game.entity;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.science.game.cache.config.ConfigCache;
@@ -16,8 +14,6 @@ public class Village {
 	private int jobId;
 	private int placeId;
 	private Place.Type placeType;
-	private Set<Integer> historyResPlace = new HashSet<>();
-	private Set<Integer> historyItemPlace = new HashSet<>();
 
 	public Village() {
 		id = ID.getAndIncrement();

@@ -34,6 +34,7 @@ public class ConfigLoader {
 				cache.load(list);
 			}
 		} catch (Exception e) {
+			log.error("配置表加载报错" + file, e);
 			System.exit(0);
 		}
 		cache.afterLoad();
