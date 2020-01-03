@@ -16,7 +16,6 @@ import com.science.game.entity.config.PlaceConfig;
 import com.science.game.service.AbstractService;
 import com.science.game.service.item.ItemInternal;
 import com.science.game.service.tech.TechInternal;
-import com.science.game.service.tech.TechService;
 
 import game.quick.window.Task;
 
@@ -74,7 +73,7 @@ public class JobServiceImpl extends AbstractService implements JobService {
 			@Override
 			public void execute() {
 				Data.areaId++;
-				Data.resPlace.put(Data.areaId, Place.create(Data.areaId));// 创建一个资源点位置
+				Data.resPlace.putIfAbsent(Data.areaId, Place.create(Data.areaId));// 创建一个资源点位置
 
 				techInternal.think(vid);
 			}

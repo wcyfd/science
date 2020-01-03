@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.science.game.cache.Data;
+import com.science.game.entity.Place;
 import com.science.game.service.AbstractService;
 
 @Service
@@ -20,6 +21,11 @@ public class NatureServiceImpl extends AbstractService implements NatureService 
 	public void initCache() {
 		Data.areaList.addAll(Arrays.asList(2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3,
 				4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4));
+		Data.areaId = 10;
+		for (int i = 0; i < Data.areaId; i++) {
+			Data.resPlace.putIfAbsent(i, Place.create(i));
+		}
+
 	}
 
 }

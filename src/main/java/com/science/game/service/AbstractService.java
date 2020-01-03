@@ -9,34 +9,15 @@ import java.util.StringTokenizer;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import game.quick.window.GameWindows;
 import game.quick.window.Task;
 
-public abstract class AbstractService implements InitializingBean {
+public abstract class AbstractService {
 	private final static Map<String, AbstractService> HANDLE = new HashMap<>();
 	@Autowired
 	private GameWindows gameWindows;
-
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		Class<?>[] clazzes = this.getClass().getInterfaces();
-		for (Class<?> clazz : clazzes) {
-			if (ServiceInterface.class.isAssignableFrom(clazz)) {
-				Method[] methods = clazz.getMethods();
-
-				String name = clazz.getSimpleName().toLowerCase().replace("service", "");
-
-				for (Method method : methods) {
-					String methodName = method.getName().toLowerCase();
-					String handleName = name + "." + methodName;
-					HANDLE.put(handleName, this);
-				}
-			}
-		}
-	}
 
 	public static void dispatchCmd(String cmd) {
 		StringTokenizer cmdToken = new StringTokenizer(cmd);
@@ -63,7 +44,29 @@ public abstract class AbstractService implements InitializingBean {
 
 	protected abstract void dispatch(String cmd, List<String> args);
 
-	public void initCache() {
+	public void initService() {
+		registHandle();
+		initCache();
+	}
+
+	private void registHandle() {
+		Class<?>[] clazzes = this.getClass().getInterfaces();
+		for (Class<?> clazz : clazzes) {
+			if (ServiceInterface.class.isAssignableFrom(clazz)) {
+				Method[] methods = clazz.getMethods();
+
+				String name = clazz.getSimpleName().toLowerCase().replace("service", "");
+
+				for (Method method : methods) {
+					String methodName = method.getName().toLowerCase();
+					String handleName = name + "." + methodName;
+					HANDLE.put(handleName, this);
+				}
+			}
+		}
+	}
+
+	protected void initCache() {
 
 	}
 

@@ -2,7 +2,6 @@ package com.science.game;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -20,8 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ConfigLoader {
 
-	public static void load(String file, IConfigCache cache)
-			throws IOException, InstantiationException, IllegalAccessException {
+	public static void load(String file, IConfigCache cache) {
 
 		log.info("Load config {}", file);
 
@@ -35,6 +33,8 @@ public class ConfigLoader {
 				}
 				cache.load(list);
 			}
+		} catch (Exception e) {
+			System.exit(0);
 		}
 		cache.afterLoad();
 	}
