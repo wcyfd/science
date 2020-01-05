@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.science.game.service.village.VillageService;
+import game.quick.window.GameWindows;
 
 /**
  * Unit test for simple App.
@@ -16,10 +16,10 @@ import com.science.game.service.village.VillageService;
 @RunWith(value = SpringJUnit4ClassRunner.class)
 public class AppTest {
 	@Autowired
-	private VillageService villageService;
+	private GameWindows win;
 
 	@Test
 	public void recruite() {
-		villageService.recruite();
+		win.command("village.recruite");
 	}
 }

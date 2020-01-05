@@ -3,7 +3,7 @@ package com.science.game;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextStartedEvent;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -14,13 +14,13 @@ import game.quick.window.GameWindows;
 
 @Component
 @Order(1)
-public class StartListener implements ApplicationListener<ContextStartedEvent> {
+public class StartListener implements ApplicationListener<ContextRefreshedEvent> {
 
 	@Autowired
 	private GameWindows win;
 
 	@Override
-	public void onApplicationEvent(ContextStartedEvent event) {
+	public void onApplicationEvent(ContextRefreshedEvent event) {
 
 		ApplicationContext ctx = event.getApplicationContext();
 		// 加载配置表

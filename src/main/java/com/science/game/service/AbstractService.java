@@ -70,7 +70,7 @@ public abstract class AbstractService {
 
 	}
 
-	protected ScheduledFuture<?> delay(Task task, long delay, TimeUnit unit) {
+	public ScheduledFuture<?> delay(Task task, long delay, TimeUnit unit) {
 		return gameWindows.schedule(task, delay, unit);
 	}
 

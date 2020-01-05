@@ -32,7 +32,7 @@ public interface JobService extends ServiceInterface {
 	 */
 	void collect(int vid, int areaId);
 
-	void develop();
+	void develop(int vid, int itemId);
 
 	void product();
 }

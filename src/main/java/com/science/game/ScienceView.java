@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import com.science.game.cache.Data;
+import com.science.game.cache.config.ItemConfigCache;
 import com.science.game.cache.config.PlaceConfigCache;
 import com.science.game.entity.Item;
 import com.science.game.entity.Village;
@@ -27,6 +28,9 @@ public class ScienceView implements IView, ApplicationContextAware {
 	@Autowired
 	private PlaceConfigCache placeConfigCache;
 
+	@Autowired
+	private ItemConfigCache itemConfigCache;
+
 	@Override
 	public String render() {
 		sb.delete(0, sb.length());
@@ -39,6 +43,8 @@ public class ScienceView implements IView, ApplicationContextAware {
 		item();
 		sb.append("\n");
 		area();
+		sb.append("\n");
+		think();
 		sb.append("\n");
 
 		return sb.toString();
@@ -65,6 +71,13 @@ public class ScienceView implements IView, ApplicationContextAware {
 			sb.append(i).append(" ").append(placeConfigCache.placeMap.get(Data.areaList.get(i)).getName()).append(" ");
 		}
 		sb.append("\n");
+	}
+
+	private void think() {
+		sb.append("think\n");
+		for (Integer id : Data.thinkList) {
+			sb.append(id).append(" ").append(itemConfigCache.itemMap.get(id).getName()).append(" ");
+		}
 	}
 
 	@Override

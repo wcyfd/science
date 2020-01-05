@@ -2,23 +2,21 @@ package com.science.game;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextStartedEvent;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-import com.science.game.cache.Data;
 
 import game.quick.window.GameWindows;
 
 @Component
 @Order(2)
-public class Robot implements ApplicationListener<ContextStartedEvent> {
+public class Robot implements ApplicationListener<ContextRefreshedEvent> {
 
 	@Autowired
 	private GameWindows win;
 
 	@Override
-	public void onApplicationEvent(ContextStartedEvent event) {
+	public void onApplicationEvent(ContextRefreshedEvent event) {
 		new Thread() {
 			public void run() {
 				w(1000);
@@ -30,6 +28,7 @@ public class Robot implements ApplicationListener<ContextStartedEvent> {
 	}
 
 	private void script() {
+		c("village.recruite");
 		c("village.recruite");
 		c("village.recruite");
 		c("job.assart 1");

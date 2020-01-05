@@ -23,8 +23,10 @@ public class Data {
 	public static Map<Integer, ScheduledFuture<?>> villageFutures = new ConcurrentHashMap<>();
 	public static List<Integer> areaList = new ArrayList<>();
 	// 等待思考的列表
-	public static List<Integer> waitThinkList = new ArrayList<>();
 	public static List<Integer> thinkList = new ArrayList<>();
 	public static int areaId = -1;
 
+	// 研发点
+	public static Map<Integer, Integer> developPoint = new ConcurrentHashMap<>();
+	public static Map<Integer, List<Integer>> developVillages = new ConcurrentHashMap<Integer, List<Integer>>();
 }
