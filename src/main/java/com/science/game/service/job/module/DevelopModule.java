@@ -10,10 +10,12 @@ import org.springframework.stereotype.Component;
 
 import com.science.game.cache.Data;
 import com.science.game.cache.config.ConsistConfigCache;
+import com.science.game.cache.config.ItemConfigCache;
 import com.science.game.entity.Item;
 import com.science.game.entity.Place.Type;
 import com.science.game.entity.Village;
 import com.science.game.entity.config.ConsistConfig;
+import com.science.game.entity.config.ItemConfig;
 import com.science.game.service.AbstractService;
 import com.science.game.service.item.ItemInternal;
 import com.science.game.service.job.JobService;
@@ -37,6 +39,9 @@ public class DevelopModule {
 
 	@Autowired
 	private ItemInternal itemInternal;
+
+	@Autowired
+	private ItemConfigCache itemConfigCache;
 
 	public void develop(int vid, int itemId, AbstractService service) {
 		List<ConsistConfig> list = consistConfigCache.consistMap.get(itemId);
@@ -93,6 +98,8 @@ public class DevelopModule {
 						// 成功
 						Item item = itemInternal.createItemIfAbsent(itemId);
 						item.setNum(1);
+						Data.developVillages.getOrDefault(itemId, new LinkedList<>())
+								.forEach(id -> jobService.stop(id));// 停止所有参与研发的村民该工作
 						Data.developVillages.remove(itemId);
 						Data.developPoint.remove(itemId);
 						Data.thinkList.remove((Integer) itemId);
@@ -119,9 +126,36 @@ public class DevelopModule {
 		}, second, TimeUnit.SECONDS));
 	}
 
+	/**
+	 * 判定是否研发成功
+	 * 
+	 * @param itemId
+	 * @return
+	 */
 	private boolean developSuccess(int itemId) {
-		Random rand = new Random();
-		return rand.nextBoolean();
+		ItemConfig itemConfig = itemConfigCache.itemMap.get(itemId);
+		List<Integer> developIds = Data.developVillages.get(itemId);
+		int maxPractice = 0;
+		for (int developId : developIds) {
+			Village village = Data.villages.get(developId);
+			Integer value = village.getSkillValues().get(itemId);
+			if (value == null) {
+				continue;
+			}
+
+			if (value > maxPractice) {
+				maxPractice = value;
+			}
+		}
+
+		if (Data.developPoint.getOrDefault(itemId, 0) >= itemConfig.getDevelopPoint()
+				&& maxPractice >= itemConfig.getPractice()) {
+			Random rand = new Random();
+			return rand.nextBoolean();
+		}
+
+		return false;
+
 	}
 
 	/**

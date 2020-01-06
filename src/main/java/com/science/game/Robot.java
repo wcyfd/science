@@ -45,7 +45,6 @@ public class Robot implements ApplicationListener<ContextRefreshedEvent> {
 		try {
 			Thread.sleep(t);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

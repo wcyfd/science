@@ -74,4 +74,7 @@ public abstract class AbstractService {
 		return gameWindows.schedule(task, delay, unit);
 	}
 
+	protected int getInt(List<String> list, int idx) {
+		return Integer.valueOf(list.get(idx));
+	}
 }

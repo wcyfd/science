@@ -12,6 +12,9 @@ public class StopModule {
 
 	public void stop(int vid) {
 		Village v = Data.villages.get(vid);
+		if (v == null) {
+			return;
+		}
 		ScheduledFuture<?> future = Data.villageFutures.remove(vid);
 		if (future != null)
 			future.cancel(false);

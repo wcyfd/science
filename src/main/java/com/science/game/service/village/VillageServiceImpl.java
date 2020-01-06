@@ -5,8 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.science.game.cache.Data;
-import com.science.game.entity.Village;
 import com.science.game.service.AbstractService;
 import com.science.game.service.village.module.CreateVillageModule;
 
@@ -32,12 +30,6 @@ public class VillageServiceImpl extends AbstractService implements VillageServic
 	@Override
 	public void recruite() {
 		createVillageModule.createVillage();
-
 	}
 
-	@Override
-	public void paper() {
-		// TODO Auto-generated method stub
-
-	}
 }

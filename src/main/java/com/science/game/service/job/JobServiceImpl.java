@@ -29,19 +29,22 @@ public class JobServiceImpl extends AbstractService implements JobService {
 	private AssartModule assartModule;
 
 	@Override
-	protected void dispatch(String cmd, List<String> args) {
+	protected void dispatch(String cmd, List<String> list) {
 		switch (cmd) {
 		case "assart":
-			assart(Integer.valueOf(args.get(0)));
+			assart(getInt(list, 0));
 			break;
 		case "stop":
-			stop(Integer.valueOf(args.get(0)));
+			stop(getInt(list, 0));
 			break;
 		case "collect":
-			collect(Integer.valueOf(args.get(0)), Integer.valueOf(args.get(1)));
+			collect(getInt(list, 0), getInt(list, 1));
 			break;
 		case "develop":
-			develop(Integer.valueOf(args.get(0)), Integer.valueOf(args.get(1)));
+			develop(getInt(list, 0), getInt(list, 1));
+			break;
+		case "product":
+			product(getInt(list, 0), getInt(list, 1));
 			break;
 		}
 
@@ -73,8 +76,8 @@ public class JobServiceImpl extends AbstractService implements JobService {
 	}
 
 	@Override
-	public void product() {
-
+	public void product(int vid, int itemId) {
+		
 	}
 
 }
