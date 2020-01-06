@@ -2,18 +2,22 @@ package com.science.game.service.village;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.science.game.cache.Data;
 import com.science.game.entity.Village;
 import com.science.game.service.AbstractService;
+import com.science.game.service.village.module.CreateVillageModule;
 
 @Service
 public class VillageServiceImpl extends AbstractService implements VillageService {
 
+	@Autowired
+	private CreateVillageModule createVillageModule;
+
 	@Override
 	public void initCache() {
-		createVillage();
 	}
 
 	@Override
@@ -27,16 +31,8 @@ public class VillageServiceImpl extends AbstractService implements VillageServic
 
 	@Override
 	public void recruite() {
-		createVillage();
+		createVillageModule.createVillage();
 
-	}
-
-	private void createVillage() {
-		Village v = new Village();
-		v.setJobId(-1);
-		v.setPlaceId(-1);
-		v.setPlaceType(null);
-		Data.villages.put(v.getId(), v);
 	}
 
 	@Override

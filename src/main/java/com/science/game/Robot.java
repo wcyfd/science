@@ -31,6 +31,7 @@ public class Robot implements ApplicationListener<ContextRefreshedEvent> {
 		c("village.recruite");
 		c("village.recruite");
 		c("village.recruite");
+		c("village.recruite");
 		c("job.assart 1");
 		c("job.collect 2 1");
 		c("job.collect 3 2");
