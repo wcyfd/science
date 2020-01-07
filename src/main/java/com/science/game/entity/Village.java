@@ -14,7 +14,7 @@ public class Village {
 	private int placeId;
 	private PlaceType placeType;
 	// 每种道具的熟练度
-	private Map<Integer, Integer> skillValues = new HashMap<>();
+	private Map<Integer, AtomicInteger> skillValues = new HashMap<>();
 
 	public Village() {
 		id = ID.getAndIncrement();
@@ -48,7 +48,7 @@ public class Village {
 		return placeType;
 	}
 
-	public Map<Integer, Integer> getSkillValues() {
+	public Map<Integer, AtomicInteger> getSkillValues() {
 		return skillValues;
 	}
 

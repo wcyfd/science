@@ -7,6 +7,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.science.game.cache.Data;
+import com.science.game.service.item.ItemInternal;
 
 import game.quick.window.GameWindows;
 
@@ -16,6 +17,9 @@ public class Robot implements ApplicationListener<ContextRefreshedEvent> {
 
 	@Autowired
 	private GameWindows win;
+
+	@Autowired
+	private ItemInternal itemInternal;
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -40,7 +44,7 @@ public class Robot implements ApplicationListener<ContextRefreshedEvent> {
 		until(() -> Data.thinkList.size() > 0);
 		int itemId = Data.thinkList.get(0);
 		c("job.develop 4 " + itemId);
-		until(() -> Data.itemMap.containsKey(itemId));
+		until(() -> itemInternal.itemIsDeveloped(itemId));
 		c("job.product 4 " + itemId);
 	}
 

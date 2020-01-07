@@ -25,4 +25,12 @@ public interface ItemInternal {
 	 * @param itemId
 	 */
 	void createItemPlace(int itemId);
+
+	/**
+	 * 道具已经被研发成功
+	 * 
+	 * @param itemId
+	 * @return
+	 */
+	boolean itemIsDeveloped(int itemId);
 }

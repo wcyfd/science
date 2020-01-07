@@ -15,6 +15,7 @@ import com.science.game.entity.Item;
 import com.science.game.entity.JobType;
 import com.science.game.entity.PlaceType;
 import com.science.game.entity.config.ConsistConfig;
+import com.science.game.entity.config.ItemConfig;
 import com.science.game.service.AbstractService;
 import com.science.game.service.item.ItemInternal;
 import com.science.game.service.job.JobInternal;
@@ -97,6 +98,10 @@ public class ProductModule {
 				transferCount.forEach((id, count) -> itemInternal.addItem(id, count));
 
 				itemInternal.addItem(itemId, 1);
+
+				// 增加熟练度
+				Data.villages.get(vid).getSkillValues().get(itemId).addAndGet(2);
+
 			}
 
 		}, delay, TimeUnit.SECONDS));

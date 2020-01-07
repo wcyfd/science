@@ -9,6 +9,7 @@ public class Item {
 
 	private static AtomicInteger ID = new AtomicInteger();
 	private ItemConfig proto;
+	private AtomicInteger age = new AtomicInteger();
 	private int num;
 	private int id;
 
@@ -35,4 +36,11 @@ public class Item {
 		this.num = num;
 	}
 
+	public AtomicInteger getAgeRef() {
+		return age;
+	}
+
+	public int getAge() {
+		return age.get();
+	}
 }

@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -52,7 +53,7 @@ public class DevelopModule {
 		List<ConsistConfig> list = consistConfigCache.consistMap.get(itemId);
 
 		// 没有足够的材料或者道具表中显示已经研发出了这个道具
-		if (Data.itemMap.containsKey(itemId) || !enoughMaterial(list))
+		if (itemInternal.itemIsDeveloped(itemId) || !enoughMaterial(list))
 			return;
 
 		jobService.stop(vid);
@@ -84,7 +85,7 @@ public class DevelopModule {
 
 			@Override
 			public void afterExecute() {
-				if (Data.itemMap.containsKey(itemId)) {
+				if (itemInternal.itemIsDeveloped(itemId)) {
 					jobService.stop(vid);
 					return;
 				}
@@ -94,7 +95,7 @@ public class DevelopModule {
 			@Override
 			public void execute() {
 
-				if (!Data.itemMap.containsKey(itemId)) {// 还没有研发成功的话就往下走
+				if (!itemInternal.itemIsDeveloped(itemId)) {// 还没有研发成功的话就往下走
 					// 研发结果
 					if (developSuccess(itemId)) {
 						// 成功
@@ -117,8 +118,8 @@ public class DevelopModule {
 						for (int developerId : developerIds) {
 							Village village = Data.villages.get(developerId);
 							// 添加熟练度
-							village.getSkillValues().putIfAbsent(itemId, 0);
-							village.getSkillValues().put(itemId, village.getSkillValues().get(itemId) + skillValue);
+							village.getSkillValues().putIfAbsent(itemId, new AtomicInteger());
+							village.getSkillValues().get(itemId).addAndGet(skillValue);
 						}
 					}
 				}
@@ -140,13 +141,13 @@ public class DevelopModule {
 		int maxPractice = 0;
 		for (int developId : developIds) {
 			Village village = Data.villages.get(developId);
-			Integer value = village.getSkillValues().get(itemId);
+			AtomicInteger value = village.getSkillValues().get(itemId);
 			if (value == null) {
 				continue;
 			}
 
-			if (value > maxPractice) {
-				maxPractice = value;
+			if (value.get() > maxPractice) {
+				maxPractice = value.get();
 			}
 		}
 

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.science.game.cache.Data;
 import com.science.game.entity.Item;
 import com.science.game.service.AbstractService;
 import com.science.game.service.item.module.AddItemModule;
@@ -60,6 +61,11 @@ public class ItemServiceImpl extends AbstractService implements ItemService, Ite
 	@Override
 	public void createItemPlace(int itemId) {
 		createItemModule.createItemPlace(itemId);
+	}
+
+	@Override
+	public boolean itemIsDeveloped(int itemId) {
+		return Data.itemMap.containsKey(itemId);
 	}
 
 }
