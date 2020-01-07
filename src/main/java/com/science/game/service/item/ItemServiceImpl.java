@@ -22,35 +22,32 @@ public class ItemServiceImpl extends AbstractService implements ItemService, Ite
 
 	@Override
 	protected void dispatch(String cmd, List<String> args) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void initCache() {
+
 	}
 
 	@Override
 	public void gc() {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void equip() {
-		// TODO Auto-generated method stub
+	public void equip(int vid, int onlyId) {
 
 	}
 
 	@Override
 	public void unequip() {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public Item createItemIfAbsent(int itemId) {
-		return createItemModule.createItemIfAbsent(itemId);
+	public void createItemIfAbsent(int itemId) {
+		createItemModule.createItemIfAbsent(itemId);
 	}
 
 	@Override

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import com.science.game.cache.Data;
 import com.science.game.cache.config.PlaceConfigCache;
-import com.science.game.entity.Item;
 import com.science.game.entity.JobType;
 import com.science.game.entity.Place;
 import com.science.game.entity.PlaceType;
@@ -88,8 +87,8 @@ public class CollectModule {
 
 			@Override
 			public void execute() {
-				Item item = itemInternal.createItemIfAbsent(placeConfig.getItemId());
-				item.setNum(item.getNum() + 1);
+				itemInternal.createItemIfAbsent(placeConfig.getItemId());
+				itemInternal.addItem(placeConfig.getItemId(), 1);
 				techInternal.think(vid);
 			}
 

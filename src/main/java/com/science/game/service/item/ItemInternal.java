@@ -1,7 +1,5 @@
 package com.science.game.service.item;
 
-import com.science.game.entity.Item;
-
 public interface ItemInternal {
 	/**
 	 * 创建一个道具
@@ -9,7 +7,7 @@ public interface ItemInternal {
 	 * @param itemId
 	 * @return
 	 */
-	Item createItemIfAbsent(int itemId);
+	void createItemIfAbsent(int itemId);
 
 	/**
 	 * 改变道具数量

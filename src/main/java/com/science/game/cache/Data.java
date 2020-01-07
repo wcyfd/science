@@ -15,7 +15,7 @@ public class Data {
 	public static String cmd = null;
 
 	public static Map<Integer, Village> villages = new ConcurrentHashMap<>();
-	public static Map<Integer, Item> itemMap = new ConcurrentHashMap<>();
+	public static Map<Integer, List<Item>> itemMap = new ConcurrentHashMap<>();
 
 	public static Map<Integer, Place> resPlace = new HashMap<>();
 	public static Map<Integer, Place> itemPlace = new HashMap<>();

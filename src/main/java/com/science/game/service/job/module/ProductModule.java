@@ -11,11 +11,9 @@ import com.aimfd.game.tool.reserve.Reserve;
 import com.science.game.cache.Data;
 import com.science.game.cache.config.ConsistConfigCache;
 import com.science.game.cache.config.ItemConfigCache;
-import com.science.game.entity.Item;
 import com.science.game.entity.JobType;
 import com.science.game.entity.PlaceType;
 import com.science.game.entity.config.ConsistConfig;
-import com.science.game.entity.config.ItemConfig;
 import com.science.game.service.AbstractService;
 import com.science.game.service.item.ItemInternal;
 import com.science.game.service.job.JobInternal;
@@ -74,21 +72,21 @@ public class ProductModule {
 					int needItemId = config.getNeedItemId();
 					int needCount = config.getCount();
 
-					Item needItem = Data.itemMap.get(needItemId);
-					if (needItem == null) {
+					if (!itemInternal.itemIsDeveloped(needItemId)) {
 						log.info("该道具不在Data.itemMap表中 {}", needItemId);
 						return;
 					}
 
-					if (needCount > 0 && needItem.getNum() == 0) {
+					if (needCount == 0) {
 						log.info("该道具在合成表中不生效，目标要合成的道具是{},需要的道具是{}", needItemId, itemId);
 						return;
 					}
 
-					Reserve reserve = Reserve.builder().store(needItem.getNum()).delta(-needCount).build();
+					int currentCount = Data.itemMap.get(needItemId).size();
+					Reserve reserve = Reserve.builder().store(currentCount).delta(-needCount).build();
 					if (!reserve.transfer()) {
-						log.info("合成{}的材料不足  {}=>当前数量{},需要数量{}", itemConfigCache.itemMap.get(itemId).getName(),
-								itemConfigCache.itemMap.get(itemId).getName(), needItem.getNum(), needCount);
+						log.info("合成{}的材料不足  {} =>当前数量{},需要数量{}", itemConfigCache.itemMap.get(itemId).getName(),
+								itemConfigCache.itemMap.get(itemId).getName(), currentCount, needCount);
 						return;
 					} else {
 						transferCount.put(needItemId, reserve.getRealDelta());

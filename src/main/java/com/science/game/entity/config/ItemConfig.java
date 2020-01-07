@@ -10,6 +10,24 @@ public class ItemConfig {
 	private ItemType type;
 	private int practice;
 	private int developPoint;
+	private int effect;
+	private int age;
+
+	public int getEffect() {
+		return effect;
+	}
+
+	public void setEffect(int effect) {
+		this.effect = effect;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
 
 	public int getItemId() {
 		return itemId;
@@ -35,11 +53,6 @@ public class ItemConfig {
 		this.type = type;
 	}
 
-	@Override
-	public String toString() {
-		return name;
-	}
-
 	public int getPractice() {
 		return practice;
 	}
@@ -54,6 +67,11 @@ public class ItemConfig {
 
 	public void setDevelopPoint(int developPoint) {
 		this.developPoint = developPoint;
+	}
+
+	@Override
+	public String toString() {
+		return name;
 	}
 
 }

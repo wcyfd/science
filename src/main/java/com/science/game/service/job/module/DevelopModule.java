@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import com.science.game.cache.Data;
 import com.science.game.cache.config.ConsistConfigCache;
 import com.science.game.cache.config.ItemConfigCache;
-import com.science.game.entity.Item;
 import com.science.game.entity.JobType;
 import com.science.game.entity.PlaceType;
 import com.science.game.entity.Village;
@@ -99,8 +98,8 @@ public class DevelopModule {
 					// 研发结果
 					if (developSuccess(itemId)) {
 						// 成功
-						Item item = itemInternal.createItemIfAbsent(itemId);
-						item.setNum(1);
+						itemInternal.createItemIfAbsent(itemId);
+						itemInternal.addItem(itemId, 1);
 						Data.developVillages.getOrDefault(itemId, new LinkedList<>())
 								.forEach(id -> jobService.stop(id));// 停止所有参与研发的村民该工作
 						Data.developVillages.remove(itemId);
@@ -162,6 +161,7 @@ public class DevelopModule {
 	}
 
 	/**
+	 * 是否有足够的材料
 	 * 
 	 * @param list
 	 * @return
@@ -171,8 +171,7 @@ public class DevelopModule {
 			int needItemId = config.getNeedItemId();
 			int count = config.getCount();
 
-			Item item = Data.itemMap.get(needItemId);
-			if (item == null || item.getNum() < count) {
+			if (!itemInternal.itemIsDeveloped(needItemId) || Data.itemMap.get(needItemId).size() < count) {
 				return false;
 			}
 		}

@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
 import com.science.game.cache.Data;
 import com.science.game.cache.config.ConsistConfigCache;
 import com.science.game.cache.config.ThinkConfigCache;
-import com.science.game.entity.Item;
 import com.science.game.entity.Village;
 import com.science.game.entity.config.ConsistConfig;
 import com.science.game.entity.config.ThinkConfig;
+import com.science.game.service.item.ItemInternal;
 
 @Component
 public class ThinkModule {
@@ -24,7 +24,10 @@ public class ThinkModule {
 	@Autowired
 	private ConsistConfigCache consistConfigCache;
 
-	/**
+	@Autowired
+	private ItemInternal itemInternal;
+
+	/**s
 	 * 思考
 	 * 
 	 * @param vid
@@ -45,25 +48,36 @@ public class ThinkModule {
 			// 检查目前解锁资源是否允许出现这个想法
 			List<ConsistConfig> consistConfigList = consistConfigCache.consistMap.get(itemId);
 
-			NEXT_ITEM: {
-				for (ConsistConfig consistConfig : consistConfigList) {
-					int needItemId = consistConfig.getNeedItemId();
-					Item item = Data.itemMap.get(needItemId);
-					if (item == null) {
-						// 有资源没有获取到过直接跳过
-						break NEXT_ITEM;
-					}
-				}
-
+			boolean allDevelop = checkAllDevelop(consistConfigList);
+			if (allDevelop) {
 				targets.add(itemId);
 			}
 
 		}
+
+		targets.removeAll(Data.itemMap.keySet());
 
 		if (targets.size() != 0) {
 			int itemId = targets.get(new Random().nextInt(targets.size()));
 			Data.thinkList.add(itemId);
 		}
 
+	}
+
+	/**
+	 * 检查所有组件都已经被研发
+	 * @param consistConfigList
+	 * @return
+	 */
+	private boolean checkAllDevelop(List<ConsistConfig> consistConfigList) {
+		for (ConsistConfig consistConfig : consistConfigList) {
+			int needItemId = consistConfig.getNeedItemId();
+			if (!itemInternal.itemIsDeveloped(needItemId)) {
+				// 有资源没有获取到过直接跳过
+				return false;
+			}
+		}
+
+		return true;
 	}
 }

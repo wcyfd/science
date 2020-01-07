@@ -4,7 +4,7 @@ import com.science.game.service.ServiceInterface;
 
 public interface ItemService extends ServiceInterface {
 
-	void equip();
+	void equip(int vid, int onlyId);
 
 	void unequip();
 

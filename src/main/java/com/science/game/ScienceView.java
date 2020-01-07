@@ -1,6 +1,7 @@
 package com.science.game;
 
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.BeansException;
@@ -59,9 +60,25 @@ public class ScienceView implements IView, ApplicationContextAware {
 
 	private void item() {
 		sb.append("Item").append("\n");
-		for (Item item : Data.itemMap.values()) {
-			sb.append(item.getProto().getItemId()).append(" ").append(item.getProto().getName()).append(" ")
-					.append(item.getNum()).append("\n");
+		for (Map.Entry<Integer, List<Item>> entrySet : Data.itemMap.entrySet()) {
+			List<Item> items = entrySet.getValue();
+			sb.append(entrySet.getKey()).append(" ").append(itemConfigCache.itemMap.get(entrySet.getKey()).getName())
+					.append(" ").append(items.size()).append(" [");
+			int maxLength = 10;
+			int idx = 0;
+			for (Item item : items) {
+				if (idx < maxLength) {
+					sb.append(item.getId());
+				} else {
+					sb.append("...");
+					break;
+				}
+				sb.append(",");
+				idx++;
+			}
+			sb.append("]");
+			sb.append("\n");
+
 		}
 	}
 

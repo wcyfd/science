@@ -22,6 +22,8 @@ public class ItemConfigCache implements IConfigCache {
 		config.setType(ItemConfig.ItemType.valueOf(values.get(2)));
 		config.setPractice(getInt(values, 3));
 		config.setDevelopPoint(getInt(values, 4));
+		config.setEffect(getInt(values, 5));
+		config.setAge(getInt(values, 6));
 
 		itemMap.put(config.getItemId(), config);
 	}
