@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.science.game.cache.Data;
+import com.science.game.entity.JobType;
 import com.science.game.entity.Place;
-import com.science.game.entity.Village;
+import com.science.game.entity.PlaceType;
 import com.science.game.service.AbstractService;
+import com.science.game.service.job.JobInternal;
 import com.science.game.service.job.JobService;
 import com.science.game.service.tech.TechInternal;
 
@@ -23,14 +25,15 @@ public class AssartModule {
 	@Autowired
 	private TechInternal techInternal;
 
+	@Autowired
+	private JobInternal jobInternal;
+
 	public void assart(int vid, AbstractService service) {
 		if (Data.areaId < Data.areaList.size()) {
 			jobService.stop(vid);
 
-			Village v = Data.villages.get(vid);
-			v.setJobId(1);
-			v.setPlaceId(1);
-			v.setPlaceType(Place.Type.PLACE);
+			// 荒地的地点是-2
+			jobInternal.preStartJob(vid, PlaceType.PLACE, -2, JobType.ASSART);
 
 			doAssart(vid, 5, service);
 		}

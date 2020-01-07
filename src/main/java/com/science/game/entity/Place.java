@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Place {
-	public enum Type {
-		PLACE, ITEM
-	}
 
 	private int placeId;
 	private List<Integer> vid = new ArrayList<>();

@@ -12,7 +12,7 @@ public class Village {
 	private int id;
 	private int jobId;
 	private int placeId;
-	private Place.Type placeType;
+	private PlaceType placeType;
 	// 每种道具的熟练度
 	private Map<Integer, Integer> skillValues = new HashMap<>();
 
@@ -40,11 +40,11 @@ public class Village {
 		this.placeId = placeId;
 	}
 
-	public void setPlaceType(Place.Type placeType) {
+	public void setPlaceType(PlaceType placeType) {
 		this.placeType = placeType;
 	}
 
-	public Place.Type getPlaceType() {
+	public PlaceType getPlaceType() {
 		return placeType;
 	}
 

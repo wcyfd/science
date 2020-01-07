@@ -25,6 +25,9 @@ public class NatureServiceImpl extends AbstractService implements NatureService 
 		for (int i = 0; i < Data.areaId; i++) {
 			Data.resPlace.putIfAbsent(i, Place.create(i));
 		}
+		
+		//生成荒地的位置
+		Data.resPlace.putIfAbsent(-2, Place.create(-2));
 
 	}
 

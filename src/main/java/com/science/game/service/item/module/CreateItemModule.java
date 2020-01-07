@@ -11,9 +11,13 @@ public class CreateItemModule {
 	public Item createItemIfAbsent(int itemId) {
 		if (!Data.itemMap.containsKey(itemId)) {
 			Data.itemMap.putIfAbsent(itemId, Item.create(itemId));
-			Data.itemPlace.put(itemId, Place.create(itemId));// 资源型item不需要创建道具位
+			Data.itemPlace.putIfAbsent(itemId, Place.create(itemId));// 资源型item不需要创建道具位
 		}
 
 		return Data.itemMap.get(itemId);
+	}
+
+	public void createItemPlace(int itemId) {
+		Data.itemPlace.putIfAbsent(itemId, Place.create(itemId));// 资源型item不需要创建道具位
 	}
 }

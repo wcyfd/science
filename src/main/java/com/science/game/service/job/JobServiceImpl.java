@@ -6,15 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.science.game.cache.Data;
+import com.science.game.entity.JobType;
 import com.science.game.entity.Place;
+import com.science.game.entity.PlaceType;
 import com.science.game.service.AbstractService;
 import com.science.game.service.job.module.AssartModule;
 import com.science.game.service.job.module.CollectModule;
 import com.science.game.service.job.module.DevelopModule;
+import com.science.game.service.job.module.PreStartJobModule;
+import com.science.game.service.job.module.ProductModule;
 import com.science.game.service.job.module.StopModule;
 
 @Service
-public class JobServiceImpl extends AbstractService implements JobService {
+public class JobServiceImpl extends AbstractService implements JobService, JobInternal {
 
 	@Autowired
 	private DevelopModule developModule;
@@ -27,6 +31,12 @@ public class JobServiceImpl extends AbstractService implements JobService {
 
 	@Autowired
 	private AssartModule assartModule;
+
+	@Autowired
+	private PreStartJobModule preStartJobModule;
+
+	@Autowired
+	private ProductModule productModule;
 
 	@Override
 	protected void dispatch(String cmd, List<String> list) {
@@ -77,7 +87,12 @@ public class JobServiceImpl extends AbstractService implements JobService {
 
 	@Override
 	public void product(int vid, int itemId) {
-		
+		productModule.product(vid, itemId, this);
+	}
+
+	@Override
+	public void preStartJob(int vid, PlaceType type, int id, JobType jobId) {
+		preStartJobModule.preStartJob(vid, type, id, jobId);
 	}
 
 }

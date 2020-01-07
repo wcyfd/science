@@ -12,12 +12,14 @@ import com.science.game.cache.Data;
 import com.science.game.cache.config.ConsistConfigCache;
 import com.science.game.cache.config.ItemConfigCache;
 import com.science.game.entity.Item;
-import com.science.game.entity.Place.Type;
+import com.science.game.entity.JobType;
+import com.science.game.entity.PlaceType;
 import com.science.game.entity.Village;
 import com.science.game.entity.config.ConsistConfig;
 import com.science.game.entity.config.ItemConfig;
 import com.science.game.service.AbstractService;
 import com.science.game.service.item.ItemInternal;
+import com.science.game.service.job.JobInternal;
 import com.science.game.service.job.JobService;
 
 import game.quick.window.Task;
@@ -41,21 +43,21 @@ public class DevelopModule {
 	private ItemInternal itemInternal;
 
 	@Autowired
+	private JobInternal jobInternal;
+
+	@Autowired
 	private ItemConfigCache itemConfigCache;
 
 	public void develop(int vid, int itemId, AbstractService service) {
 		List<ConsistConfig> list = consistConfigCache.consistMap.get(itemId);
 
-		if (!enoughMaterial(list) || Data.itemMap.containsKey(itemId))
+		// 没有足够的材料或者道具表中显示已经研发出了这个道具
+		if (Data.itemMap.containsKey(itemId) || !enoughMaterial(list))
 			return;
 
 		jobService.stop(vid);
-
-		Village v = Data.villages.get(vid);
-
-		v.setPlaceType(Type.ITEM);
-		v.setPlaceId(itemId);
-		v.setJobId(4);
+		itemInternal.createItemPlace(itemId);
+		jobInternal.preStartJob(vid, PlaceType.ITEM, itemId, JobType.DEVELOP);
 
 		Data.developVillages.putIfAbsent(itemId, new LinkedList<>());
 		List<Integer> developerIds = Data.developVillages.get(itemId);

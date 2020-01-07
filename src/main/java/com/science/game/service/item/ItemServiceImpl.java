@@ -57,4 +57,9 @@ public class ItemServiceImpl extends AbstractService implements ItemService, Ite
 		addItemModule.addItem(itemId, count);
 	}
 
+	@Override
+	public void createItemPlace(int itemId) {
+		createItemModule.createItemPlace(itemId);
+	}
+
 }

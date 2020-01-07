@@ -6,6 +6,8 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import com.science.game.cache.Data;
+
 import game.quick.window.GameWindows;
 
 @Component
@@ -35,6 +37,11 @@ public class Robot implements ApplicationListener<ContextRefreshedEvent> {
 		c("job.assart 1");
 		c("job.collect 2 1");
 		c("job.collect 3 2");
+		until(() -> Data.thinkList.size() > 0);
+		int itemId = Data.thinkList.get(0);
+		c("job.develop 4 " + itemId);
+		until(() -> Data.itemMap.containsKey(itemId));
+		c("job.product 4 " + itemId);
 	}
 
 	private void c(String line) {
@@ -49,4 +56,23 @@ public class Robot implements ApplicationListener<ContextRefreshedEvent> {
 		}
 	}
 
+	private void until(ConditionFunc func, long t) {
+		boolean loopTag = true;
+		while (loopTag) {
+			if (func.conform()) {
+				loopTag = false;
+			} else {
+				w(t);
+			}
+		}
+	}
+
+	private void until(ConditionFunc func) {
+		until(func, 5000);
+	}
+
+	@FunctionalInterface
+	private interface ConditionFunc {
+		boolean conform();
+	}
 }

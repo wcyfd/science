@@ -5,6 +5,7 @@ import java.util.concurrent.ScheduledFuture;
 import org.springframework.stereotype.Component;
 
 import com.science.game.cache.Data;
+import com.science.game.entity.JobType;
 import com.science.game.entity.Village;
 
 @Component
@@ -29,11 +30,10 @@ public class StopModule {
 				break;
 			default:
 				break;
-
 			}
 		}
 
-		v.setJobId(-1);
+		v.setJobId(JobType.NULL.getJobId());
 		v.setPlaceId(-1);
 		v.setPlaceType(null);
 

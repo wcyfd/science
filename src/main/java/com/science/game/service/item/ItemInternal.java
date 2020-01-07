@@ -18,4 +18,11 @@ public interface ItemInternal {
 	 * @param count
 	 */
 	void addItem(int itemId, int count);
+
+	/**
+	 * 创建道具放置位
+	 * 
+	 * @param itemId
+	 */
+	void createItemPlace(int itemId);
 }
