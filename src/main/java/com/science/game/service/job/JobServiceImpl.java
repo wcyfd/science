@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.science.game.cache.Data;
+import com.science.game.entity.JobTimeData;
 import com.science.game.entity.JobType;
 import com.science.game.entity.Place;
 import com.science.game.entity.PlaceType;
@@ -100,12 +101,17 @@ public class JobServiceImpl extends AbstractService implements JobService, JobIn
 	}
 
 	@Override
-	public long getJobTime(JobType jobType, int vid, int itemId) {
+	public JobTimeData getJobTime(JobType jobType, int vid, int itemId) {
 		return jobTimeModule.getJobTime(jobType, vid, itemId);
 	}
 
 	@Override
 	public long stopAndReturnRemainTime(int vid) {
 		return stopModule.stop(vid);
+	}
+
+	@Override
+	public void changeJobRate(int vid) {
+		jobTimeModule.changeJobRage(vid, this);
 	}
 }

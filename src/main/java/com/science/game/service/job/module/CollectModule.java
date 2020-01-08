@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.science.game.cache.Data;
 import com.science.game.cache.config.PlaceConfigCache;
+import com.science.game.entity.JobTimeData;
 import com.science.game.entity.JobType;
 import com.science.game.entity.Place;
 import com.science.game.entity.PlaceType;
@@ -75,12 +76,11 @@ public class CollectModule {
 
 	}
 
-	private void doCollect(int vid, int areaId, JobType jobType, long second, AbstractService service) {
+	private void doCollect(int vid, int areaId, JobType jobType, JobTimeData data, AbstractService service) {
 		int resId = Data.areaList.get(areaId);
 		PlaceConfig placeConfig = placeConfigCache.placeMap.get(resId);
 
 		// 解锁且资源点没有这个人
-
 		Data.villageFutures.put(vid, service.delay(new Task() {
 
 			@Override
@@ -95,7 +95,7 @@ public class CollectModule {
 				doCollect(vid, areaId, jobType, jobInternal.getJobTime(jobType, vid, 0), service);
 			}
 
-		}, second));
+		}, data.getDelayTime()));
 
 	}
 }

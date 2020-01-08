@@ -1,5 +1,8 @@
 package com.science.game.entity.config;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class ItemConfig {
 	public enum ItemType {
 		RES, ITEM
@@ -14,6 +17,8 @@ public class ItemConfig {
 	private int age;
 	private long unitTotal;
 	private int unitVelocity;
+
+	private Set<Integer> jobs = new HashSet<>();
 
 	public int getEffect() {
 		return effect;
@@ -90,6 +95,10 @@ public class ItemConfig {
 
 	public void setUnitVelocity(int unitCount) {
 		this.unitVelocity = unitCount;
+	}
+
+	public Set<Integer> getJobs() {
+		return jobs;
 	}
 
 }

@@ -12,4 +12,22 @@ public enum JobType {
 	public int getJobId() {
 		return jobId;
 	}
+
+	public static JobType getByJobId(int jobId) {
+		if (jobId == -1) {
+			return NULL;
+		} else if (jobId == 1) {
+			return ASSART;
+		} else if (jobId == 2) {
+			return DIG;
+		} else if (jobId == 3) {
+			return CHOP;
+		} else if (jobId == 4) {
+			return DEVELOP;
+		} else if (jobId == 5) {
+			return PRODUCT;
+		} else {
+			return null;
+		}
+	}
 }

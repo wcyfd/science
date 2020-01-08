@@ -1,5 +1,6 @@
 package com.science.game.service.job;
 
+import com.science.game.entity.JobTimeData;
 import com.science.game.entity.JobType;
 import com.science.game.entity.PlaceType;
 
@@ -21,7 +22,7 @@ public interface JobInternal {
 	 * @param itemId
 	 * @return
 	 */
-	long getJobTime(JobType jobType, int vid, int itemId);
+	JobTimeData getJobTime(JobType jobType, int vid, int itemId);
 
 	/**
 	 * 停止工作
@@ -30,4 +31,11 @@ public interface JobInternal {
 	 * @return
 	 */
 	long stopAndReturnRemainTime(int vid);
+
+	/**
+	 * 改变工作效率
+	 * 
+	 * @param vid
+	 */
+	void changeJobRate(int vid);
 }

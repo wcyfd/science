@@ -18,6 +18,8 @@ public class Village {
 	// 装备列表
 	private Map<Integer, Item> equips = new HashMap<>();
 
+	private JobTimeData jobTimeData = new JobTimeData();
+
 	public Village() {
 		id = ID.getAndIncrement();
 	}
@@ -56,6 +58,10 @@ public class Village {
 
 	public Map<Integer, Item> getEquips() {
 		return equips;
+	}
+
+	public JobTimeData getJobTimeData() {
+		return this.jobTimeData;
 	}
 
 	@Override

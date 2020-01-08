@@ -10,6 +10,7 @@ import com.aimfd.game.tool.reserve.Reserve;
 import com.science.game.cache.Data;
 import com.science.game.cache.config.ConsistConfigCache;
 import com.science.game.cache.config.ItemConfigCache;
+import com.science.game.entity.JobTimeData;
 import com.science.game.entity.JobType;
 import com.science.game.entity.PlaceType;
 import com.science.game.entity.config.ConsistConfig;
@@ -55,7 +56,7 @@ public class ProductModule {
 		doProduct(vid, itemId, jobInternal.getJobTime(JobType.PRODUCT, vid, itemId), service);
 	}
 
-	private void doProduct(int vid, int itemId, long delay, AbstractService service) {
+	private void doProduct(int vid, int itemId, JobTimeData data, AbstractService service) {
 		Data.villageFutures.put(vid, service.delay(new Task() {
 
 			@Override
@@ -101,7 +102,7 @@ public class ProductModule {
 
 			}
 
-		}, delay));
+		}, data.getDelayTime()));
 	}
 
 }

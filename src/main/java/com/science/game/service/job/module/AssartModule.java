@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.science.game.cache.Data;
+import com.science.game.entity.JobTimeData;
 import com.science.game.entity.JobType;
 import com.science.game.entity.Place;
 import com.science.game.entity.PlaceType;
@@ -33,12 +34,11 @@ public class AssartModule {
 			// 荒地的地点是-2
 			jobInternal.preStartJob(vid, PlaceType.PLACE, -2, JobType.ASSART);
 
-			long jobTime = jobInternal.getJobTime(JobType.ASSART, vid, 0);
-			doAssart(vid, jobTime, service);
+			doAssart(vid, jobInternal.getJobTime(JobType.ASSART, vid, 0), service);
 		}
 	}
 
-	private void doAssart(int vid, long second, AbstractService service) {
+	private void doAssart(int vid, JobTimeData data, AbstractService service) {
 
 		Data.villageFutures.put(vid, service.delay(new Task() {
 
@@ -53,13 +53,12 @@ public class AssartModule {
 			@Override
 			public void afterExecute() {
 				if (Data.areaId < Data.areaList.size()) {
-					long jobTime = jobInternal.getJobTime(JobType.ASSART, vid, 0);
-					doAssart(vid, jobTime, service);
+					doAssart(vid, jobInternal.getJobTime(JobType.ASSART, vid, 0), service);
 				} else {
 					jobService.stop(vid);
 				}
 			}
-		}, second));
+		}, data.getDelayTime()));
 
 	}
 }

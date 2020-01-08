@@ -5,12 +5,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.science.game.entity.config.ItemConfig;
 import com.science.game.entity.config.ThinkConfig;
 
 @Component
 public class ThinkConfigCache implements IConfigCache {
+
+	@Autowired
+	private ItemConfigCache itemCache;
+
 	public Map<Integer, ThinkConfig> thinkMap = new HashMap<>();
 	public Map<Integer, List<ThinkConfig>> jobThinkMap = new HashMap<>();
 
@@ -28,6 +34,7 @@ public class ThinkConfigCache implements IConfigCache {
 			jobThinkMap.put(config.getJobId(), thinkItemList);
 		}
 		thinkItemList.add(config);
+
 	}
 
 	@Override
@@ -38,6 +45,11 @@ public class ThinkConfigCache implements IConfigCache {
 	@Override
 	public void afterLoad() {
 		ConfigCache.think = this;
+
+		for (ThinkConfig config : thinkMap.values()) {
+			ItemConfig itemConfig = itemCache.itemMap.get(config.getItemId());
+			itemConfig.getJobs().add(config.getJobId());
+		}
 	}
 
 }

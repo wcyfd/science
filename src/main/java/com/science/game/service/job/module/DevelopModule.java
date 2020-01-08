@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.science.game.cache.Data;
 import com.science.game.cache.config.ConsistConfigCache;
 import com.science.game.cache.config.ItemConfigCache;
+import com.science.game.entity.JobTimeData;
 import com.science.game.entity.JobType;
 import com.science.game.entity.PlaceType;
 import com.science.game.entity.Village;
@@ -67,7 +68,7 @@ public class DevelopModule {
 		doDevelop(vid, itemId, jobInternal.getJobTime(JobType.DEVELOP, vid, itemId), service);
 	}
 
-	private void doDevelop(int vid, int itemId, long second, AbstractService service) {
+	private void doDevelop(int vid, int itemId, JobTimeData data, AbstractService service) {
 		List<ConsistConfig> list = consistConfigCache.consistMap.get(itemId);
 		if (!enoughMaterial(list)) {// 如果材料不够了就停止工作
 			jobService.stop(vid);
@@ -124,7 +125,7 @@ public class DevelopModule {
 
 			}
 
-		}, second));
+		}, data.getDelayTime()));
 	}
 
 	/**
