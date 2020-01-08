@@ -171,7 +171,7 @@ public class DevelopModule {
 			int needItemId = config.getNeedItemId();
 			int count = config.getCount();
 
-			if (!itemInternal.itemIsDeveloped(needItemId) || Data.itemMap.get(needItemId).size() < count) {
+			if (!itemInternal.itemIsDeveloped(needItemId) || itemInternal.getItemCount(needItemId) < count) {
 				return false;
 			}
 		}

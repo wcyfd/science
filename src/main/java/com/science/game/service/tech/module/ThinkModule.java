@@ -27,8 +27,8 @@ public class ThinkModule {
 	@Autowired
 	private ItemInternal itemInternal;
 
-	/**s
-	 * 思考
+	/**
+	 * s 思考
 	 * 
 	 * @param vid
 	 */
@@ -55,7 +55,7 @@ public class ThinkModule {
 
 		}
 
-		targets.removeAll(Data.itemMap.keySet());
+		targets.removeAll(itemInternal.getDevelopSuccessItem());
 
 		if (targets.size() != 0) {
 			int itemId = targets.get(new Random().nextInt(targets.size()));
@@ -66,6 +66,7 @@ public class ThinkModule {
 
 	/**
 	 * 检查所有组件都已经被研发
+	 * 
 	 * @param consistConfigList
 	 * @return
 	 */

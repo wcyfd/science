@@ -24,11 +24,16 @@ public class CreateItemModule {
 
 		// 需要判断如果是资源型，则就默认加一个
 		ItemConfig config = itemConfigCache.itemMap.get(itemId);
+
+		Data.scienceMap.add(itemId);
 		if (config.getType() == ItemType.RES) {
 			Data.itemMap.putIfAbsent(itemId, new ArrayList<>(1));
 			List<Item> list = Data.itemMap.get(itemId);
 			if (list.size() == 0) {
-				list.add(Item.create(itemId));
+				Item item = Item.create(itemId);
+				list.add(item);
+
+				Data.itemIdMap.put(item.getId(), item);
 			}
 		} else if (config.getType() == ItemType.ITEM) {
 			Data.itemMap.putIfAbsent(itemId, new LinkedList<>());

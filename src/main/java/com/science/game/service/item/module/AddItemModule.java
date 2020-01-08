@@ -44,7 +44,10 @@ public class AddItemModule {
 					if (realDelta < 0) {
 						int absRealDelta = Math.abs(realDelta);
 						for (int i = 0; i < absRealDelta; i++) {
-							items.remove(0);
+							Item item = items.remove(0);
+							if (item != null) {
+								Data.itemIdMap.remove(item.getId());
+							}
 						}
 					} else if (realDelta > 0) {
 						for (int i = 0; i < realDelta; i++) {
@@ -52,6 +55,8 @@ public class AddItemModule {
 							item.setAge(item.getProto().getAge());
 
 							items.add(item);
+
+							Data.itemIdMap.put(item.getId(), item);
 						}
 					}
 				}
@@ -67,5 +72,23 @@ public class AddItemModule {
 			log.error("该道具还没有研发完成 {}", itemConfigCache.itemMap.get(itemId).getName());
 		}
 
+	}
+
+	/**
+	 * 插入道具
+	 * 
+	 * @param item
+	 */
+	public void insertItem(Item item) {
+		ItemConfig itemConfig = item.getProto();
+		if (itemConfig.getType() == ItemType.ITEM) {
+			List<Item> list = Data.itemMap.get(itemConfig.getItemId());
+			if (!list.contains(item)) {
+				list.add(item);
+			}
+		} else if (itemConfig.getType() == ItemType.RES) {
+			Item res = Data.itemMap.get(itemConfig.getItemId()).get(0);
+			res.getNumRef().addAndGet(item.getNum());
+		}
 	}
 }

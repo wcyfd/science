@@ -82,7 +82,7 @@ public class ProductModule {
 						return;
 					}
 
-					int currentCount = Data.itemMap.get(needItemId).size();
+					int currentCount = itemInternal.getItemCount(needItemId);
 					Reserve reserve = Reserve.builder().store(currentCount).delta(-needCount).build();
 					if (!reserve.transfer()) {
 						log.info("合成{}的材料不足  {} =>当前数量{},需要数量{}", itemConfigCache.itemMap.get(itemId).getName(),

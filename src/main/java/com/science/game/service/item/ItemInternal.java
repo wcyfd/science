@@ -1,5 +1,9 @@
 package com.science.game.service.item;
 
+import java.util.Set;
+
+import com.science.game.entity.Item;
+
 public interface ItemInternal {
 	/**
 	 * 创建一个道具
@@ -31,4 +35,26 @@ public interface ItemInternal {
 	 * @return
 	 */
 	boolean itemIsDeveloped(int itemId);
+
+	/**
+	 * 插入道具
+	 * 
+	 * @param item
+	 */
+	void insertItem(Item item);
+
+	/**
+	 * 获取道具数量
+	 * 
+	 * @param itemId
+	 * @return
+	 */
+	int getItemCount(int itemId);
+
+	/**
+	 * 获取研发成功的道具id
+	 * 
+	 * @return
+	 */
+	Set<Integer> getDevelopSuccessItem();
 }

@@ -11,12 +11,14 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import com.science.game.cache.Data;
+import com.science.game.cache.config.ConfigCache;
 import com.science.game.cache.config.ItemConfigCache;
 import com.science.game.cache.config.PlaceConfigCache;
 import com.science.game.entity.Item;
 import com.science.game.entity.Village;
 import com.science.game.entity.config.ItemConfig;
 import com.science.game.entity.config.ItemConfig.ItemType;
+import com.science.game.entity.config.JobConfig;
 import com.science.game.service.AbstractService;
 import com.science.game.service.ServiceInterface;
 
@@ -55,8 +57,20 @@ public class ScienceView implements IView, ApplicationContextAware {
 
 	private void village() {
 		sb.append("Village").append("\n");
-		for (Village village : Data.villages.values()) {
-			sb.append(village.toString()).append("\t");
+		Map<Integer, JobConfig> jobMap = ConfigCache.job.jobMap;
+		for (Village v : Data.villages.values()) {
+			sb.append(v.getId()).append(" ");
+			JobConfig jobConfig = jobMap.get(v.getJobId());
+			sb.append(jobConfig == null ? null : jobConfig.getJob());
+			sb.append("[");
+			for (Item item : v.getEquips().values()) {
+				if (item != null) {
+					sb.append(item.getId()).append(" ");
+					sb.append(item.getProto().getName()).append(",");
+				}
+			}
+			sb.append("]");
+			sb.append("\t");
 		}
 	}
 
