@@ -8,9 +8,10 @@ import com.science.game.entity.config.ItemConfig;
 public class Item {
 
 	private static AtomicInteger ID = new AtomicInteger();
+	private int id;
 	private ItemConfig proto;
 	private AtomicInteger age = new AtomicInteger();
-	private int id;
+	private AtomicInteger num = new AtomicInteger();
 
 	public static Item create(int itemId) {
 		Item item = new Item();
@@ -37,5 +38,13 @@ public class Item {
 
 	public void setAge(int age) {
 		this.age.set(age);
+	}
+
+	public int getNum() {
+		return this.num.get();
+	}
+
+	public AtomicInteger getNumRef() {
+		return this.num;
 	}
 }

@@ -9,6 +9,8 @@ import com.aimfd.game.tool.reserve.Reserve;
 import com.science.game.cache.Data;
 import com.science.game.cache.config.ItemConfigCache;
 import com.science.game.entity.Item;
+import com.science.game.entity.config.ItemConfig;
+import com.science.game.entity.config.ItemConfig.ItemType;
 import com.science.game.service.item.ItemInternal;
 
 import lombok.extern.slf4j.Slf4j;
@@ -33,23 +35,34 @@ public class AddItemModule {
 		List<Item> items = Data.itemMap.get(itemId);
 
 		if (itemInternal.itemIsDeveloped(itemId)) {
-			Reserve reserve = Reserve.builder().delta(count).store(items.size()).build();
-			if (reserve.transfer()) {
-				int realDelta = reserve.getRealDelta();
-				if (realDelta < 0) {
-					int absRealDelta = Math.abs(realDelta);
-					for (int i = 0; i < absRealDelta; i++) {
-						items.remove(0);
-					}
-				} else if (realDelta > 0) {
-					for (int i = 0; i < realDelta; i++) {
-						Item item = Item.create(itemId);
-						item.setAge(item.getProto().getAge());
 
-						items.add(item);
+			ItemConfig proto = itemConfigCache.itemMap.get(itemId);
+			if (proto.getType() == ItemType.ITEM) {
+				Reserve reserve = Reserve.builder().delta(count).store(items.size()).build();
+				if (reserve.transfer()) {
+					int realDelta = reserve.getRealDelta();
+					if (realDelta < 0) {
+						int absRealDelta = Math.abs(realDelta);
+						for (int i = 0; i < absRealDelta; i++) {
+							items.remove(0);
+						}
+					} else if (realDelta > 0) {
+						for (int i = 0; i < realDelta; i++) {
+							Item item = Item.create(itemId);
+							item.setAge(item.getProto().getAge());
+
+							items.add(item);
+						}
 					}
 				}
+			} else if (proto.getType() == ItemType.RES) {
+				Item item = items.get(0);
+				Reserve reserve = Reserve.builder().delta(count).store(item.getNum()).build();
+				if (reserve.transfer()) {
+					item.getNumRef().set(reserve.getRemainCount());
+				}
 			}
+
 		} else {
 			log.error("该道具还没有研发完成 {}", itemConfigCache.itemMap.get(itemId).getName());
 		}

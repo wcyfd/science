@@ -15,6 +15,8 @@ import com.science.game.cache.config.ItemConfigCache;
 import com.science.game.cache.config.PlaceConfigCache;
 import com.science.game.entity.Item;
 import com.science.game.entity.Village;
+import com.science.game.entity.config.ItemConfig;
+import com.science.game.entity.config.ItemConfig.ItemType;
 import com.science.game.service.AbstractService;
 import com.science.game.service.ServiceInterface;
 
@@ -62,8 +64,9 @@ public class ScienceView implements IView, ApplicationContextAware {
 		sb.append("Item").append("\n");
 		for (Map.Entry<Integer, List<Item>> entrySet : Data.itemMap.entrySet()) {
 			List<Item> items = entrySet.getValue();
-			sb.append(entrySet.getKey()).append(" ").append(itemConfigCache.itemMap.get(entrySet.getKey()).getName())
-					.append(" ").append(items.size()).append(" [");
+			ItemConfig config = itemConfigCache.itemMap.get(entrySet.getKey());
+			sb.append(entrySet.getKey()).append(" ").append(config.getName()).append(" ")
+					.append(config.getType() == ItemType.ITEM ? items.size() : items.get(0).getNum()).append(" [");
 			int maxLength = 10;
 			int idx = 0;
 			for (Item item : items) {
@@ -76,9 +79,7 @@ public class ScienceView implements IView, ApplicationContextAware {
 				sb.append(",");
 				idx++;
 			}
-			sb.append("]");
-			sb.append("\n");
-
+			sb.append("]\n");
 		}
 	}
 
