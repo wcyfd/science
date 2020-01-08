@@ -13,6 +13,7 @@ import com.science.game.service.AbstractService;
 import com.science.game.service.job.module.AssartModule;
 import com.science.game.service.job.module.CollectModule;
 import com.science.game.service.job.module.DevelopModule;
+import com.science.game.service.job.module.JobTimeModule;
 import com.science.game.service.job.module.PreStartJobModule;
 import com.science.game.service.job.module.ProductModule;
 import com.science.game.service.job.module.StopModule;
@@ -37,6 +38,9 @@ public class JobServiceImpl extends AbstractService implements JobService, JobIn
 
 	@Autowired
 	private ProductModule productModule;
+
+	@Autowired
+	private JobTimeModule jobTimeModule;
 
 	@Override
 	protected void dispatch(String cmd, List<String> list) {
@@ -95,4 +99,13 @@ public class JobServiceImpl extends AbstractService implements JobService, JobIn
 		preStartJobModule.preStartJob(vid, type, id, jobId);
 	}
 
+	@Override
+	public long getJobTime(JobType jobType, int vid, int itemId) {
+		return jobTimeModule.getJobTime(jobType, vid, itemId);
+	}
+
+	@Override
+	public long stopAndReturnRemainTime(int vid) {
+		return stopModule.stop(vid);
+	}
 }

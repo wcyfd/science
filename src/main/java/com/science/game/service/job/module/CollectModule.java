@@ -1,7 +1,5 @@
 package com.science.game.service.job.module;
 
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -69,15 +67,15 @@ public class CollectModule {
 		if (jobType != null) {
 			// 先停止工作
 			jobService.stop(vid);
-			jobInternal.preStartJob(vid, PlaceType.PLACE, itemId, jobType);
-			doCollect(vid, areaId, 2, service);
+			jobInternal.preStartJob(vid, PlaceType.PLACE, 0, jobType);
+			doCollect(vid, areaId, jobType, jobInternal.getJobTime(jobType, vid, itemId), service);
 		} else {
 			log.error("没有这个工作{}", resId);
 		}
 
 	}
 
-	private void doCollect(int vid, int areaId, int second, AbstractService service) {
+	private void doCollect(int vid, int areaId, JobType jobType, long second, AbstractService service) {
 		int resId = Data.areaList.get(areaId);
 		PlaceConfig placeConfig = placeConfigCache.placeMap.get(resId);
 
@@ -94,10 +92,10 @@ public class CollectModule {
 
 			@Override
 			public void afterExecute() {
-				doCollect(vid, areaId, 2, service);
+				doCollect(vid, areaId, jobType, jobInternal.getJobTime(jobType, vid, 0), service);
 			}
 
-		}, second, TimeUnit.SECONDS));
+		}, second));
 
 	}
 }

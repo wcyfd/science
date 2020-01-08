@@ -70,11 +70,36 @@ public abstract class AbstractService {
 
 	}
 
-	public ScheduledFuture<?> delay(Task task, long delay, TimeUnit unit) {
-		return gameWindows.schedule(task, delay, unit);
+	public ScheduledFuture<?> delay(Task task, long millisecond) {
+		return gameWindows.schedule(new TimeTask(task, System.currentTimeMillis()), millisecond, TimeUnit.SECONDS);
 	}
 
 	protected int getInt(List<String> list, int idx) {
 		return Integer.valueOf(list.get(idx));
+	}
+
+	public class TimeTask implements Task {
+		private Task task;
+		private final long startTime;
+
+		public TimeTask(Task task, long startTime) {
+			this.task = task;
+			this.startTime = startTime;
+		}
+
+		public long getStartTime() {
+			return startTime;
+		}
+
+		@Override
+		public void afterExecute() {
+			task.afterExecute();
+		}
+
+		@Override
+		public void execute() {
+			task.execute();
+		}
+
 	}
 }

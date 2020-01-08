@@ -12,6 +12,8 @@ public class ItemConfig {
 	private int developPoint;
 	private int effect;
 	private int age;
+	private long unitTotal;
+	private int unitVelocity;
 
 	public int getEffect() {
 		return effect;
@@ -72,6 +74,22 @@ public class ItemConfig {
 	@Override
 	public String toString() {
 		return name;
+	}
+
+	public long getUnitTotal() {
+		return unitTotal;
+	}
+
+	public void setUnitTotal(long unitTime) {
+		this.unitTotal = unitTime;
+	}
+
+	public int getUnitVelocity() {
+		return unitVelocity;
+	}
+
+	public void setUnitVelocity(int unitCount) {
+		this.unitVelocity = unitCount;
 	}
 
 }

@@ -2,7 +2,6 @@ package com.science.game.service.job.module;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -53,15 +52,15 @@ public class ProductModule {
 		jobService.stop(vid);
 		jobInternal.preStartJob(vid, PlaceType.ITEM, itemId, JobType.PRODUCT);
 
-		doProduct(vid, itemId, 3, service);
+		doProduct(vid, itemId, jobInternal.getJobTime(JobType.PRODUCT, vid, itemId), service);
 	}
 
-	private void doProduct(int vid, int itemId, int delay, AbstractService service) {
+	private void doProduct(int vid, int itemId, long delay, AbstractService service) {
 		Data.villageFutures.put(vid, service.delay(new Task() {
 
 			@Override
 			public void afterExecute() {
-				doProduct(vid, itemId, delay, service);
+				doProduct(vid, itemId, jobInternal.getJobTime(JobType.PRODUCT, vid, itemId), service);
 			}
 
 			@Override
@@ -102,7 +101,7 @@ public class ProductModule {
 
 			}
 
-		}, delay, TimeUnit.SECONDS));
+		}, delay));
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.science.game.service.job.module;
 
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.stereotype.Component;
 
@@ -11,14 +12,17 @@ import com.science.game.entity.Village;
 @Component
 public class StopModule {
 
-	public void stop(int vid) {
+	public long stop(int vid) {
+		long remainTime = 0L;
 		Village v = Data.villages.get(vid);
 		if (v == null) {
-			return;
+			return -1;
 		}
 		ScheduledFuture<?> future = Data.villageFutures.remove(vid);
 		if (future != null)
-			future.cancel(false);
+			if (future.cancel(false)) {
+				remainTime = future.getDelay(TimeUnit.MILLISECONDS);
+			}
 
 		if (v.getPlaceType() != null) {
 			switch (v.getPlaceType()) {
@@ -37,5 +41,6 @@ public class StopModule {
 		v.setPlaceId(-1);
 		v.setPlaceType(null);
 
+		return remainTime;
 	}
 }

@@ -3,7 +3,6 @@ package com.science.game.service.job.module;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,10 +64,10 @@ public class DevelopModule {
 			developerIds.add(vid);
 		}
 
-		doDevelop(vid, itemId, 2, service);
+		doDevelop(vid, itemId, jobInternal.getJobTime(JobType.DEVELOP, vid, itemId), service);
 	}
 
-	private void doDevelop(int vid, int itemId, int second, AbstractService service) {
+	private void doDevelop(int vid, int itemId, long second, AbstractService service) {
 		List<ConsistConfig> list = consistConfigCache.consistMap.get(itemId);
 		if (!enoughMaterial(list)) {// 如果材料不够了就停止工作
 			jobService.stop(vid);
@@ -88,7 +87,7 @@ public class DevelopModule {
 					jobService.stop(vid);
 					return;
 				}
-				doDevelop(vid, itemId, second, service);
+				doDevelop(vid, itemId, jobInternal.getJobTime(JobType.DEVELOP, vid, itemId), service);
 			}
 
 			@Override
@@ -125,7 +124,7 @@ public class DevelopModule {
 
 			}
 
-		}, second, TimeUnit.SECONDS));
+		}, second));
 	}
 
 	/**

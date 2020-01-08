@@ -12,4 +12,22 @@ public interface JobInternal {
 	 * @param jobType
 	 */
 	void preStartJob(int vid, PlaceType type, int id, JobType jobType);
+
+	/**
+	 * 获取工作时间
+	 * 
+	 * @param jobType
+	 * @param vid
+	 * @param itemId
+	 * @return
+	 */
+	long getJobTime(JobType jobType, int vid, int itemId);
+
+	/**
+	 * 停止工作
+	 * 
+	 * @param vid
+	 * @return
+	 */
+	long stopAndReturnRemainTime(int vid);
 }

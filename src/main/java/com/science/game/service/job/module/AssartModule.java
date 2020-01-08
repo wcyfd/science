@@ -1,7 +1,5 @@
 package com.science.game.service.job.module;
 
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,11 +33,12 @@ public class AssartModule {
 			// 荒地的地点是-2
 			jobInternal.preStartJob(vid, PlaceType.PLACE, -2, JobType.ASSART);
 
-			doAssart(vid, 5, service);
+			long jobTime = jobInternal.getJobTime(JobType.ASSART, vid, 0);
+			doAssart(vid, jobTime, service);
 		}
 	}
 
-	private void doAssart(int vid, int second, AbstractService service) {
+	private void doAssart(int vid, long second, AbstractService service) {
 
 		Data.villageFutures.put(vid, service.delay(new Task() {
 
@@ -53,13 +52,14 @@ public class AssartModule {
 
 			@Override
 			public void afterExecute() {
-				if (Data.areaId < Data.areaList.size())
-					doAssart(vid, second, service);
-				else {
+				if (Data.areaId < Data.areaList.size()) {
+					long jobTime = jobInternal.getJobTime(JobType.ASSART, vid, 0);
+					doAssart(vid, jobTime, service);
+				} else {
 					jobService.stop(vid);
 				}
 			}
-		}, second, TimeUnit.SECONDS));
+		}, second));
 
 	}
 }
