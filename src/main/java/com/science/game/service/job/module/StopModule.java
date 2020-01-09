@@ -9,6 +9,9 @@ import com.science.game.entity.JobType;
 import com.science.game.entity.Village;
 import com.science.game.service.village.VillageInternal;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class StopModule {
 
@@ -40,6 +43,7 @@ public class StopModule {
 	}
 
 	private void removeFromPlace(JobData jobData, int vid) {
+		log.info("从工作地点移除 vid={},placeType={},placeId={}", vid, jobData.getPlaceType(), jobData.getPlaceId());
 		if (jobData.getPlaceType() != null) {
 			switch (jobData.getPlaceType()) {
 			case ITEM:

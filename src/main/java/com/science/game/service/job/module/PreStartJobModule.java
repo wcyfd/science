@@ -31,6 +31,7 @@ public class PreStartJobModule {
 		jobData.setPlaceId(id);
 		jobData.setPlaceType(type);
 		jobData.setJobType(jobType);
+		log.info("工作前预处理vid={},placeType={},placeId={},jobType={}", vid, type, id, jobType);
 
 		Map<Integer, Place> placeMap = null;
 		if (type == PlaceType.ITEM) {
