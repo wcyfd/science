@@ -46,6 +46,7 @@ public abstract class AbstractService {
 
 	public void initService() {
 		registHandle();
+		initModule();
 		initCache();
 	}
 
@@ -66,12 +67,20 @@ public abstract class AbstractService {
 		}
 	}
 
+	protected void initModule() {
+
+	}
+
 	protected void initCache() {
 
 	}
 
-	public ScheduledFuture<Task> delay(Task task, long millisecond) {
+	public ScheduledFuture<?> delay(Task task, long millisecond) {
 		return gameWindows.schedule(task, millisecond, TimeUnit.SECONDS);
+	}
+
+	public ScheduledFuture<?> delay(Task task) {
+		return gameWindows.schedule(task, 1, TimeUnit.SECONDS);
 	}
 
 	protected int getInt(List<String> list, int idx) {

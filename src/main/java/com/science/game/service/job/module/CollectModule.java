@@ -4,19 +4,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.science.game.cache.Data;
+import com.science.game.cache.config.JobConfigCache;
 import com.science.game.cache.config.PlaceConfigCache;
-import com.science.game.entity.JobTimeData;
+import com.science.game.entity.JobData;
 import com.science.game.entity.JobType;
 import com.science.game.entity.Place;
 import com.science.game.entity.PlaceType;
+import com.science.game.entity.Village;
 import com.science.game.entity.config.PlaceConfig;
 import com.science.game.service.AbstractService;
 import com.science.game.service.item.ItemInternal;
 import com.science.game.service.job.JobInternal;
 import com.science.game.service.job.JobService;
 import com.science.game.service.tech.TechInternal;
+import com.science.game.service.village.VillageInternal;
 
-import game.quick.window.Task;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -38,6 +40,12 @@ public class CollectModule {
 	@Autowired
 	private PlaceConfigCache placeConfigCache;
 
+	@Autowired
+	private JobConfigCache jobConfigCache;
+
+	@Autowired
+	private VillageInternal villageInternal;
+
 	/**
 	 * 采集
 	 * 
@@ -54,7 +62,6 @@ public class CollectModule {
 		}
 
 		int resId = Data.areaList.get(areaId);
-		int itemId = placeConfigCache.placeMap.get(resId).getItemId();
 		JobType jobType = null;
 		switch (resId) {
 		case 3:
@@ -65,37 +72,57 @@ public class CollectModule {
 			break;
 		}
 
-		if (jobType != null) {
-			// 先停止工作
-			jobService.stop(vid);
-			jobInternal.preStartJob(vid, PlaceType.PLACE, 0, jobType);
-			doCollect(vid, areaId, jobType, jobInternal.getJobTime(jobType, vid, itemId), service);
-		} else {
+		if (jobType == null) {
 			log.error("没有这个工作{}", resId);
+			return;
 		}
+
+		// 先停止工作
+		jobService.stop(vid);
+
+		Village v = villageInternal.getVillage(vid);
+
+		jobInternal.preStartJob(vid, PlaceType.PLACE, areaId, jobType);
+
+		new CollectJob(resId, v, service).start();
 
 	}
 
-	private void doCollect(int vid, int areaId, JobType jobType, JobTimeData data, AbstractService service) {
-		int resId = Data.areaList.get(areaId);
-		PlaceConfig placeConfig = placeConfigCache.placeMap.get(resId);
+	class CollectJob extends JobTask {
+		private int resId;
 
-		// 解锁且资源点没有这个人
-		Data.villageFutures.put(vid, service.delay(new Task() {
+		public CollectJob(int resId, Village v, AbstractService service) {
+			super(v, service);
+			this.resId = resId;
+		}
 
-			@Override
-			public void execute() {
-				itemInternal.createItemIfAbsent(placeConfig.getItemId());
-				itemInternal.addItem(placeConfig.getItemId(), 1);
-				techInternal.think(vid);
+		@Override
+		public void work(Village village) {
+			JobData jobData = village.getJobData();
+			if (jobData.getCurrent().get() < jobData.getTotal()) {
+				int velocity = jobConfigCache.jobMap.get(jobData.getJobType().getJobId()).getUnitVelocity();
+				jobInternal.addJobProgress(jobData, velocity);
+
+				PlaceConfig placeConfig = placeConfigCache.placeMap.get(resId);
+
+				if (jobData.getCurrent().get() >= jobData.getTotal()) {
+					itemInternal.createItemIfAbsent(placeConfig.getItemId());
+					itemInternal.addItem(placeConfig.getItemId(), 1);
+				}
+
+			} else {
+				resetProgress();
 			}
 
-			@Override
-			public void afterExecute() {
-				doCollect(vid, areaId, jobType, jobInternal.getJobTime(jobType, vid, 0), service);
-			}
+			techInternal.think(village.getId());
+		}
 
-		}, data.getDelayTime()));
+		@Override
+		protected void initJobProgress(Village v) {
+			JobData jobData = v.getJobData();
+			jobData.setTotal(jobConfigCache.jobMap.get(jobData.getJobType().getJobId()).getUnitTotal());
+			jobData.getCurrent().set(0);
+		}
 
 	}
 }

@@ -34,7 +34,7 @@ public class ThinkModule {
 	 */
 	public void think(int vid) {
 		Village village = Data.villages.get(vid);
-		int jobId = village.getJobId();
+		int jobId = village.getJobData().getJobType().getJobId();
 		List<ThinkConfig> list = thinkConfigCache.jobThinkMap.get(jobId);
 		// 检查当前职业
 		List<Integer> targets = new ArrayList<>(list.size());

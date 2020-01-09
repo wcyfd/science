@@ -24,7 +24,7 @@ public class ItemConfigCache implements IConfigCache {
 		config.setDevelopPoint(getInt(values, 4));
 		config.setEffect(getInt(values, 5));
 		config.setAge(getInt(values, 6));
-		config.setUnitTotal(getLong(values, 7));
+		config.setUnitTotal(getInt(values, 7));
 		config.setUnitVelocity(getInt(values, 8));
 
 		itemMap.put(config.getItemId(), config);

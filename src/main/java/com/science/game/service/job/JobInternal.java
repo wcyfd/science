@@ -1,5 +1,6 @@
 package com.science.game.service.job;
 
+import com.science.game.entity.JobData;
 import com.science.game.entity.JobTimeData;
 import com.science.game.entity.JobType;
 import com.science.game.entity.PlaceType;
@@ -38,4 +39,13 @@ public interface JobInternal {
 	 * @param vid
 	 */
 	void changeJobRate(int vid);
+
+	/**
+	 * 添加工作进度
+	 * 
+	 * @param jobData
+	 * @param val
+	 */
+	void addJobProgress(JobData jobData, int val);
+
 }

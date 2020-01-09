@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import com.science.game.cache.Data;
 import com.science.game.cache.config.ConsistConfigCache;
 import com.science.game.cache.config.ItemConfigCache;
-import com.science.game.entity.JobTimeData;
 import com.science.game.entity.JobType;
 import com.science.game.entity.PlaceType;
 import com.science.game.entity.Village;
@@ -21,8 +20,7 @@ import com.science.game.service.AbstractService;
 import com.science.game.service.item.ItemInternal;
 import com.science.game.service.job.JobInternal;
 import com.science.game.service.job.JobService;
-
-import game.quick.window.Task;
+import com.science.game.service.village.VillageInternal;
 
 /**
  * 研发模块
@@ -48,6 +46,9 @@ public class DevelopModule {
 	@Autowired
 	private ItemConfigCache itemConfigCache;
 
+	@Autowired
+	private VillageInternal villageInternal;
+
 	public void develop(int vid, int itemId, AbstractService service) {
 		List<ConsistConfig> list = consistConfigCache.consistMap.get(itemId);
 
@@ -65,67 +66,7 @@ public class DevelopModule {
 			developerIds.add(vid);
 		}
 
-		doDevelop(vid, itemId, jobInternal.getJobTime(JobType.DEVELOP, vid, itemId), service);
-	}
-
-	private void doDevelop(int vid, int itemId, JobTimeData data, AbstractService service) {
-		List<ConsistConfig> list = consistConfigCache.consistMap.get(itemId);
-		if (!enoughMaterial(list)) {// 如果材料不够了就停止工作
-			jobService.stop(vid);
-			return;
-		}
-
-		// 扣除道具数量,先扣除再研究
-		for (ConsistConfig config : list) {
-			itemInternal.addItem(config.getNeedItemId(), -config.getCount());
-		}
-
-		Data.villageFutures.put(vid, service.delay(new Task() {
-
-			@Override
-			public void afterExecute() {
-				if (itemInternal.itemIsDeveloped(itemId)) {
-					jobService.stop(vid);
-					return;
-				}
-				doDevelop(vid, itemId, jobInternal.getJobTime(JobType.DEVELOP, vid, itemId), service);
-			}
-
-			@Override
-			public void execute() {
-
-				if (!itemInternal.itemIsDeveloped(itemId)) {// 还没有研发成功的话就往下走
-					// 研发结果
-					if (developSuccess(itemId)) {
-						// 成功
-						itemInternal.createItemIfAbsent(itemId);
-						itemInternal.addItem(itemId, 1);
-						Data.developVillages.getOrDefault(itemId, new LinkedList<>())
-								.forEach(id -> jobService.stop(id));// 停止所有参与研发的村民该工作
-						Data.developVillages.remove(itemId);
-						Data.developPoint.remove(itemId);
-						Data.thinkList.remove((Integer) itemId);
-					} else {
-						// 失败
-						int addPoint = 2;
-						int skillValue = 4;
-						// 研发点按照总值来算，熟练度按照村民来算
-						Data.developPoint.putIfAbsent(itemId, 0);
-						Data.developPoint.put(itemId, Data.developPoint.get(itemId) + addPoint);
-
-						List<Integer> developerIds = Data.developVillages.get(itemId);
-						for (int developerId : developerIds) {
-							Village village = Data.villages.get(developerId);
-							// 添加熟练度
-							village.getSkillValues().putIfAbsent(itemId, new AtomicInteger());
-							village.getSkillValues().get(itemId).addAndGet(skillValue);
-						}
-					}
-				}
-
-			}
-
-		}, data.getDelayTime()));
+		new DevelopJob(itemId, villageInternal.getVillage(vid), service).start();
 	}
 
 	/**
@@ -177,5 +118,64 @@ public class DevelopModule {
 		}
 
 		return true;
+	}
+
+	class DevelopJob extends JobTask {
+		private int itemId;
+
+		public DevelopJob(int itemId, Village v, AbstractService service) {
+			super(v, service);
+			this.itemId = itemId;
+		}
+
+		@Override
+		public void work(Village village) {
+			int vid = village.getId();
+
+			if (!itemInternal.itemIsDeveloped(itemId)) {// 还没有研发成功的话就往下走
+				// 研发结果
+				if (developSuccess(itemId)) {
+					// 成功
+					itemInternal.createItemIfAbsent(itemId);
+					itemInternal.addItem(itemId, 1);
+					Data.developVillages.getOrDefault(itemId, new LinkedList<>()).forEach(id -> jobService.stop(id));// 停止所有参与研发的村民该工作
+					Data.developVillages.remove(itemId);
+					Data.developPoint.remove(itemId);
+					Data.thinkList.remove((Integer) itemId);
+				} else {
+					// 失败
+					List<ConsistConfig> list = consistConfigCache.consistMap.get(itemId);
+					if (!enoughMaterial(list)) {// 如果材料不够了就停止工作
+						return;
+					}
+
+					// 扣除道具数量,先扣除再研究
+					for (ConsistConfig config : list) {
+						itemInternal.addItem(config.getNeedItemId(), -config.getCount());
+					}
+					int addPoint = 2;
+					int skillValue = 4;
+					// 研发点按照总值来算，熟练度按照村民来算
+					Data.developPoint.putIfAbsent(itemId, 0);
+					Data.developPoint.put(itemId, Data.developPoint.get(itemId) + addPoint);
+
+					List<Integer> developerIds = Data.developVillages.get(itemId);
+					for (int developerId : developerIds) {
+						Village developer = Data.villages.get(developerId);
+						// 添加熟练度
+						developer.getSkillValues().putIfAbsent(itemId, new AtomicInteger());
+						developer.getSkillValues().get(itemId).addAndGet(skillValue);
+					}
+				}
+			} else {
+				jobService.stop(vid);
+			}
+		}
+
+		@Override
+		protected void initJobProgress(Village v) {
+
+		}
+
 	}
 }

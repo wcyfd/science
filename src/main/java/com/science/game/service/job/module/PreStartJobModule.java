@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 
 import com.science.game.cache.Data;
+import com.science.game.entity.JobData;
 import com.science.game.entity.JobType;
 import com.science.game.entity.Place;
 import com.science.game.entity.PlaceType;
@@ -26,9 +27,10 @@ public class PreStartJobModule {
 	 */
 	public void preStartJob(int vid, PlaceType type, int id, JobType jobType) {
 		Village village = Data.villages.get(vid);
-		village.setPlaceType(type);
-		village.setPlaceId(id);
-		village.setJobId(jobType.getJobId());
+		JobData jobData = village.getJobData();
+		jobData.setPlaceId(id);
+		jobData.setPlaceType(type);
+		jobData.setJobType(jobType);
 
 		Map<Integer, Place> placeMap = null;
 		if (type == PlaceType.ITEM) {

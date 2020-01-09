@@ -110,7 +110,7 @@ public class JobTimeModule {
 
 	public void changeJobRage(int vid, AbstractService service) {
 		Village v = villageInternal.getVillage(vid);
-		ScheduledFuture<Task> f = Data.villageFutures.get(vid);
+		ScheduledFuture<?> f = Data.villageFutures.get(vid);
 		if (f == null)
 			return;
 		if (!f.cancel(false))

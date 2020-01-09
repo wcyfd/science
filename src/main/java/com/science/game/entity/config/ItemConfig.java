@@ -15,7 +15,7 @@ public class ItemConfig {
 	private int developPoint;
 	private int effect;
 	private int age;
-	private long unitTotal;
+	private int unitTotal;
 	private int unitVelocity;
 
 	private Set<Integer> jobs = new HashSet<>();
@@ -81,11 +81,11 @@ public class ItemConfig {
 		return name;
 	}
 
-	public long getUnitTotal() {
+	public int getUnitTotal() {
 		return unitTotal;
 	}
 
-	public void setUnitTotal(long unitTime) {
+	public void setUnitTotal(int unitTime) {
 		this.unitTotal = unitTime;
 	}
 

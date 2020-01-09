@@ -4,16 +4,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.science.game.cache.Data;
-import com.science.game.entity.JobTimeData;
+import com.science.game.cache.config.JobConfigCache;
+import com.science.game.entity.JobData;
 import com.science.game.entity.JobType;
 import com.science.game.entity.Place;
 import com.science.game.entity.PlaceType;
+import com.science.game.entity.Village;
+import com.science.game.entity.config.JobConfig;
 import com.science.game.service.AbstractService;
 import com.science.game.service.job.JobInternal;
 import com.science.game.service.job.JobService;
 import com.science.game.service.tech.TechInternal;
-
-import game.quick.window.Task;
+import com.science.game.service.village.VillageInternal;
 
 @Component
 public class AssartModule {
@@ -27,38 +29,67 @@ public class AssartModule {
 	@Autowired
 	private JobInternal jobInternal;
 
+	@Autowired
+	private VillageInternal villageInternal;
+
+	@Autowired
+	private JobConfigCache jobConfigCache;
+
 	public void assart(int vid, AbstractService service) {
-		if (Data.areaId < Data.areaList.size()) {
-			jobService.stop(vid);
+		if (Data.areaId >= Data.areaList.size())
+			return;
 
-			// 荒地的地点是-2
-			jobInternal.preStartJob(vid, PlaceType.PLACE, -2, JobType.ASSART);
+		jobService.stop(vid);
 
-			doAssart(vid, jobInternal.getJobTime(JobType.ASSART, vid, 0), service);
-		}
+		// 荒地的地点是-2
+		jobInternal.preStartJob(vid, PlaceType.PLACE, -2, JobType.ASSART);
+
+		Village v = villageInternal.getVillage(vid);
+
+		new AssartJob(v, service).start();
+
 	}
 
-	private void doAssart(int vid, JobTimeData data, AbstractService service) {
+	private JobConfig getAssartJobConfig() {
+		return jobConfigCache.jobMap.get(JobType.ASSART.getJobId());
+	}
 
-		Data.villageFutures.put(vid, service.delay(new Task() {
+	class AssartJob extends JobTask {
 
-			@Override
-			public void execute() {
-				Data.areaId++;
-				Data.resPlace.putIfAbsent(Data.areaId, Place.create(Data.areaId));// 创建一个资源点位置
+		public AssartJob(Village v, AbstractService service) {
+			super(v, service);
+		}
 
-				techInternal.think(vid);
-			}
+		@Override
+		public void work(Village village) {
+			JobData jobData = village.getJobData();
+			if (jobData.getCurrent().get() < jobData.getTotal()) {
 
-			@Override
-			public void afterExecute() {
-				if (Data.areaId < Data.areaList.size()) {
-					doAssart(vid, jobInternal.getJobTime(JobType.ASSART, vid, 0), service);
-				} else {
-					jobService.stop(vid);
+				jobInternal.addJobProgress(jobData, getAssartJobConfig().getUnitVelocity());
+
+				if (jobData.getCurrent().get() >= jobData.getTotal()) {
+					Data.areaId++;
+					Data.resPlace.putIfAbsent(Data.areaId, Place.create(Data.areaId));// 创建一个资源点位置
 				}
+
+				techInternal.think(village.getId());
+			} else {
+				resetProgress();
+
+				techInternal.think(village.getId());
+
+				if (Data.areaId >= Data.areaList.size())
+					jobService.stop(village.getId());
 			}
-		}, data.getDelayTime()));
+		}
+
+		@Override
+		protected void initJobProgress(Village v) {
+			int total = getAssartJobConfig().getUnitTotal();
+			JobData jobData = v.getJobData();
+			jobData.setTotal(total);
+			jobData.getCurrent().set(0);
+		}
 
 	}
 }

@@ -19,7 +19,7 @@ public class JobConfigCache implements IConfigCache {
 
 		config.setId(getInt(values, 0));
 		config.setJob(values.get(1));
-		config.setUnitTotal(getLong(values, 2));
+		config.setUnitTotal(getInt(values, 2));
 		config.setUnitVelocity(getInt(values, 3));
 
 		jobMap.put(config.getId(), config);

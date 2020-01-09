@@ -21,12 +21,13 @@ public class NatureServiceImpl extends AbstractService implements NatureService 
 	public void initCache() {
 		Data.areaList.addAll(Arrays.asList(2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3,
 				4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4));
-		Data.areaId = 10;
+//		Data.areaList.addAll(Arrays.asList(2));
+		Data.areaId = 5;
 		for (int i = 0; i < Data.areaId; i++) {
 			Data.resPlace.putIfAbsent(i, Place.create(i));
 		}
-		
-		//生成荒地的位置
+
+		// 生成荒地的位置
 		Data.resPlace.putIfAbsent(-2, Place.create(-2));
 
 	}

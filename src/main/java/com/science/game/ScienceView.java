@@ -60,8 +60,10 @@ public class ScienceView implements IView, ApplicationContextAware {
 		Map<Integer, JobConfig> jobMap = ConfigCache.job.jobMap;
 		for (Village v : Data.villages.values()) {
 			sb.append(v.getId()).append(" ");
-			JobConfig jobConfig = jobMap.get(v.getJobId());
+			JobConfig jobConfig = jobMap.get(v.getJobData().getJobType().getJobId());
 			sb.append(jobConfig == null ? null : jobConfig.getJob());
+			sb.append(" (").append(v.getJobData().getCurrent()).append("/").append(v.getJobData().getTotal())
+					.append(")");
 			sb.append("[");
 			for (Item item : v.getEquips().values()) {
 				if (item != null) {

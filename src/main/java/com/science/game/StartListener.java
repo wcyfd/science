@@ -27,12 +27,13 @@ public class StartListener implements ApplicationListener<ContextRefreshedEvent>
 		ctx.getBeansOfType(IConfigCache.class).values()
 				.forEach(cache -> ConfigLoader.load("./config/" + cache.getFileName(), cache));
 		ctx.getBeansOfType(IConfigCache.class).values().forEach(cache -> cache.afterLoad());
-		
+
 		ctx.getBeansOfType(AbstractService.class).values().forEach(service -> service.initService());
 
 		win.setHandler(ctx.getBean(ScienceHandler.class));
 		win.setView(ctx.getBean(ScienceView.class));
-		win.build().startConsoleThread();
+		win.build();
+
 	}
 
 }

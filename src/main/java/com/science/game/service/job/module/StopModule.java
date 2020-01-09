@@ -1,46 +1,57 @@
 package com.science.game.service.job.module;
 
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.science.game.cache.Data;
+import com.science.game.entity.JobData;
 import com.science.game.entity.JobType;
 import com.science.game.entity.Village;
+import com.science.game.service.village.VillageInternal;
 
 @Component
 public class StopModule {
 
+	@Autowired
+	private VillageInternal villageInternal;
+
 	public long stop(int vid) {
 		long remainTime = 0L;
-		Village v = Data.villages.get(vid);
+		Village v = villageInternal.getVillage(vid);
 		if (v == null) {
 			return -1;
 		}
-		ScheduledFuture<?> future = Data.villageFutures.remove(vid);
-		if (future != null)
-			if (future.cancel(false)) {
-				remainTime = future.getDelay(TimeUnit.MILLISECONDS);
-			}
 
-		if (v.getPlaceType() != null) {
-			switch (v.getPlaceType()) {
+		JobData jobData = v.getJobData();
+		removeFromPlace(v.getJobData(), vid);
+
+		jobData.setJobType(JobType.NULL);
+		jobData.setPlaceId(-1);
+		jobData.setPlaceType(null);
+		jobData.getCurrent().set(0);
+		jobData.setTotal(0);
+		JobTask task = jobData.getJobTask();
+		if (task != null) {
+			task.stop();
+		}
+		jobData.setJobTask(null);
+
+		return remainTime;
+	}
+
+	private void removeFromPlace(JobData jobData, int vid) {
+		if (jobData.getPlaceType() != null) {
+			switch (jobData.getPlaceType()) {
 			case ITEM:
-				Data.itemPlace.get(v.getPlaceId()).getVillages().remove((Integer) vid);
+				Data.itemPlace.get(jobData.getPlaceId()).getVillages().remove((Integer) vid);
 				break;
 			case PLACE:
-				Data.resPlace.get(v.getPlaceId()).getVillages().remove((Integer) vid);
+				Data.resPlace.get(jobData.getPlaceId()).getVillages().remove((Integer) vid);
 				break;
 			default:
 				break;
 			}
 		}
 
-		v.setJobId(JobType.NULL.getJobId());
-		v.setPlaceId(-1);
-		v.setPlaceType(null);
-
-		return remainTime;
 	}
 }

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.science.game.cache.Data;
+import com.science.game.entity.JobData;
 import com.science.game.entity.JobTimeData;
 import com.science.game.entity.JobType;
 import com.science.game.entity.Place;
@@ -14,6 +15,7 @@ import com.science.game.service.AbstractService;
 import com.science.game.service.job.module.AssartModule;
 import com.science.game.service.job.module.CollectModule;
 import com.science.game.service.job.module.DevelopModule;
+import com.science.game.service.job.module.JobProgressModule;
 import com.science.game.service.job.module.JobTimeModule;
 import com.science.game.service.job.module.PreStartJobModule;
 import com.science.game.service.job.module.ProductModule;
@@ -43,6 +45,9 @@ public class JobServiceImpl extends AbstractService implements JobService, JobIn
 	@Autowired
 	private JobTimeModule jobTimeModule;
 
+	@Autowired
+	private JobProgressModule jobProgressModule;
+
 	@Override
 	protected void dispatch(String cmd, List<String> list) {
 		switch (cmd) {
@@ -66,7 +71,7 @@ public class JobServiceImpl extends AbstractService implements JobService, JobIn
 	}
 
 	@Override
-	public void initCache() {
+	protected void initCache() {
 		Data.resPlace.put(1, Place.create(1));// 开荒地区
 	}
 
@@ -113,5 +118,10 @@ public class JobServiceImpl extends AbstractService implements JobService, JobIn
 	@Override
 	public void changeJobRate(int vid) {
 		jobTimeModule.changeJobRage(vid, this);
+	}
+
+	@Override
+	public void addJobProgress(JobData jobData, int val) {
+		jobProgressModule.addJobProgress(jobData, val);
 	}
 }

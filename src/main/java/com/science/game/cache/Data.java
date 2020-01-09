@@ -18,7 +18,7 @@ import game.quick.window.Task;
 public class Data {
 	public static String cmd = null;
 
-	public static Map<Integer, ScheduledFuture<Task>> villageFutures = new ConcurrentHashMap<>();
+	public static Map<Integer, ScheduledFuture<?>> villageFutures = new ConcurrentHashMap<>();
 	public static Map<Integer, Village> villages = new ConcurrentHashMap<>();
 
 	public static Map<Integer, List<Item>> itemMap = new ConcurrentHashMap<>();
