@@ -9,16 +9,12 @@ import com.science.game.cache.Data;
 import com.science.game.entity.Item;
 import com.science.game.entity.Village;
 import com.science.game.service.item.ItemInternal;
-import com.science.game.service.job.JobInternal;
 
 @Component
 public class EquipModule {
 
 	@Autowired
 	private ItemInternal itemInternal;
-
-	@Autowired
-	private JobInternal jobInternal;
 
 	/**
 	 * 装备
@@ -36,8 +32,7 @@ public class EquipModule {
 
 			v.getEquips().put(itemId, item);
 		}
-		
-		jobInternal.changeJobRate(vid);
+
 	}
 
 	/**
@@ -53,6 +48,5 @@ public class EquipModule {
 			itemInternal.insertItem(item);
 		}
 
-		jobInternal.changeJobRate(vid);
 	}
 }

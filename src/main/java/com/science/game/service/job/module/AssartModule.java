@@ -65,7 +65,8 @@ public class AssartModule {
 			JobData jobData = village.getJobData();
 			if (jobData.getCurrent().get() < jobData.getTotal()) {
 
-				jobInternal.addJobProgress(jobData, getAssartJobConfig().getUnitVelocity());
+				jobInternal.addJobProgress(jobData, getAssartJobConfig().getUnitVelocity()
+						+ jobInternal.getEffectByJobType(jobData.getJobType(), village));
 
 				if (jobData.getCurrent().get() >= jobData.getTotal()) {
 					Data.areaId++;

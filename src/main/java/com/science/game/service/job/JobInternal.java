@@ -1,9 +1,9 @@
 package com.science.game.service.job;
 
 import com.science.game.entity.JobData;
-import com.science.game.entity.JobTimeData;
 import com.science.game.entity.JobType;
 import com.science.game.entity.PlaceType;
+import com.science.game.entity.Village;
 
 public interface JobInternal {
 	/**
@@ -16,29 +16,12 @@ public interface JobInternal {
 	void preStartJob(int vid, PlaceType type, int id, JobType jobType);
 
 	/**
-	 * 获取工作时间
-	 * 
-	 * @param jobType
-	 * @param vid
-	 * @param itemId
-	 * @return
-	 */
-	JobTimeData getJobTime(JobType jobType, int vid, int itemId);
-
-	/**
 	 * 停止工作
 	 * 
 	 * @param vid
 	 * @return
 	 */
 	long stopAndReturnRemainTime(int vid);
-
-	/**
-	 * 改变工作效率
-	 * 
-	 * @param vid
-	 */
-	void changeJobRate(int vid);
 
 	/**
 	 * 添加工作进度
@@ -48,4 +31,12 @@ public interface JobInternal {
 	 */
 	void addJobProgress(JobData jobData, int val);
 
+	/**
+	 * 获得增益
+	 * 
+	 * @param jobType
+	 * @param v
+	 * @return
+	 */
+	int getEffectByJobType(JobType jobType, Village v);
 }

@@ -99,20 +99,17 @@ public class CollectModule {
 		@Override
 		public void work(Village village) {
 			JobData jobData = village.getJobData();
-			if (jobData.getCurrent().get() < jobData.getTotal()) {
-				int velocity = jobConfigCache.jobMap.get(jobData.getJobType().getJobId()).getUnitVelocity();
-				jobInternal.addJobProgress(jobData, velocity);
+			int velocity = jobConfigCache.jobMap.get(jobData.getJobType().getJobId()).getUnitVelocity();
+			velocity += jobInternal.getEffectByJobType(jobData.getJobType(), village);
+			jobInternal.addJobProgress(jobData, velocity);
 
-				PlaceConfig placeConfig = placeConfigCache.placeMap.get(resId);
+			PlaceConfig placeConfig = placeConfigCache.placeMap.get(resId);
 
-				if (jobData.getCurrent().get() >= jobData.getTotal()) {
-					itemInternal.createItemIfAbsent(placeConfig.getItemId());
-					itemInternal.addItem(placeConfig.getItemId(), 1);
-				}
-
-			} else {
-				resetProgress();
+			if (jobData.getCurrent().get() >= jobData.getTotal()) {
+				itemInternal.createItemIfAbsent(placeConfig.getItemId());
+				itemInternal.addItem(placeConfig.getItemId(), jobData.getCurrent().get() / jobData.getTotal());
 			}
+			jobData.getCurrent().set(jobData.getCurrent().get() % jobData.getTotal());
 
 			techInternal.think(village.getId());
 		}

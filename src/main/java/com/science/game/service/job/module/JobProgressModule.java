@@ -7,6 +7,7 @@ import com.science.game.entity.JobData;
 
 @Component
 public class JobProgressModule {
+
 	public void addJobProgress(JobData jobData, int value) {
 		Reserve reserve = Reserve.builder().store(jobData.getCurrent().get()).delta(value).capacity(jobData.getTotal())
 				.fill(true).build();
@@ -14,4 +15,5 @@ public class JobProgressModule {
 			jobData.getCurrent().addAndGet(reserve.getRealDelta());
 		}
 	}
+
 }

@@ -8,13 +8,11 @@ import org.springframework.stereotype.Service;
 
 import com.science.game.cache.Data;
 import com.science.game.entity.Item;
-import com.science.game.entity.JobType;
 import com.science.game.service.AbstractService;
 import com.science.game.service.item.module.AddItemModule;
 import com.science.game.service.item.module.CreateItemModule;
 import com.science.game.service.item.module.EquipModule;
 import com.science.game.service.item.module.ItemInfoModule;
-import com.science.game.service.job.module.JobTimeModule;
 
 @Service
 public class ItemServiceImpl extends AbstractService implements ItemService, ItemInternal {

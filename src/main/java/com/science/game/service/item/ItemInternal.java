@@ -3,7 +3,6 @@ package com.science.game.service.item;
 import java.util.Set;
 
 import com.science.game.entity.Item;
-import com.science.game.entity.JobType;
 
 public interface ItemInternal {
 	/**
