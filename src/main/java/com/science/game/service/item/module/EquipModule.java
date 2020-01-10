@@ -30,7 +30,7 @@ public class EquipModule {
 		if (equips.remove(item)) {
 			unequip(vid, itemId);
 
-			v.getEquips().put(itemId, item);
+			v.getItemData().getEquips().put(itemId, item);
 		}
 
 	}
@@ -43,7 +43,7 @@ public class EquipModule {
 	 */
 	public void unequip(int vid, int itemId) {
 		Village v = Data.villages.get(vid);
-		Item item = v.getEquips().remove(itemId);
+		Item item = v.getItemData().getEquips().remove(itemId);
 		if (item != null) {
 			itemInternal.insertItem(item);
 		}

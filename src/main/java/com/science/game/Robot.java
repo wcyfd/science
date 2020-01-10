@@ -34,18 +34,18 @@ public class Robot implements ApplicationListener<ContextRefreshedEvent> {
 	}
 
 	private void script() {
-		c("village.recruite");
-		c("village.recruite");
-		c("village.recruite");
-		c("village.recruite");
-		c("job.assart 1");
-		c("job.collect 2 1");
-		c("job.collect 3 2");
-		until(() -> Data.thinkList.size() > 0);
-		int itemId = Data.thinkList.get(0);
-		c("job.develop 4 " + itemId);
-		until(() -> itemInternal.itemIsDeveloped(itemId));
-		c("job.product 4 " + itemId);
+//		c("village.recruite");
+//		c("village.recruite");
+//		c("village.recruite");
+//		c("village.recruite");
+//		c("job.assart 1");
+//		c("job.collect 2 1");
+//		c("job.collect 3 2");
+//		until(() -> Data.thinkList.size() > 0);
+//		int itemId = Data.thinkList.get(0);
+//		c("job.develop 4 " + itemId);
+//		until(() -> itemInternal.itemIsDeveloped(itemId));
+//		c("job.product 4 " + itemId);
 	}
 
 	private void c(String line) {

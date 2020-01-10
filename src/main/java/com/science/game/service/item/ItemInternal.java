@@ -29,14 +29,6 @@ public interface ItemInternal {
 	void createItemPlace(int itemId);
 
 	/**
-	 * 道具已经被研发成功
-	 * 
-	 * @param itemId
-	 * @return
-	 */
-	boolean itemIsDeveloped(int itemId);
-
-	/**
 	 * 插入道具
 	 * 
 	 * @param item
@@ -50,12 +42,5 @@ public interface ItemInternal {
 	 * @return
 	 */
 	int getItemCount(int itemId);
-
-	/**
-	 * 获取研发成功的道具id
-	 * 
-	 * @return
-	 */
-	Set<Integer> getDevelopSuccessItem();
 
 }

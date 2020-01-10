@@ -15,10 +15,12 @@ import com.science.game.cache.config.ConfigCache;
 import com.science.game.cache.config.ItemConfigCache;
 import com.science.game.cache.config.PlaceConfigCache;
 import com.science.game.entity.Item;
+import com.science.game.entity.JobType;
 import com.science.game.entity.Village;
 import com.science.game.entity.config.ItemConfig;
 import com.science.game.entity.config.ItemConfig.ItemType;
 import com.science.game.entity.config.JobConfig;
+import com.science.game.entity.village.WorkData;
 import com.science.game.service.AbstractService;
 import com.science.game.service.ServiceInterface;
 
@@ -60,12 +62,16 @@ public class ScienceView implements IView, ApplicationContextAware {
 		Map<Integer, JobConfig> jobMap = ConfigCache.job.jobMap;
 		for (Village v : Data.villages.values()) {
 			sb.append(v.getId()).append(" ");
-			JobConfig jobConfig = jobMap.get(v.getJobData().getJobType().getJobId());
+			WorkData workData = v.getWorkData();
+
+			JobType jobType = workData.getJobType();
+			JobConfig jobConfig = (jobType == null || jobType == JobType.NULL) ? null
+					: jobMap.get(workData.getJobType().getJobId());
 			sb.append(jobConfig == null ? null : jobConfig.getJob());
-			sb.append(" (").append(v.getJobData().getCurrent()).append("/").append(v.getJobData().getTotal())
-					.append(")");
+
+			sb.append(" (").append(workData.getCurrent()).append("/").append(workData.getTotal()).append(")");
 			sb.append("[");
-			for (Item item : v.getEquips().values()) {
+			for (Item item : v.getItemData().getEquips().values()) {
 				if (item != null) {
 					sb.append(item.getId()).append(" ");
 					sb.append(item.getProto().getName()).append(",");

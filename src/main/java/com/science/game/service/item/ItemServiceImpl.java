@@ -1,12 +1,10 @@
 package com.science.game.service.item;
 
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.science.game.cache.Data;
 import com.science.game.entity.Item;
 import com.science.game.service.AbstractService;
 import com.science.game.service.item.module.AddItemModule;
@@ -82,18 +80,8 @@ public class ItemServiceImpl extends AbstractService implements ItemService, Ite
 	}
 
 	@Override
-	public boolean itemIsDeveloped(int itemId) {
-		return Data.scienceMap.contains(itemId);
-	}
-
-	@Override
 	public int getItemCount(int itemId) {
 		return ItemInfoModule.getItemCount(itemId);
-	}
-
-	@Override
-	public Set<Integer> getDevelopSuccessItem() {
-		return ItemInfoModule.getDevelopItemId();
 	}
 
 }

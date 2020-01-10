@@ -11,7 +11,7 @@ import com.science.game.cache.config.ItemConfigCache;
 import com.science.game.entity.Item;
 import com.science.game.entity.config.ItemConfig;
 import com.science.game.entity.config.ItemConfig.ItemType;
-import com.science.game.service.item.ItemInternal;
+import com.science.game.service.lab.LabInternal;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,10 +20,10 @@ import lombok.extern.slf4j.Slf4j;
 public class AddItemModule {
 
 	@Autowired
-	private ItemInternal itemInternal;
+	private ItemConfigCache itemConfigCache;
 
 	@Autowired
-	private ItemConfigCache itemConfigCache;
+	private LabInternal labInternal;
 
 	/**
 	 * 增减道具数量
@@ -34,7 +34,7 @@ public class AddItemModule {
 	public void addItem(int itemId, int count) {
 		List<Item> items = Data.itemMap.get(itemId);
 
-		if (itemInternal.itemIsDeveloped(itemId)) {
+		if (labInternal.isDeveloped(itemId)) {
 
 			ItemConfig proto = itemConfigCache.itemMap.get(itemId);
 			if (proto.getType() == ItemType.ITEM) {
