@@ -65,7 +65,10 @@ public class WorkServiceImpl extends AbstractService implements WorkInternal, Wo
 
 	@Override
 	public void exitWork(WorkData workData) {
-		workData.getTask().setStop(true);
+		WorkTask workTask = workData.getTask();
+		if (workTask != null) {
+			workTask.setStop(true);
+		}
 		workData.getCurrent().set(0);
 		workData.setJobType(JobType.NULL);
 		workData.setTotal(0);
