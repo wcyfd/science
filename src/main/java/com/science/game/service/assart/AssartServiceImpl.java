@@ -5,13 +5,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.science.game.cache.Data;
 import com.science.game.cache.config.JobConfigCache;
 import com.science.game.entity.JobType;
-import com.science.game.entity.Place;
 import com.science.game.entity.PlaceType;
+import com.science.game.entity.Scene;
 import com.science.game.entity.Village;
 import com.science.game.entity.config.JobConfig;
+import com.science.game.entity.scene.PlaceData;
 import com.science.game.entity.village.WorkData;
 import com.science.game.service.AbstractService;
 import com.science.game.service.place.PlaceInternal;
@@ -37,6 +37,9 @@ public class AssartServiceImpl extends AbstractService implements AssartService,
 	@Autowired
 	private JobConfigCache jobConfigCache;
 
+	@Autowired
+	private Scene scene;
+
 	@Override
 	protected void dispatch(String cmd, List<String> args) {
 		switch (cmd) {
@@ -48,7 +51,7 @@ public class AssartServiceImpl extends AbstractService implements AssartService,
 
 	@Override
 	public void assart(int vid) {
-		if (Data.areaId >= Data.areaList.size()) {
+		if (placeInternal.isMaxPlace()) {
 			log.info("荒地全部开发完了");
 			return;
 		}
@@ -67,14 +70,15 @@ public class AssartServiceImpl extends AbstractService implements AssartService,
 			workInternal.addWorkProgress(workData, delta);
 
 			if (workInternal.isWorkComplete(workData)) {
-				Data.areaId++;
-				Data.resPlace.putIfAbsent(Data.areaId, Place.create(Data.areaId));// 创建一个资源点位置
+				PlaceData placeData = scene.getPlaceData();
+				placeData.getIncreAreaId().incrementAndGet();
+				placeInternal.createIfAbsent(PlaceType.PLACE, placeData.getAreaId());// 创建一个资源点位置
 			}
 
 		} else {
 			workInternal.resetProgress(workData);
 
-			if (Data.areaId >= Data.areaList.size())
+			if (placeInternal.isMaxPlace())
 				workInternal.exitWork(workData);
 		}
 	}

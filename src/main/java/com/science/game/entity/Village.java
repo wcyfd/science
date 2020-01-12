@@ -25,8 +25,13 @@ public class Village {
 	@Getter
 	private ItemData itemData;
 
-	public Village() {
-		id = ID.getAndIncrement();
+	public static Village create() {
+		Village v = new Village();
+		return v;
+	}
+
+	private Village() {
+		this.id = ID.getAndIncrement();
 		this.workData = new WorkData(id);
 		this.placeData = new PlaceData(id);
 		this.developData = new DevelopData(id);

@@ -19,7 +19,11 @@ public class WorkServiceImpl extends AbstractService implements WorkInternal, Wo
 
 	@Override
 	protected void dispatch(String cmd, List<String> args) {
-
+		switch (cmd) {
+		case "stop":
+			stop(getInt(args, 0));
+			break;
+		}
 	}
 
 	@Override
@@ -27,7 +31,7 @@ public class WorkServiceImpl extends AbstractService implements WorkInternal, Wo
 		WorkTask task = new WorkTask(this) {
 
 			@Override
-			public void execute() {
+			public void doJob() {
 				context.workLoop(workData);
 			}
 		};
@@ -61,6 +65,11 @@ public class WorkServiceImpl extends AbstractService implements WorkInternal, Wo
 	@Override
 	public void resetProgress(WorkData workData) {
 		workData.getCurrent().set(0);
+	}
+
+	@Override
+	public void setProgress(WorkData workData, int val) {
+		workData.getCurrent().set(val);
 	}
 
 	@Override

@@ -6,8 +6,8 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import com.science.game.cache.Data;
 import com.science.game.service.item.ItemInternal;
+import com.science.game.service.lab.LabInternal;
 
 import game.quick.window.GameWindows;
 
@@ -20,6 +20,9 @@ public class Robot implements ApplicationListener<ContextRefreshedEvent> {
 
 	@Autowired
 	private ItemInternal itemInternal;
+
+	@Autowired
+	private LabInternal labInternal;
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -34,18 +37,18 @@ public class Robot implements ApplicationListener<ContextRefreshedEvent> {
 	}
 
 	private void script() {
+		c("village.recruite");
 //		c("village.recruite");
 //		c("village.recruite");
 //		c("village.recruite");
-//		c("village.recruite");
-//		c("job.assart 1");
-//		c("job.collect 2 1");
-//		c("job.collect 3 2");
-//		until(() -> Data.thinkList.size() > 0);
-//		int itemId = Data.thinkList.get(0);
-//		c("job.develop 4 " + itemId);
-//		until(() -> itemInternal.itemIsDeveloped(itemId));
-//		c("job.product 4 " + itemId);
+//		c("assart.assart 1");
+//		c("mine.dig 2 1");
+		c("forest.chop 1 2");
+//		until(() -> labInternal.getThinkingList().size() > 0);
+//		int itemId = labInternal.getThinkingList().get(0);
+//		c("lab.develop 4 " + itemId);
+//		until(() -> labInternal.isDeveloped(itemId));
+//		c("product.product 4 " + itemId);
 	}
 
 	private void c(String line) {

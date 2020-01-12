@@ -10,10 +10,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
-import com.science.game.cache.Data;
 import com.science.game.cache.config.ConfigCache;
 import com.science.game.cache.config.ItemConfigCache;
 import com.science.game.cache.config.PlaceConfigCache;
+import com.science.game.entity.Scene;
 import com.science.game.entity.Item;
 import com.science.game.entity.JobType;
 import com.science.game.entity.Village;
@@ -38,12 +38,15 @@ public class ScienceView implements IView, ApplicationContextAware {
 	@Autowired
 	private ItemConfigCache itemConfigCache;
 
+	@Autowired
+	private Scene scene;
+
 	@Override
 	public String render() {
 		sb.delete(0, sb.length());
 		sb.append(cmd).append("\n");
 		sb.append("===========\n");
-		sb.append(Data.cmd).append("\n");
+		sb.append(ScienceHandler.getCmd()).append("\n");
 		sb.append("===========\n");
 		village();
 		sb.append("\n");
@@ -60,7 +63,8 @@ public class ScienceView implements IView, ApplicationContextAware {
 	private void village() {
 		sb.append("Village").append("\n");
 		Map<Integer, JobConfig> jobMap = ConfigCache.job.jobMap;
-		for (Village v : Data.villages.values()) {
+
+		for (Village v : scene.getVillageData().getVillages().values()) {
 			sb.append(v.getId()).append(" ");
 			WorkData workData = v.getWorkData();
 
@@ -84,7 +88,7 @@ public class ScienceView implements IView, ApplicationContextAware {
 
 	private void item() {
 		sb.append("Item").append("\n");
-		for (Map.Entry<Integer, List<Item>> entrySet : Data.itemMap.entrySet()) {
+		for (Map.Entry<Integer, List<Item>> entrySet : scene.getItemData().getAllItemsByItemId().entrySet()) {
 			List<Item> items = entrySet.getValue();
 			ItemConfig config = itemConfigCache.itemMap.get(entrySet.getKey());
 			sb.append(entrySet.getKey()).append(" ").append(config.getName()).append(" ")
@@ -107,15 +111,19 @@ public class ScienceView implements IView, ApplicationContextAware {
 
 	private void area() {
 		sb.append("area\n");
-		for (int i = 0; i < Data.areaId; i++) {
-			sb.append(i).append(" ").append(placeConfigCache.placeMap.get(Data.areaList.get(i)).getName()).append(" ");
+		int size = scene.getPlaceData().getAreaId();
+		for (int i = 0; i < size; i++) {
+			sb.append(i).append(" ")
+					.append(placeConfigCache.placeMap.get(scene.getPlaceData().getAreaList().get(i)).getName())
+					.append(" ");
 		}
 		sb.append("\n");
 	}
 
 	private void think() {
 		sb.append("think\n");
-		for (Integer id : Data.thinkList) {
+
+		for (Integer id : scene.getLabData().getThinkList()) {
 			sb.append(id).append(" ").append(itemConfigCache.itemMap.get(id).getName()).append(" ");
 		}
 	}

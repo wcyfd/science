@@ -13,6 +13,15 @@ public abstract class WorkTask implements Task {
 	}
 
 	@Override
+	public void execute() {
+		if (stop)
+			return;
+		doJob();
+	}
+
+	public abstract void doJob();
+
+	@Override
 	public void afterExecute() {
 		if (stop)
 			return;

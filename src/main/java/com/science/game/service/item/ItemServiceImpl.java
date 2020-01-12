@@ -60,11 +60,6 @@ public class ItemServiceImpl extends AbstractService implements ItemService, Ite
 	}
 
 	@Override
-	public void createItemIfAbsent(int itemId) {
-		createItemModule.createItemIfAbsent(itemId);
-	}
-
-	@Override
 	public void addItem(int itemId, int count) {
 		addItemModule.addItem(itemId, count);
 	}
@@ -75,13 +70,18 @@ public class ItemServiceImpl extends AbstractService implements ItemService, Ite
 	}
 
 	@Override
-	public void createItemPlace(int itemId) {
-		createItemModule.createItemPlace(itemId);
+	public int getItemCount(int itemId) {
+		return ItemInfoModule.getItemCount(itemId);
 	}
 
 	@Override
-	public int getItemCount(int itemId) {
-		return ItemInfoModule.getItemCount(itemId);
+	public void createResItemSpace(int itemId) {
+		createItemModule.createResItemIfAbsent(itemId);
+	}
+
+	@Override
+	public void createEquipItemSpace(int itemId) {
+		createItemModule.createEquipItemIfAbsent(itemId);
 	}
 
 }

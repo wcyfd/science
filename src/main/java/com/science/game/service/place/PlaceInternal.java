@@ -34,4 +34,20 @@ public interface PlaceInternal {
 	 * @return
 	 */
 	Place getPlace(PlaceType type, int id);
+
+	/**
+	 * 创建地点如果没有该地点
+	 * 
+	 * @param type
+	 * @param id
+	 * @return
+	 */
+	Place createIfAbsent(PlaceType type, int id);
+
+	/**
+	 * 是否已经把所有地方都开发完毕了
+	 * 
+	 * @return
+	 */
+	boolean isMaxPlace();
 }

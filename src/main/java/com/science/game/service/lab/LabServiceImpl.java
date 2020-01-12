@@ -9,14 +9,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.science.game.cache.Data;
 import com.science.game.cache.config.ConsistConfigCache;
 import com.science.game.cache.config.ItemConfigCache;
 import com.science.game.entity.JobType;
 import com.science.game.entity.PlaceType;
+import com.science.game.entity.Scene;
 import com.science.game.entity.Village;
 import com.science.game.entity.config.ConsistConfig;
 import com.science.game.entity.config.ItemConfig;
+import com.science.game.entity.scene.LabData;
 import com.science.game.entity.village.DevelopData;
 import com.science.game.entity.village.WorkData;
 import com.science.game.service.AbstractService;
@@ -51,6 +52,9 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 
 	@Autowired
 	private ConsistConfigCache consistConfigCache;
+
+	@Autowired
+	private Scene scene;
 
 	@Override
 	public void develop(int vid, int itemId) {
@@ -97,12 +101,13 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 	 */
 	private boolean developSuccess(int itemId) {
 		ItemConfig itemConfig = itemConfigCache.itemMap.get(itemId);
-		List<Integer> developIds = Data.developVillages.get(itemId);
+		LabData labData = scene.getLabData();
+		List<Integer> developIds = labData.getDevelopVillages().get(itemId);
 
 		// 获得最大的熟练度，目前是遍历所有开发者，并获取最大的熟练度
 		int maxPractice = 0;
 		for (int developId : developIds) {
-			Village village = Data.villages.get(developId);
+			Village village = scene.getVillageData().getByOnlyId(developId);
 			AtomicInteger value = village.getDevelopData().getPracticeMap().get(itemId);
 			if (value == null) {
 				continue;
@@ -114,7 +119,7 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 		}
 
 		// 检验研发点和熟练度是否大于指定研发点
-		if (Data.developPoint.getOrDefault(itemId, 0) >= itemConfig.getDevelopPoint()
+		if (labData.getDevelopPoint().getOrDefault(itemId, new AtomicInteger(0)).get() >= itemConfig.getDevelopPoint()
 				&& maxPractice >= itemConfig.getPractice()) {
 			Random rand = new Random();
 			return rand.nextBoolean();
@@ -143,13 +148,15 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 	}
 
 	private void successFunc(int itemId) {
-		itemInternal.createItemIfAbsent(itemId);
+		itemInternal.createEquipItemSpace(itemId);
 		itemInternal.addItem(itemId, 1);
-		Data.developVillages.getOrDefault(itemId, new LinkedList<>())
+		LabData labData = scene.getLabData();
+
+		labData.getDevelopVillages().getOrDefault(itemId, new LinkedList<>())
 				.forEach(id -> workInternal.exitWork(villageInternal.getVillage(id).getWorkData()));// 停止所有参与研发的村民该工作
-		Data.developVillages.remove(itemId);
-		Data.developPoint.remove(itemId);
-		Data.thinkList.remove((Integer) itemId);
+		labData.getDevelopVillages().remove(itemId);
+		labData.getDevelopPoint().remove(itemId);
+		labData.getThinkList().remove((Integer) itemId);
 	}
 
 	private void failedFunc(int itemId) {
@@ -158,6 +165,8 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 			return;
 		}
 
+		LabData labData = scene.getLabData();
+
 		// 扣除道具数量,先扣除再研究
 		for (ConsistConfig config : list) {
 			itemInternal.addItem(config.getNeedItemId(), -config.getCount());
@@ -165,12 +174,14 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 		int addPoint = 2;
 		int skillValue = 4;
 		// 研发点按照总值来算，熟练度按照村民来算
-		Data.developPoint.putIfAbsent(itemId, 0);
-		Data.developPoint.put(itemId, Data.developPoint.get(itemId) + addPoint);
+		if (!labData.getDevelopPoint().containsKey(itemId)) {
+			labData.getDevelopPoint().put(itemId, new AtomicInteger());
+		}
+		labData.getDevelopPoint().get(itemId).addAndGet(addPoint);
 
-		List<Integer> developerIds = Data.developVillages.get(itemId);
+		List<Integer> developerIds = labData.getDevelopVillages().get(itemId);
 		for (int developerId : developerIds) {
-			Village developer = Data.villages.get(developerId);
+			Village developer = scene.getVillageData().getByOnlyId(developerId);
 
 			// 添加熟练度
 			developer.getDevelopData().getPracticeMap().putIfAbsent(itemId, new AtomicInteger());
@@ -190,12 +201,12 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 
 	@Override
 	public boolean isDeveloped(int itemId) {
-		return Data.scienceMap.contains(itemId);
+		return scene.getLabData().getSciences().contains(itemId);
 	}
 
 	@Override
 	public Set<Integer> getDevelopSuccessItem() {
-		return Data.scienceMap;
+		return scene.getLabData().getSciences();
 	}
 
 	@Override
@@ -211,5 +222,23 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 	public void addPractice(DevelopData developData, int itemId, int val) {
 		developData.getPracticeMap().putIfAbsent(itemId, new AtomicInteger());
 		developData.getPracticeMap().get(itemId).addAndGet(val);
+	}
+
+	@Override
+	public void addNewThink(int id) {
+		LabData labData = scene.getLabData();
+		if (!isOldThinking(id)) {
+			labData.getThinkList().add(id);
+		}
+	}
+
+	@Override
+	public boolean isOldThinking(int id) {
+		return scene.getLabData().getThinkList().contains((Integer) id);
+	}
+
+	@Override
+	public List<Integer> getThinkingList() {
+		return scene.getLabData().getThinkList();
 	}
 }

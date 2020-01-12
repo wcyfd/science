@@ -7,21 +7,17 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.science.game.cache.Data;
 import com.science.game.cache.config.ConsistConfigCache;
 import com.science.game.cache.config.ThinkConfigCache;
+import com.science.game.entity.Scene;
 import com.science.game.entity.Village;
 import com.science.game.entity.config.ConsistConfig;
 import com.science.game.entity.config.ThinkConfig;
 import com.science.game.service.AbstractService;
 import com.science.game.service.lab.LabInternal;
-import com.science.game.service.village.module.CreateVillageModule;
 
 @Service
 public class VillageServiceImpl extends AbstractService implements VillageService, VillageInternal {
-
-	@Autowired
-	private CreateVillageModule createVillageModule;
 
 	@Autowired
 	private VillageInternal villageInternal;
@@ -34,6 +30,9 @@ public class VillageServiceImpl extends AbstractService implements VillageServic
 
 	@Autowired
 	private ConsistConfigCache consistConfigCache;
+
+	@Autowired
+	private Scene scene;
 
 	@Override
 	public void initCache() {
@@ -50,12 +49,13 @@ public class VillageServiceImpl extends AbstractService implements VillageServic
 
 	@Override
 	public void recruite() {
-		createVillageModule.createVillage();
+		Village v = Village.create();
+		scene.getVillageData().getVillages().put(v.getId(), v);
 	}
 
 	@Override
 	public Village getVillage(int vid) {
-		return Data.villages.get(vid);
+		return scene.getVillageData().getByOnlyId(vid);
 	}
 
 	@Override
@@ -69,7 +69,7 @@ public class VillageServiceImpl extends AbstractService implements VillageServic
 		for (ThinkConfig config : list) {
 			int itemId = config.getItemId();
 
-			if (Data.thinkList.contains((Integer) itemId)) {
+			if (labInternal.isOldThinking(itemId)) {
 				continue;
 			}
 
@@ -87,7 +87,7 @@ public class VillageServiceImpl extends AbstractService implements VillageServic
 
 		if (targets.size() != 0) {
 			int itemId = targets.get(new Random().nextInt(targets.size()));
-			Data.thinkList.add(itemId);
+			labInternal.addNewThink(itemId);
 		}
 
 	}

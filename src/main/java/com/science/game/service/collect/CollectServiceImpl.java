@@ -9,6 +9,7 @@ import com.science.game.cache.config.JobConfigCache;
 import com.science.game.cache.config.PlaceConfigCache;
 import com.science.game.entity.JobType;
 import com.science.game.entity.PlaceType;
+import com.science.game.entity.Scene;
 import com.science.game.entity.Village;
 import com.science.game.entity.config.PlaceConfig;
 import com.science.game.entity.village.PlaceData;
@@ -40,6 +41,9 @@ public class CollectServiceImpl extends AbstractService implements CollectIntern
 	@Autowired
 	private JobConfigCache jobConfigCache;
 
+	@Autowired
+	private Scene scene;
+
 	@Override
 	protected void dispatch(String cmd, List<String> args) {
 
@@ -58,13 +62,17 @@ public class CollectServiceImpl extends AbstractService implements CollectIntern
 	public void workLoop(WorkData workData) {
 		Village v = villageInternal.getVillage(workData.getVid());
 		PlaceData placeData = v.getPlaceData();
+		int resId = scene.getPlaceData().getAreaList().get(placeData.getPlace().getPlaceId());
 
-		PlaceConfig placeConfig = placeConfigCache.placeMap.get(placeData.getPlace().getPlaceId());
+		PlaceConfig placeConfig = placeConfigCache.placeMap.get(resId);
+		// TODO 要先加入工作进度后决定是否超过去
+		int velocity = jobConfigCache.jobMap.get(workData.getJobType().getJobId()).getUnitVelocity();
+		workData.getCurrent().addAndGet(velocity);
 		if (workData.getCurrent().get() >= workData.getTotal()) {
-			itemInternal.createItemIfAbsent(placeConfig.getItemId());
+			itemInternal.createResItemSpace(placeConfig.getItemId());
 			itemInternal.addItem(placeConfig.getItemId(), workData.getCurrent().get() / workData.getTotal());
 		}
-		workData.getCurrent().set(workData.getCurrent().get() % workData.getTotal());
+		workInternal.setProgress(workData, workData.getCurrent().get() % workData.getTotal());
 	}
 
 	@Override

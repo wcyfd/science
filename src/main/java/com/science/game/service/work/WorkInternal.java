@@ -36,6 +36,14 @@ public interface WorkInternal {
 	void resetProgress(WorkData workData);
 
 	/**
+	 * 设置进度
+	 * 
+	 * @param workData
+	 * @param val
+	 */
+	void setProgress(WorkData workData, int val);
+
+	/**
 	 * 退出工作
 	 * 
 	 * @param v

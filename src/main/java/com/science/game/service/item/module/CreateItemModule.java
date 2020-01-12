@@ -7,12 +7,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.science.game.cache.Data;
 import com.science.game.cache.config.ItemConfigCache;
 import com.science.game.entity.Item;
-import com.science.game.entity.Place;
+import com.science.game.entity.PlaceType;
+import com.science.game.entity.Scene;
 import com.science.game.entity.config.ItemConfig;
 import com.science.game.entity.config.ItemConfig.ItemType;
+import com.science.game.entity.scene.ItemData;
+import com.science.game.service.place.PlaceInternal;
 
 @Component
 public class CreateItemModule {
@@ -20,29 +22,45 @@ public class CreateItemModule {
 	@Autowired
 	private ItemConfigCache itemConfigCache;
 
-	public void createItemIfAbsent(int itemId) {
+	@Autowired
+	private PlaceInternal placeInternal;
 
+	@Autowired
+	private Scene scene;
+
+	/**
+	 * 创建资源型道具
+	 * 
+	 * @param itemId
+	 */
+	public void createResItemIfAbsent(int itemId) {
 		// 需要判断如果是资源型，则就默认加一个
 		ItemConfig config = itemConfigCache.itemMap.get(itemId);
+		ItemData itemData = scene.getItemData();
 
-		Data.scienceMap.add(itemId);
-		if (config.getType() == ItemType.RES) {
-			Data.itemMap.putIfAbsent(itemId, new ArrayList<>(1));
-			List<Item> list = Data.itemMap.get(itemId);
-			if (list.size() == 0) {
+		if (config.getType() == ItemType.RES) {// 资源型道具列表里面始终只有一个道具
+			if (!itemData.getAllItemsByItemId().containsKey(itemId)) {
+				itemData.getAllItemsByItemId().putIfAbsent(itemId, new ArrayList<>(1));
 				Item item = Item.create(itemId);
-				list.add(item);
-
-				Data.itemIdMap.put(item.getId(), item);
+				itemData.getAllItemsByItemId().get(itemId).add(item);
+				itemData.getUniqueItems().put(item.getId(), item);
 			}
-		} else if (config.getType() == ItemType.ITEM) {
-			Data.itemMap.putIfAbsent(itemId, new LinkedList<>());
 		}
-
-		Data.itemPlace.putIfAbsent(itemId, Place.create(itemId));// 资源型item不需要创建道具位
 	}
 
-	public void createItemPlace(int itemId) {
-		Data.itemPlace.putIfAbsent(itemId, Place.create(itemId));// 资源型item不需要创建道具位
+	/**
+	 * 创建装备性道具
+	 * 
+	 * @param itemId
+	 */
+	public void createEquipItemIfAbsent(int itemId) {
+		ItemConfig config = itemConfigCache.itemMap.get(itemId);
+		ItemData itemData = scene.getItemData();
+
+		if (config.getType() == ItemType.ITEM) {
+			itemData.getAllItemsByItemId().putIfAbsent(itemId, new LinkedList<>());
+			placeInternal.createIfAbsent(PlaceType.ITEM, itemId);// 资源型item不需要创建道具位
+		}
+
 	}
 }
