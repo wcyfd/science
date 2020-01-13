@@ -6,6 +6,11 @@ public interface VillageInternal {
 
 	Village getVillage(int vid);
 
+	/**
+	 * 思考
+	 * 
+	 * @param vid
+	 */
 	void think(int vid);
 
 }

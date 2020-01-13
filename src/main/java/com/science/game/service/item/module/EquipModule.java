@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.science.game.cache.data.DataCenter;
 import com.science.game.entity.Item;
 import com.science.game.entity.Scene;
 import com.science.game.entity.Village;
@@ -17,7 +18,7 @@ public class EquipModule {
 	private ItemInternal itemInternal;
 
 	@Autowired
-	private Scene scene;
+	private DataCenter dataCenter;
 
 	/**
 	 * 装备
@@ -26,6 +27,7 @@ public class EquipModule {
 	 * @param onlyId
 	 */
 	public void equip(int vid, int onlyId) {
+		Scene scene = dataCenter.getScene();
 		Village v = scene.getVillageData().getByOnlyId(vid);
 		Item item = scene.getItemData().getItemByOnlyId(onlyId);
 		int itemId = item.getProto().getItemId();
@@ -45,6 +47,7 @@ public class EquipModule {
 	 * @param itemId
 	 */
 	public void unequip(int vid, int itemId) {
+		Scene scene = dataCenter.getScene();
 		Village v = scene.getVillageData().getByOnlyId(vid);
 		Item item = v.getItemData().getEquips().remove(itemId);
 		if (item != null) {

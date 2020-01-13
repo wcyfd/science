@@ -7,16 +7,13 @@ import org.springframework.stereotype.Component;
 
 import com.aimfd.game.tool.reserve.Reserve;
 import com.science.game.cache.config.ItemConfigCache;
+import com.science.game.cache.data.DataCenter;
 import com.science.game.entity.Item;
 import com.science.game.entity.Scene;
 import com.science.game.entity.config.ItemConfig;
 import com.science.game.entity.config.ItemConfig.ItemType;
 import com.science.game.entity.scene.ItemData;
-import com.science.game.service.lab.LabInternal;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Component
 public class AddItemModule {
 
@@ -24,10 +21,7 @@ public class AddItemModule {
 	private ItemConfigCache itemConfigCache;
 
 	@Autowired
-	private LabInternal labInternal;
-
-	@Autowired
-	private Scene scene;
+	private DataCenter dataCenter;
 
 	/**
 	 * 增减道具数量<br>
@@ -37,7 +31,7 @@ public class AddItemModule {
 	 * @param count
 	 */
 	public void addItem(int itemId, int count) {
-
+		Scene scene = dataCenter.getScene();
 		ItemConfig proto = itemConfigCache.itemMap.get(itemId);
 		List<Item> items = scene.getItemData().getAllItemsByItemId().get(itemId);
 		if (proto.getType() == ItemType.ITEM) {// 装备型道具，还要调整道具全局表
@@ -104,12 +98,14 @@ public class AddItemModule {
 	private void removeUniqueItem(Item item) {
 		if (item == null)
 			return;
+		Scene scene = dataCenter.getScene();
 		scene.getItemData().getUniqueItems().remove(item.getId());
 	}
 
 	private void addUniqueItem(Item item) {
 		if (item == null)
 			return;
+		Scene scene = dataCenter.getScene();
 		scene.getItemData().getUniqueItems().put(item.getId(), item);
 	}
 
@@ -119,6 +115,7 @@ public class AddItemModule {
 	 * @param item
 	 */
 	public void insertItem(Item item) {
+		Scene scene = dataCenter.getScene();
 		ItemConfig itemConfig = item.getProto();
 		ItemData itemData = scene.getItemData();
 		if (itemConfig.getType() == ItemType.ITEM) {

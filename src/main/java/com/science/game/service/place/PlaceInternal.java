@@ -50,4 +50,12 @@ public interface PlaceInternal {
 	 * @return
 	 */
 	boolean isMaxPlace();
+
+	/**
+	 * 删除场地
+	 * 
+	 * @param placeType
+	 * @param id
+	 */
+	void deletePlace(PlaceType placeType, int id);
 }

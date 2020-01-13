@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.science.game.cache.config.ItemConfigCache;
+import com.science.game.cache.data.DataCenter;
 import com.science.game.entity.Item;
 import com.science.game.entity.Scene;
 import com.science.game.entity.config.ItemConfig;
@@ -21,9 +22,10 @@ public class ItemInfoModule {
 	private ItemConfigCache itemConfigCache;
 
 	@Autowired
-	private Scene scene;
+	private DataCenter dataCenter;
 
 	public int getItemCount(int itemId) {
+		Scene scene = dataCenter.getScene();
 		ItemConfig config = itemConfigCache.itemMap.get(itemId);
 		ItemType type = config.getType();
 		List<Item> list = scene.getItemData().getItemsByItemId(itemId);

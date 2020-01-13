@@ -1,6 +1,7 @@
 package com.science.game.entity;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.springframework.stereotype.Component;
 
 import com.science.game.entity.scene.ItemData;
@@ -12,21 +13,29 @@ import lombok.Getter;
 
 @Component
 public class Scene {
+	private static AtomicInteger ID = new AtomicInteger();
 
-	@Autowired
+	@Getter
+	private int id;
+
 	@Getter
 	private LabData labData;
 
-	@Autowired
 	@Getter
 	private PlaceData placeData;
 
-	@Autowired
 	@Getter
 	private ItemData itemData;
 
-	@Autowired
 	@Getter
 	private VillageData villageData;
+
+	public Scene() {
+		id = ID.incrementAndGet();
+		labData = new LabData();
+		placeData = new PlaceData();
+		itemData = new ItemData();
+		villageData = new VillageData();
+	}
 
 }

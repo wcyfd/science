@@ -4,11 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.springframework.stereotype.Component;
-
 import com.science.game.entity.Item;
 
-@Component
 public class ItemData {
 	private Map<Integer, List<Item>> itemMap = new ConcurrentHashMap<>();// 存放装备型道具
 

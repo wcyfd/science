@@ -21,6 +21,13 @@ public interface LabInternal {
 	 */
 	Set<Integer> getDevelopSuccessItem();
 
+	/**
+	 * 增加熟练度
+	 * 
+	 * @param developData
+	 * @param itemId
+	 * @param val
+	 */
 	void addPractice(DevelopData developData, int itemId, int val);
 
 	/**
@@ -28,19 +35,27 @@ public interface LabInternal {
 	 * 
 	 * @param id
 	 */
-	void addNewThink(int id);
+	void addNewIdea(int id);
 
 	/**
 	 * 是否已经有这个想法
 	 * 
 	 * @param id
 	 */
-	boolean isOldThinking(int id);
+	boolean isOldIdea(int id);
 
 	/**
 	 * 获取正在思考的想法列表
 	 * 
 	 * @return
 	 */
-	List<Integer> getThinkingList();
+	List<Integer> getIdeaList();
+
+	/**
+	 * 获取尝试次数
+	 * 
+	 * @param itemId
+	 * @return
+	 */
+	int getTryCount(int itemId);
 }

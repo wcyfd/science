@@ -1,6 +1,6 @@
 package com.science.game.service.lab;
 
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.science.game.cache.config.ConsistConfigCache;
 import com.science.game.cache.config.ItemConfigCache;
+import com.science.game.cache.data.DataCenter;
 import com.science.game.entity.JobType;
 import com.science.game.entity.PlaceType;
 import com.science.game.entity.Scene;
@@ -54,7 +55,7 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 	private ConsistConfigCache consistConfigCache;
 
 	@Autowired
-	private Scene scene;
+	private DataCenter dataCenter;
 
 	@Override
 	public void develop(int vid, int itemId) {
@@ -66,10 +67,13 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 
 		Village v = villageInternal.getVillage(vid);
 
-		placeInternal.enter(v, PlaceType.ITEM, itemId);
+		placeInternal.createIfAbsent(PlaceType.DEVELOP, itemId);
+		placeInternal.enter(v, PlaceType.DEVELOP, itemId);
 
 		DevelopData developData = v.getDevelopData();
 		developData.setItemId(itemId);
+
+		dataCenter.getScene().getLabData().getTryCountMap().putIfAbsent(itemId, new AtomicInteger());
 
 		workInternal.beginWork(v.getWorkData(), JobType.DEVELOP, this);
 	}
@@ -99,10 +103,11 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 	 * @param itemId
 	 * @return
 	 */
-	private boolean developSuccess(int itemId) {
+	private boolean isDevelopSuccess(int itemId) {
 		ItemConfig itemConfig = itemConfigCache.itemMap.get(itemId);
+		Scene scene = dataCenter.getScene();
 		LabData labData = scene.getLabData();
-		List<Integer> developIds = labData.getDevelopVillages().get(itemId);
+		Set<Integer> developIds = placeInternal.getPlace(PlaceType.DEVELOP, itemId).getVillageIds();
 
 		// 获得最大的熟练度，目前是遍历所有开发者，并获取最大的熟练度
 		int maxPractice = 0;
@@ -135,7 +140,7 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 		int itemId = v.getDevelopData().getItemId();
 		if (!labInternal.isDeveloped(itemId)) {// 还没有研发成功的话就往下走
 			// 研发结果
-			if (developSuccess(itemId)) {
+			if (isDevelopSuccess(itemId)) {
 				// 成功
 				successFunc(itemId);
 			} else {
@@ -150,13 +155,23 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 	private void successFunc(int itemId) {
 		itemInternal.createEquipItemSpace(itemId);
 		itemInternal.addItem(itemId, 1);
+		Scene scene = dataCenter.getScene();
 		LabData labData = scene.getLabData();
 
-		labData.getDevelopVillages().getOrDefault(itemId, new LinkedList<>())
-				.forEach(id -> workInternal.exitWork(villageInternal.getVillage(id).getWorkData()));// 停止所有参与研发的村民该工作
-		labData.getDevelopVillages().remove(itemId);
-		labData.getDevelopPoint().remove(itemId);
-		labData.getThinkList().remove((Integer) itemId);
+		// 停止所有参与研发的村民该工作
+		placeInternal.getPlace(PlaceType.DEVELOP, itemId).getVillageIds()
+				.forEach(vid -> workInternal.exitWork(villageInternal.getVillage(vid).getWorkData()));
+
+		labData.getDevelopPoint().remove(itemId);// 清空研发点
+		labData.getIdeaList().remove((Integer) itemId);// 从想法中移除
+		labData.getSciences().add(itemId);// 添加科技信息
+
+		// 清空所有人
+		new HashSet<>(placeInternal.getPlace(PlaceType.DEVELOP, itemId).getVillageIds()).stream()
+				.forEach(vid -> placeInternal.exit(villageInternal.getVillage(vid)));
+		labData.getTryCountMap().remove(itemId);
+		// 清空场地
+		placeInternal.deletePlace(PlaceType.DEVELOP, itemId);
 	}
 
 	private void failedFunc(int itemId) {
@@ -164,7 +179,7 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 		if (!enoughConsistItem(list)) {// 如果材料不够了就停止工作
 			return;
 		}
-
+		Scene scene = dataCenter.getScene();
 		LabData labData = scene.getLabData();
 
 		// 扣除道具数量,先扣除再研究
@@ -179,7 +194,7 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 		}
 		labData.getDevelopPoint().get(itemId).addAndGet(addPoint);
 
-		List<Integer> developerIds = labData.getDevelopVillages().get(itemId);
+		Set<Integer> developerIds = placeInternal.getPlace(PlaceType.DEVELOP, itemId).getVillageIds();
 		for (int developerId : developerIds) {
 			Village developer = scene.getVillageData().getByOnlyId(developerId);
 
@@ -187,6 +202,8 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 			developer.getDevelopData().getPracticeMap().putIfAbsent(itemId, new AtomicInteger());
 			developer.getDevelopData().getPracticeMap().get(itemId).addAndGet(skillValue);
 		}
+
+		labData.getTryCountMap().get(itemId).incrementAndGet();
 	}
 
 	@Override
@@ -201,12 +218,12 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 
 	@Override
 	public boolean isDeveloped(int itemId) {
-		return scene.getLabData().getSciences().contains(itemId);
+		return dataCenter.getScene().getLabData().getSciences().contains(itemId);
 	}
 
 	@Override
 	public Set<Integer> getDevelopSuccessItem() {
-		return scene.getLabData().getSciences();
+		return dataCenter.getScene().getLabData().getSciences();
 	}
 
 	@Override
@@ -225,20 +242,28 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 	}
 
 	@Override
-	public void addNewThink(int id) {
+	public void addNewIdea(int id) {
+		Scene scene = dataCenter.getScene();
 		LabData labData = scene.getLabData();
-		if (!isOldThinking(id)) {
-			labData.getThinkList().add(id);
+		if (!isOldIdea(id)) {
+			labData.getIdeaList().add(id);
 		}
 	}
 
 	@Override
-	public boolean isOldThinking(int id) {
-		return scene.getLabData().getThinkList().contains((Integer) id);
+	public boolean isOldIdea(int id) {
+		Scene scene = dataCenter.getScene();
+		return scene.getLabData().getIdeaList().contains((Integer) id);
 	}
 
 	@Override
-	public List<Integer> getThinkingList() {
-		return scene.getLabData().getThinkList();
+	public List<Integer> getIdeaList() {
+		Scene scene = dataCenter.getScene();
+		return scene.getLabData().getIdeaList();
+	}
+
+	@Override
+	public int getTryCount(int itemId) {
+		return dataCenter.getScene().getLabData().getTryCountMap().getOrDefault(itemId, new AtomicInteger(0)).get();
 	}
 }

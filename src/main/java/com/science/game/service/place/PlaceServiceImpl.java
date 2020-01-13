@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.science.game.cache.data.DataCenter;
 import com.science.game.entity.Place;
 import com.science.game.entity.PlaceType;
 import com.science.game.entity.Scene;
@@ -21,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PlaceServiceImpl extends AbstractService implements PlaceInternal {
 
 	@Autowired
-	private Scene scene;
+	private DataCenter dataCenter;
 
 	@Autowired
 	private PlaceInternal placeInternal;
@@ -33,7 +34,7 @@ public class PlaceServiceImpl extends AbstractService implements PlaceInternal {
 
 	@Override
 	protected void initCache() {
-
+		Scene scene = dataCenter.getScene();
 		scene.getPlaceData().getAreaList().addAll(Arrays.asList(2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2,
 				3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4));
 		scene.getPlaceData().getIncreAreaId().set(5);
@@ -70,10 +71,13 @@ public class PlaceServiceImpl extends AbstractService implements PlaceInternal {
 
 	@Override
 	public Place getPlace(PlaceType type, int id) {
+		Scene scene = dataCenter.getScene();
 		if (type == PlaceType.PLACE) {
 			return scene.getPlaceData().getResPlace().get(id);
 		} else if (type == PlaceType.ITEM) {
 			return scene.getPlaceData().getItemPlace().get(id);
+		} else if (type == PlaceType.DEVELOP) {
+			return scene.getPlaceData().getDevelopPlace().get(id);
 		}
 
 		log.info("读取地点失败 placeType={},placeId={}", type, id);
@@ -82,12 +86,14 @@ public class PlaceServiceImpl extends AbstractService implements PlaceInternal {
 
 	@Override
 	public Place createIfAbsent(PlaceType type, int id) {
-
+		Scene scene = dataCenter.getScene();
 		Map<Integer, Place> placeMap = null;
 		if (type == PlaceType.ITEM) {
 			placeMap = scene.getPlaceData().getItemPlace();
 		} else if (type == PlaceType.PLACE) {
 			placeMap = scene.getPlaceData().getResPlace();
+		} else if (type == PlaceType.DEVELOP) {
+			placeMap = scene.getPlaceData().getDevelopPlace();
 		}
 		if (placeMap == null) {
 			return null;
@@ -102,6 +108,32 @@ public class PlaceServiceImpl extends AbstractService implements PlaceInternal {
 
 	@Override
 	public boolean isMaxPlace() {
+		Scene scene = dataCenter.getScene();
 		return scene.getPlaceData().getAreaId() >= scene.getPlaceData().getAreaList().size();
+	}
+
+	@Override
+	public void deletePlace(PlaceType placeType, int id) {
+		PlaceData placeData = dataCenter.getScene().getPlaceData();
+		Map<Integer, Place> placeMap = null;
+
+		switch (placeType) {
+		case DEVELOP:
+			placeMap = placeData.getDevelopPlace();
+			break;
+		case ITEM:
+			placeMap = placeData.getItemPlace();
+			break;
+		case PLACE:
+			placeMap = placeData.getResPlace();
+			break;
+		default:
+			log.error("没有该场地 id={}", id);
+			break;
+		}
+
+		if (placeMap != null) {
+			placeMap.remove(id);
+		}
 	}
 }

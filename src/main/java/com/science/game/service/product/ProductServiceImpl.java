@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.aimfd.game.tool.reserve.Reserve;
 import com.science.game.cache.config.ConsistConfigCache;
 import com.science.game.cache.config.ItemConfigCache;
-import com.science.game.entity.Scene;
 import com.science.game.entity.JobType;
 import com.science.game.entity.PlaceType;
 import com.science.game.entity.Village;
@@ -133,6 +132,8 @@ public class ProductServiceImpl extends AbstractService implements ProductServic
 		} else {
 			workInternal.resetProgress(workData);
 		}
+
+		villageInternal.think(v.getId());
 	}
 
 	@Override

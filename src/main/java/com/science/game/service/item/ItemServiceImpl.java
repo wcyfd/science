@@ -1,10 +1,12 @@
 package com.science.game.service.item;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.science.game.cache.data.DataCenter;
 import com.science.game.entity.Item;
 import com.science.game.service.AbstractService;
 import com.science.game.service.item.module.AddItemModule;
@@ -26,6 +28,9 @@ public class ItemServiceImpl extends AbstractService implements ItemService, Ite
 
 	@Autowired
 	private ItemInfoModule ItemInfoModule;
+
+	@Autowired
+	private DataCenter dataCenter;
 
 	@Override
 	protected void dispatch(String cmd, List<String> args) {
@@ -82,6 +87,12 @@ public class ItemServiceImpl extends AbstractService implements ItemService, Ite
 	@Override
 	public void createEquipItemSpace(int itemId) {
 		createItemModule.createEquipItemIfAbsent(itemId);
+	}
+
+	@Override
+	public boolean hasItemRecord(int itemId) {
+		Map<Integer,List<Item>> map = dataCenter.getScene().getItemData().getAllItemsByItemId();
+		return map.containsKey(itemId);
 	}
 
 }

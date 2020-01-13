@@ -32,4 +32,11 @@ public interface ItemInternal {
 
 	void createEquipItemSpace(int itemId);
 
+	/**
+	 * 是否有道具记录
+	 * 
+	 * @param itemId
+	 */
+	boolean hasItemRecord(int itemId);
+
 }

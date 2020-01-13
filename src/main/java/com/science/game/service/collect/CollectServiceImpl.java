@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.science.game.cache.config.JobConfigCache;
 import com.science.game.cache.config.PlaceConfigCache;
+import com.science.game.cache.data.DataCenter;
 import com.science.game.entity.JobType;
 import com.science.game.entity.PlaceType;
 import com.science.game.entity.Scene;
@@ -42,7 +43,7 @@ public class CollectServiceImpl extends AbstractService implements CollectIntern
 	private JobConfigCache jobConfigCache;
 
 	@Autowired
-	private Scene scene;
+	private DataCenter dataCenter;
 
 	@Override
 	protected void dispatch(String cmd, List<String> args) {
@@ -60,12 +61,12 @@ public class CollectServiceImpl extends AbstractService implements CollectIntern
 
 	@Override
 	public void workLoop(WorkData workData) {
+		Scene scene = dataCenter.getScene();
 		Village v = villageInternal.getVillage(workData.getVid());
 		PlaceData placeData = v.getPlaceData();
 		int resId = scene.getPlaceData().getAreaList().get(placeData.getPlace().getPlaceId());
 
 		PlaceConfig placeConfig = placeConfigCache.placeMap.get(resId);
-		// TODO 要先加入工作进度后决定是否超过去
 		int velocity = jobConfigCache.jobMap.get(workData.getJobType().getJobId()).getUnitVelocity();
 		workData.getCurrent().addAndGet(velocity);
 		if (workData.getCurrent().get() >= workData.getTotal()) {
@@ -73,6 +74,8 @@ public class CollectServiceImpl extends AbstractService implements CollectIntern
 			itemInternal.addItem(placeConfig.getItemId(), workData.getCurrent().get() / workData.getTotal());
 		}
 		workInternal.setProgress(workData, workData.getCurrent().get() % workData.getTotal());
+
+		villageInternal.think(v.getId());
 	}
 
 	@Override

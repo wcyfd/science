@@ -2,12 +2,12 @@ package com.science.game.service.item.module;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.science.game.cache.config.ItemConfigCache;
+import com.science.game.cache.data.DataCenter;
 import com.science.game.entity.Item;
 import com.science.game.entity.PlaceType;
 import com.science.game.entity.Scene;
@@ -26,7 +26,7 @@ public class CreateItemModule {
 	private PlaceInternal placeInternal;
 
 	@Autowired
-	private Scene scene;
+	private DataCenter dataCenter;
 
 	/**
 	 * 创建资源型道具
@@ -36,6 +36,7 @@ public class CreateItemModule {
 	public void createResItemIfAbsent(int itemId) {
 		// 需要判断如果是资源型，则就默认加一个
 		ItemConfig config = itemConfigCache.itemMap.get(itemId);
+		Scene scene = dataCenter.getScene();
 		ItemData itemData = scene.getItemData();
 
 		if (config.getType() == ItemType.RES) {// 资源型道具列表里面始终只有一个道具
@@ -55,6 +56,7 @@ public class CreateItemModule {
 	 */
 	public void createEquipItemIfAbsent(int itemId) {
 		ItemConfig config = itemConfigCache.itemMap.get(itemId);
+		Scene scene = dataCenter.getScene();
 		ItemData itemData = scene.getItemData();
 
 		if (config.getType() == ItemType.ITEM) {

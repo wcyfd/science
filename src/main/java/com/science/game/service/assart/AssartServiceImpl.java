@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.science.game.cache.config.JobConfigCache;
+import com.science.game.cache.data.DataCenter;
 import com.science.game.entity.JobType;
 import com.science.game.entity.PlaceType;
 import com.science.game.entity.Scene;
@@ -18,6 +19,7 @@ import com.science.game.service.place.PlaceInternal;
 import com.science.game.service.village.VillageInternal;
 import com.science.game.service.work.IWork;
 import com.science.game.service.work.WorkInternal;
+import com.science.game.service.work.WorkService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,10 +37,13 @@ public class AssartServiceImpl extends AbstractService implements AssartService,
 	private WorkInternal workInternal;
 
 	@Autowired
+	private WorkService workService;
+
+	@Autowired
 	private JobConfigCache jobConfigCache;
 
 	@Autowired
-	private Scene scene;
+	private DataCenter dataCenter;
 
 	@Override
 	protected void dispatch(String cmd, List<String> args) {
@@ -65,6 +70,7 @@ public class AssartServiceImpl extends AbstractService implements AssartService,
 
 	@Override
 	public void workLoop(WorkData workData) {
+		Scene scene = dataCenter.getScene();
 		if (workData.getCurrent().get() < workData.getTotal()) {
 			int delta = 1;
 			workInternal.addWorkProgress(workData, delta);
@@ -79,8 +85,10 @@ public class AssartServiceImpl extends AbstractService implements AssartService,
 			workInternal.resetProgress(workData);
 
 			if (placeInternal.isMaxPlace())
-				workInternal.exitWork(workData);
+				workService.stop(workData.getVid());
 		}
+
+		villageInternal.think(workData.getVid());
 	}
 
 	@Override

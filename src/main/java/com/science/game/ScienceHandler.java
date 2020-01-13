@@ -2,7 +2,6 @@ package com.science.game;
 
 import org.springframework.stereotype.Component;
 
-import com.science.game.entity.Scene;
 import com.science.game.service.AbstractService;
 
 import game.quick.window.GameHandler;
@@ -22,5 +21,4 @@ public class ScienceHandler implements GameHandler {
 		cmd = arg1;
 		AbstractService.dispatchCmd(arg1);
 	}
-
 }
