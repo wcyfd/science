@@ -1,5 +1,7 @@
 package com.science.game.service.item;
 
+import java.util.List;
+
 import com.science.game.entity.Item;
 
 public interface ItemInternal {
@@ -39,4 +41,27 @@ public interface ItemInternal {
 	 */
 	boolean hasItemRecord(int itemId);
 
+	/**
+	 * 根据唯一id获得道具
+	 * 
+	 * @param itemId
+	 * @return
+	 */
+	Item getItemByOnlyId(int onlyId);
+
+	/**
+	 * 根据道具类型获得道具列表
+	 * 
+	 * @param itemId
+	 * @return
+	 */
+	List<Item> getItemList(int itemId);
+
+	/**
+	 * 移除道具
+	 * 
+	 * @param onlyId
+	 * @return
+	 */
+	Item removeItemByOnlyId(int onlyId);
 }

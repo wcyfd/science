@@ -90,7 +90,8 @@ public class ScienceView implements IView, ApplicationContextAware {
 			for (Item item : v.getItemData().getEquips().values()) {
 				if (item != null) {
 					sb.append(item.getId()).append(" ");
-					sb.append(item.getProto().getName()).append(",");
+					sb.append(item.getProto().getName()).append("(").append(item.getProto().getItemId()).append(")");
+					sb.append(",");
 				}
 			}
 			sb.append("]");

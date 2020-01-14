@@ -8,10 +8,10 @@ import org.springframework.stereotype.Service;
 
 import com.science.game.cache.data.DataCenter;
 import com.science.game.entity.Item;
+import com.science.game.entity.scene.ItemData;
 import com.science.game.service.AbstractService;
 import com.science.game.service.item.module.AddItemModule;
 import com.science.game.service.item.module.CreateItemModule;
-import com.science.game.service.item.module.EquipModule;
 import com.science.game.service.item.module.ItemInfoModule;
 
 @Service
@@ -24,9 +24,6 @@ public class ItemServiceImpl extends AbstractService implements ItemService, Ite
 	private CreateItemModule createItemModule;
 
 	@Autowired
-	private EquipModule equipModule;
-
-	@Autowired
 	private ItemInfoModule ItemInfoModule;
 
 	@Autowired
@@ -34,14 +31,7 @@ public class ItemServiceImpl extends AbstractService implements ItemService, Ite
 
 	@Override
 	protected void dispatch(String cmd, List<String> args) {
-		switch (cmd) {
-		case "equip":
-			this.equip(getInt(args, 0), getInt(args, 1));
-			break;
-		case "unequip":
-			this.unequip(getInt(args, 0), getInt(args, 1));
-			break;
-		}
+
 	}
 
 	@Override
@@ -52,16 +42,6 @@ public class ItemServiceImpl extends AbstractService implements ItemService, Ite
 	@Override
 	public void gc() {
 
-	}
-
-	@Override
-	public void equip(int vid, int onlyId) {
-		equipModule.equip(vid, onlyId);
-	}
-
-	@Override
-	public void unequip(int vid, int itemId) {
-		equipModule.unequip(vid, itemId);
 	}
 
 	@Override
@@ -91,8 +71,33 @@ public class ItemServiceImpl extends AbstractService implements ItemService, Ite
 
 	@Override
 	public boolean hasItemRecord(int itemId) {
-		Map<Integer,List<Item>> map = dataCenter.getScene().getItemData().getAllItemsByItemId();
+		Map<Integer, List<Item>> map = dataCenter.getScene().getItemData().getAllItemsByItemId();
 		return map.containsKey(itemId);
+	}
+
+	@Override
+	public Item getItemByOnlyId(int onlyId) {
+		return dataCenter.getScene().getItemData().getItemByOnlyId(onlyId);
+	}
+
+	@Override
+	public List<Item> getItemList(int itemId) {
+		return dataCenter.getScene().getItemData().getItemsByItemId(itemId);
+	}
+
+	@Override
+	public Item removeItemByOnlyId(int onlyId) {
+		ItemData itemData = dataCenter.getScene().getItemData();
+		Item item = itemData.getItemByOnlyId(onlyId);
+		if (item == null) {
+			return null;
+		}
+
+		int itemId = item.getProto().getItemId();
+		if (itemData.getItemsByItemId(itemId).remove(item)) {
+			return item;
+		}
+		return null;
 	}
 
 }
