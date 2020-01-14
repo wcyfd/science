@@ -150,6 +150,11 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 		}
 	}
 
+	/**
+	 * 开发成功
+	 * 
+	 * @param itemId
+	 */
 	private void successFunc(int itemId) {
 		itemInternal.createEquipItemSpace(itemId);
 		itemInternal.addItem(itemId, 1);
@@ -175,9 +180,16 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 		placeInternal.deletePlace(PlaceType.DEVELOP, itemId);
 	}
 
+	/**
+	 * 开发失败
+	 * 
+	 * @param itemId
+	 */
 	private void failedFunc(int itemId) {
+
 		List<ConsistConfig> list = consistConfigCache.consistMap.get(itemId);
 		if (!enoughConsistItem(list)) {// 如果材料不够了就停止工作
+			log.info("材料不足研发等待 itemId={}", itemId);
 			return;
 		}
 		Scene scene = dataCenter.getScene();
@@ -203,6 +215,7 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 			developer.getDevelopData().getPracticeMap().putIfAbsent(itemId, new AtomicInteger());
 			developer.getDevelopData().getPracticeMap().get(itemId).addAndGet(skillValue);
 		}
+		log.info("研发失败，次数加1 itemId={}", itemId);
 
 		labData.getTryCountMap().get(itemId).incrementAndGet();
 	}

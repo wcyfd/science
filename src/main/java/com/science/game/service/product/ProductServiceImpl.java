@@ -75,7 +75,6 @@ public class ProductServiceImpl extends AbstractService implements ProductServic
 	@Override
 	public void exitWork(WorkData workData) {
 		ProductData productData = villageInternal.getVillage(workData.getVid()).getProductData();
-		productData.setItemId(0);
 		productData.setNeedCostItem(false);
 	}
 
@@ -91,8 +90,8 @@ public class ProductServiceImpl extends AbstractService implements ProductServic
 				int needItemId = config.getNeedItemId();
 				int needCount = config.getCount();
 
-				if (!labInternal.isDeveloped(needItemId)) {
-					log.info("该道具不在Data.itemMap表中 {}", needItemId);
+				if (!labInternal.isDeveloped(itemId)) {
+					log.info("该道具没有研发过 itemId={}", itemId);
 					return;
 				}
 

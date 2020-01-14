@@ -78,6 +78,10 @@ public class VillageServiceImpl extends AbstractService implements VillageServic
 		Village village = villageInternal.getVillage(vid);
 
 		int jobId = village.getWorkData().getJobType().getJobId();
+
+		if (!thinkConfigCache.jobThinkMap.containsKey(jobId))
+			return;
+
 		// 检查当前职业,过滤出还没有开发成功的道具
 		List<Integer> targets = thinkConfigCache.jobThinkMap.get(jobId)// 获取该职业的所有可想到的道具
 				.stream()//

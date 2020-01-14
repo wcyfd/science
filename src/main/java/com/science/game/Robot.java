@@ -6,7 +6,6 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import com.science.game.service.item.ItemInternal;
 import com.science.game.service.lab.LabInternal;
 
 import game.quick.window.GameWindows;
@@ -17,9 +16,6 @@ public class Robot implements ApplicationListener<ContextRefreshedEvent> {
 
 	@Autowired
 	private GameWindows win;
-
-	@Autowired
-	private ItemInternal itemInternal;
 
 	@Autowired
 	private LabInternal labInternal;
@@ -41,14 +37,18 @@ public class Robot implements ApplicationListener<ContextRefreshedEvent> {
 		c("village.recruite");
 		c("village.recruite");
 		c("village.recruite");
+		c("village.recruite");
+		c("village.recruite");
 //		c("assart.assart 1");
+		c("mine.dig 1 1");
 		c("mine.dig 2 1");
-		c("forest.chop 1 2");
-//		until(() -> labInternal.getThinkingList().size() > 0);
-//		int itemId = labInternal.getThinkingList().get(0);
-//		c("lab.develop 4 " + itemId);
-//		until(() -> labInternal.isDeveloped(itemId));
-//		c("product.product 4 " + itemId);
+		c("forest.chop 3 2");
+		c("forest.chop 4 2");
+		until(() -> labInternal.getIdeaList().size() > 0);
+		int itemId = labInternal.getIdeaList().get(0);
+		c("lab.develop 5 " + itemId);
+		until(() -> labInternal.isDeveloped(itemId));
+		c("product.product 6 " + itemId);
 	}
 
 	private void c(String line) {
