@@ -75,7 +75,6 @@ public class VillageServiceImpl extends AbstractService implements VillageServic
 	@Override
 	public void think(int vid) {
 
-		log.info("思考 vid={}", vid);
 		Village village = villageInternal.getVillage(vid);
 
 		int jobId = village.getWorkData().getJobType().getJobId();

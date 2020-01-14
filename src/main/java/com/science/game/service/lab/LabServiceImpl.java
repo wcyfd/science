@@ -73,8 +73,6 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 		DevelopData developData = v.getDevelopData();
 		developData.setItemId(itemId);
 
-		dataCenter.getScene().getLabData().getTryCountMap().putIfAbsent(itemId, new AtomicInteger());
-
 		workInternal.beginWork(v.getWorkData(), JobType.DEVELOP, this);
 	}
 
@@ -159,6 +157,7 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 		LabData labData = scene.getLabData();
 
 		// 停止所有参与研发的村民该工作
+		log.info("研发成功,停止所有参与研发的村民该工作 itemId={} vid={}", itemId, labData.getTeamMap().get(itemId));
 		placeInternal.getPlace(PlaceType.DEVELOP, itemId).getVillageIds()
 				.forEach(vid -> workInternal.exitWork(villageInternal.getVillage(vid).getWorkData()));
 
@@ -170,6 +169,8 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 		new HashSet<>(placeInternal.getPlace(PlaceType.DEVELOP, itemId).getVillageIds()).stream()
 				.forEach(vid -> placeInternal.exit(villageInternal.getVillage(vid)));
 		labData.getTryCountMap().remove(itemId);
+		log.info("删除开发团队 itemId={}", itemId);
+		labData.getTeamMap().remove(itemId);// 删除开发团队
 		// 清空场地
 		placeInternal.deletePlace(PlaceType.DEVELOP, itemId);
 	}
@@ -208,12 +209,33 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 
 	@Override
 	public void enterWork(WorkData workData) {
+		int vid = workData.getVid();
+		Village v = villageInternal.getVillage(vid);
+		int itemId = v.getDevelopData().getItemId();
+
+		LabData labData = dataCenter.getScene().getLabData();
+
+		labData.getTryCountMap().putIfAbsent(itemId, new AtomicInteger());
+
+		// 加入团队
+
+		if (!labData.getTeamMap().containsKey(itemId)) {
+			labData.getTeamMap().putIfAbsent(itemId, new HashSet<>());
+		}
+		labData.getTeamMap().get(itemId).add(vid);
+		log.info("加入研发团队 vid={} itemId={}", vid, itemId);
 	}
 
 	@Override
 	public void exitWork(WorkData workData) {
 		Village v = villageInternal.getVillage(workData.getVid());
-		v.getDevelopData().setItemId(-1);
+
+		DevelopData developData = v.getDevelopData();
+		int itemId = developData.getItemId();
+		dataCenter.getScene().getLabData().getTeamMap().get(itemId).remove(v.getId());
+		developData.setItemId(-1);
+
+		log.info("退出研发团队 itemId={} vid={}", itemId, v.getId());
 	}
 
 	@Override
@@ -243,6 +265,7 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 
 	@Override
 	public void addNewIdea(int id) {
+		log.info("加入想法 itemId={}", id);
 		Scene scene = dataCenter.getScene();
 		LabData labData = scene.getLabData();
 		if (!isOldIdea(id)) {
@@ -253,7 +276,7 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 	@Override
 	public boolean isOldIdea(int id) {
 		Scene scene = dataCenter.getScene();
-		return scene.getLabData().getIdeaList().contains((Integer) id);
+		return isDeveloped(id) || scene.getLabData().getIdeaList().contains((Integer) id);
 	}
 
 	@Override

@@ -18,6 +18,8 @@ public class LabData {
 	private Map<Integer, AtomicInteger> developPoint = new ConcurrentHashMap<>();
 	// 尝试次数
 	private Map<Integer, AtomicInteger> tryCountMap = new ConcurrentHashMap<>();
+	// 开发团队
+	private Map<Integer, Set<Integer>> teamMap = new ConcurrentHashMap<>();
 
 	private List<Integer> ideaList = new ArrayList<>();
 
@@ -36,6 +38,15 @@ public class LabData {
 
 	public Map<Integer, AtomicInteger> getTryCountMap() {
 		return tryCountMap;
+	}
+
+	/**
+	 * 所有的开发团队
+	 * 
+	 * @return Map<道具id,Set<村民id>>
+	 */
+	public Map<Integer, Set<Integer>> getTeamMap() {
+		return teamMap;
 	}
 
 }

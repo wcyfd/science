@@ -41,6 +41,9 @@ public class ScienceView implements IView, ApplicationContextAware {
 	private ItemConfigCache itemConfigCache;
 
 	@Autowired
+	private LabInternal labInternal;
+
+	@Autowired
 	private DataCenter dataCenter;
 
 	@Override
@@ -74,10 +77,15 @@ public class ScienceView implements IView, ApplicationContextAware {
 			JobType jobType = workData.getJobType();
 			JobConfig jobConfig = (jobType == null || jobType == JobType.NULL) ? null
 					: jobMap.get(workData.getJobType().getJobId());
-			sb.append(jobConfig == null ? null : jobConfig.getJob());
-			if (jobType != JobType.DEVELOP) {
-				sb.append(" (").append(workData.getCurrent()).append("/").append(workData.getTotal()).append(")");
+			sb.append(jobConfig == null ? "空闲" : jobConfig.getJob());
+			if (jobType != JobType.NULL) {
+				if (jobType != JobType.DEVELOP) {
+					sb.append(" (").append(workData.getCurrent()).append("/").append(workData.getTotal()).append(")");
+				} else {
+					sb.append("(").append(labInternal.getTryCount(v.getDevelopData().getItemId())).append(")");
+				}
 			}
+
 			sb.append("[");
 			for (Item item : v.getItemData().getEquips().values()) {
 				if (item != null) {
