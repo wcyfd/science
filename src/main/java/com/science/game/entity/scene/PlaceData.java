@@ -7,17 +7,14 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.science.game.entity.Place;
+import com.science.game.entity.PlaceType;
 
 import lombok.Getter;
 import lombok.Setter;
 
 public class PlaceData {
-	@Getter
-	private Map<Integer, Place> resPlace = new HashMap<>();
-	@Getter
-	private Map<Integer, Place> itemPlace = new HashMap<>();
-	@Getter
-	private Map<Integer, Place> developPlace = new HashMap<>();
+
+	private Map<PlaceType, Map<Integer, Place>> placeTypeMap = new HashMap<>();
 	@Getter
 	private List<Integer> areaList = new ArrayList<>();
 	@Setter
@@ -26,6 +23,15 @@ public class PlaceData {
 
 	public PlaceData() {
 		this.increAreaId.set(-1);
+
+		PlaceType[] placeTypes = PlaceType.values();
+		for (PlaceType placeType : placeTypes) {
+			placeTypeMap.put(placeType, new HashMap<>());
+		}
+	}
+
+	public Map<Integer, Place> getPlaceMapByType(PlaceType type) {
+		return placeTypeMap.get(type);
 	}
 
 	public int getAreaId() {

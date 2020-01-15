@@ -2,6 +2,7 @@ package com.science.game.entity;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.science.game.entity.village.BuildData;
 import com.science.game.entity.village.DevelopData;
 import com.science.game.entity.village.ItemData;
 import com.science.game.entity.village.PlaceData;
@@ -25,6 +26,9 @@ public class Village {
 	@Getter
 	private ItemData itemData;
 
+	@Getter
+	private BuildData buildData;
+
 	public static Village create() {
 		Village v = new Village();
 		return v;
@@ -37,6 +41,7 @@ public class Village {
 		this.developData = new DevelopData(id);
 		this.productData = new ProductData(id);
 		this.itemData = new ItemData(id);
+		this.buildData = new BuildData(id);
 	}
 
 	public int getId() {

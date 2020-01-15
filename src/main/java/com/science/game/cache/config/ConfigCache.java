@@ -6,4 +6,5 @@ public class ConfigCache {
 	public static ConsistConfigCache consist;
 	public static JobConfigCache job;
 	public static ThinkConfigCache think;
+	public static BuildConfigCache build;
 }

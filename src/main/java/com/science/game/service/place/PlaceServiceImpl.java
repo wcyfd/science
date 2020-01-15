@@ -72,32 +72,18 @@ public class PlaceServiceImpl extends AbstractService implements PlaceInternal {
 	@Override
 	public Place getPlace(PlaceType type, int id) {
 		Scene scene = dataCenter.getScene();
-		if (type == PlaceType.PLACE) {
-			return scene.getPlaceData().getResPlace().get(id);
-		} else if (type == PlaceType.ITEM) {
-			return scene.getPlaceData().getItemPlace().get(id);
-		} else if (type == PlaceType.DEVELOP) {
-			return scene.getPlaceData().getDevelopPlace().get(id);
-		}
+		return scene.getPlaceData().getPlaceMapByType(type).get(id);
 
-		log.info("读取地点失败 placeType={},placeId={}", type, id);
-		return null;
 	}
 
 	@Override
 	public Place createIfAbsent(PlaceType type, int id) {
 		Scene scene = dataCenter.getScene();
-		Map<Integer, Place> placeMap = null;
-		if (type == PlaceType.ITEM) {
-			placeMap = scene.getPlaceData().getItemPlace();
-		} else if (type == PlaceType.PLACE) {
-			placeMap = scene.getPlaceData().getResPlace();
-		} else if (type == PlaceType.DEVELOP) {
-			placeMap = scene.getPlaceData().getDevelopPlace();
-		}
-		if (placeMap == null) {
+
+		if (type == null)
 			return null;
-		}
+
+		Map<Integer, Place> placeMap = scene.getPlaceData().getPlaceMapByType(type);
 
 		if (!placeMap.containsKey(id)) {
 			placeMap.putIfAbsent(id, Place.create(id));
@@ -115,25 +101,10 @@ public class PlaceServiceImpl extends AbstractService implements PlaceInternal {
 	@Override
 	public void deletePlace(PlaceType placeType, int id) {
 		PlaceData placeData = dataCenter.getScene().getPlaceData();
-		Map<Integer, Place> placeMap = null;
+		if (placeType == null)
+			return;
 
-		switch (placeType) {
-		case DEVELOP:
-			placeMap = placeData.getDevelopPlace();
-			break;
-		case ITEM:
-			placeMap = placeData.getItemPlace();
-			break;
-		case PLACE:
-			placeMap = placeData.getResPlace();
-			break;
-		default:
-			log.error("没有该场地 id={}", id);
-			break;
-		}
+		placeData.getPlaceMapByType(placeType).remove(id);
 
-		if (placeMap != null) {
-			placeMap.remove(id);
-		}
 	}
 }
