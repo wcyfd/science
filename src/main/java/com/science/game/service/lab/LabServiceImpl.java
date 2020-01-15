@@ -249,6 +249,8 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 		developData.setItemId(-1);
 
 		log.info("退出研发团队 itemId={} vid={}", itemId, v.getId());
+		
+		placeInternal.exit(v);
 	}
 
 	@Override

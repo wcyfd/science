@@ -8,6 +8,8 @@ public class BuildData {
 
 	private int buildOnlyId;
 
+	private int moduleId;// 正在进行建造的模块id
+
 	public BuildData(int vid) {
 		this.vid = vid;
 	}
@@ -18,5 +20,13 @@ public class BuildData {
 
 	public void setBuildOnlyId(int buildOnlyId) {
 		this.buildOnlyId = buildOnlyId;
+	}
+
+	public int getModuleId() {
+		return moduleId;
+	}
+
+	public void setModuleId(int moduleId) {
+		this.moduleId = moduleId;
 	}
 }

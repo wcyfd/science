@@ -51,6 +51,7 @@ public class PlaceServiceImpl extends AbstractService implements PlaceInternal {
 	public void enter(Village v, PlaceType placeType, int placeId) {
 		exit(v);
 
+		log.info("村民 vid={} 进入位置 type={} ,placeId={}", v.getId(), placeType, placeId);
 		Place place = this.getPlace(placeType, placeId);
 		v.getPlaceData().setPlace(place);
 		v.getPlaceData().setPlaceType(placeType);
@@ -62,11 +63,15 @@ public class PlaceServiceImpl extends AbstractService implements PlaceInternal {
 	public void exit(Village v) {
 		Place place = v.getPlaceData().getPlace();
 
+		log.info("村民 vid={} 退出位置 placeType={},placeId={} ", v.getId(), v.getPlaceData().getPlaceType(),
+				place != null ? place.getPlaceId() : null);
+
 		if (place != null)
 			place.getVillageIds().remove(v.getId());
 		v.getPlaceData().setPlace(null);
 
 		v.getPlaceData().setPlaceType(null);
+
 	}
 
 	@Override

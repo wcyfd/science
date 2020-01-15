@@ -25,7 +25,6 @@ public class Village {
 	private ProductData productData;
 	@Getter
 	private ItemData itemData;
-
 	@Getter
 	private BuildData buildData;
 

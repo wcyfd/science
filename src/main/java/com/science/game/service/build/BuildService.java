@@ -11,11 +11,11 @@ import com.science.game.service.ServiceInterface;
 public interface BuildService extends ServiceInterface {
 
 	/**
-	 * 开始建造
+	 * 申请建造
 	 * 
 	 * @param buildId
 	 */
-	void startBuild(int buildId);
+	void applyBuild(int buildId);
 
 	/**
 	 * 建造模块
@@ -26,10 +26,11 @@ public interface BuildService extends ServiceInterface {
 	void build(int vid, int moduleId);
 
 	/**
-	 * 加入建造
+	 * 加入团队
 	 * 
 	 * @param vid
 	 * @param buildOnlyId
 	 */
 	void joinTeam(int vid, int buildOnlyId);
+
 }

@@ -74,8 +74,11 @@ public class ProductServiceImpl extends AbstractService implements ProductServic
 
 	@Override
 	public void exitWork(WorkData workData) {
-		ProductData productData = villageInternal.getVillage(workData.getVid()).getProductData();
+		Village v = villageInternal.getVillage(workData.getVid());
+		ProductData productData = v.getProductData();
 		productData.setNeedCostItem(false);
+
+		placeInternal.exit(v);
 	}
 
 	@Override
