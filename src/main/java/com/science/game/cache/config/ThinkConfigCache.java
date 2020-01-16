@@ -21,11 +21,11 @@ public class ThinkConfigCache implements IConfigCache {
 	public Map<Integer, List<ThinkConfig>> jobThinkMap = new HashMap<>();
 
 	@Override
-	public void load(List<String> values) {
+	public void load() {
 		ThinkConfig config = new ThinkConfig();
-		config.setId(getInt(values, 0));
-		config.setJobId(getInt(values, 1));
-		config.setItemId(getInt(values, 2));
+		config.setId(i(0));
+		config.setJobId(i(1));
+		config.setItemId(i(2));
 
 		thinkMap.put(config.getId(), config);
 		List<ThinkConfig> thinkItemList = jobThinkMap.get(config.getJobId());

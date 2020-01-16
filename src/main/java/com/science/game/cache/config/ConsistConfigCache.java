@@ -17,11 +17,11 @@ public class ConsistConfigCache implements IConfigCache {
 	public Map<Integer, Set<Integer>> parentMap = new HashMap<>();
 
 	@Override
-	public void load(List<String> values) {
+	public void load() {
 		ConsistConfig config = new ConsistConfig();
-		config.setItemId(getInt(values, 0));
-		config.setNeedItemId(getInt(values, 1));
-		config.setCount(getInt(values, 2));
+		config.setItemId(i(0));
+		config.setNeedItemId(i(1));
+		config.setCount(i(2));
 
 		List<ConsistConfig> list = consistMap.get(config.getItemId());
 		if (list == null) {

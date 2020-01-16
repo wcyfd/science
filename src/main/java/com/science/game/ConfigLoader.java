@@ -23,19 +23,25 @@ public class ConfigLoader {
 
 		log.info("Load config {}", file);
 
+		IConfigCache.threadLocals.set(new LinkedList<String>());
+		List<String> list = IConfigCache.threadLocals.get();
+
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 			String line = br.readLine();// 列名跳过
 			while ((line = br.readLine()) != null) {
+				list.clear();
 				StringTokenizer token = new StringTokenizer(line, ",");
-				List<String> list = new LinkedList<>();
 				while (token.hasMoreTokens()) {
 					list.add(token.nextToken());
 				}
-				cache.load(list);
+				cache.load();
+				list.clear();
 			}
 		} catch (Exception e) {
 			log.error("配置表加载报错" + file, e);
 			System.exit(0);
+		} finally {
+			IConfigCache.threadLocals.set(null);
 		}
 	}
 }

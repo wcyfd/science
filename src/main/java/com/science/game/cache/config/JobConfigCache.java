@@ -1,7 +1,6 @@
 package com.science.game.cache.config;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
@@ -14,13 +13,13 @@ public class JobConfigCache implements IConfigCache {
 	public Map<Integer, JobConfig> jobMap = new HashMap<>();
 
 	@Override
-	public void load(List<String> values) {
+	public void load() {
 		JobConfig config = new JobConfig();
 
-		config.setId(getInt(values, 0));
-		config.setJob(values.get(1));
-		config.setUnitTotal(getInt(values, 2));
-		config.setUnitVelocity(getInt(values, 3));
+		config.setId(i(0));
+		config.setJob(str(1));
+		config.setUnitTotal(i(2));
+		config.setUnitVelocity(i(3));
 
 		jobMap.put(config.getId(), config);
 	}

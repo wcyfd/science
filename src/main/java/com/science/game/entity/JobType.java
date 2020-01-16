@@ -1,7 +1,7 @@
 package com.science.game.entity;
 
 public enum JobType {
-	NULL(-1), ASSART(1), DIG(2), CHOP(3), DEVELOP(4), PRODUCT(5);
+	NULL(-1), ASSART(1), DIG(2), CHOP(3), DEVELOP(4), PRODUCT(5), BUILD(6);
 
 	JobType(int jobId) {
 		this.jobId = jobId;
@@ -26,7 +26,11 @@ public enum JobType {
 			return DEVELOP;
 		} else if (jobId == 5) {
 			return PRODUCT;
-		} else {
+		} else if (jobId == 6) {
+			return BUILD;
+		}
+
+		else {
 			return null;
 		}
 	}

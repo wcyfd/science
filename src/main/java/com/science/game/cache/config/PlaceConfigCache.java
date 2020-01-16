@@ -1,7 +1,6 @@
 package com.science.game.cache.config;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
@@ -14,11 +13,11 @@ public class PlaceConfigCache implements IConfigCache {
 	public Map<Integer, PlaceConfig> placeMap = new HashMap<>();
 
 	@Override
-	public void load(List<String> values) {
+	public void load() {
 		PlaceConfig config = new PlaceConfig();
-		config.setPlaceId(getInt(values, 0));
-		config.setName(values.get(1));
-		config.setItemId(getInt(values, 2));
+		config.setPlaceId(i(0));
+		config.setName(str(1));
+		config.setItemId(i(2));
 
 		placeMap.put(config.getPlaceId(), config);
 	}
