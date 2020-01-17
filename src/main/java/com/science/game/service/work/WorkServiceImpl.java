@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.aimfd.game.tool.reserve.Reserve;
 import com.science.game.entity.JobType;
+import com.science.game.entity.ProgressData;
 import com.science.game.entity.village.WorkData;
 import com.science.game.service.AbstractService;
 import com.science.game.service.village.VillageInternal;
@@ -49,27 +50,27 @@ public class WorkServiceImpl extends AbstractService implements WorkInternal, Wo
 	}
 
 	@Override
-	public void addWorkProgress(WorkData workData, int delta) {
-		Reserve reserve = Reserve.builder().store(workData.getCurrent().get()).delta(delta)
-				.capacity(workData.getTotal()).fill(true).useAll(true).build();
+	public void addWorkProgress(ProgressData progressData, int delta) {
+		Reserve reserve = Reserve.builder().store(progressData.getCurrent().get()).delta(delta)
+				.capacity(progressData.getTotal()).fill(true).useAll(true).build();
 		if (reserve.transfer()) {
-			workData.getCurrent().addAndGet(reserve.getRealDelta());
+			progressData.getCurrent().addAndGet(reserve.getRealDelta());
 		}
 	}
 
 	@Override
-	public boolean isWorkComplete(WorkData workData) {
-		return workData.getCurrent().get() >= workData.getTotal();
+	public boolean isWorkComplete(ProgressData progressData) {
+		return progressData.getCurrent().get() >= progressData.getTotal();
 	}
 
 	@Override
-	public void resetProgress(WorkData workData) {
-		workData.getCurrent().set(0);
+	public void resetProgress(ProgressData progressData) {
+		progressData.getCurrent().set(0);
 	}
 
 	@Override
-	public void setProgress(WorkData workData, int val) {
-		workData.getCurrent().set(val);
+	public void setProgress(ProgressData progressData, int val) {
+		progressData.getCurrent().set(val);
 	}
 
 	@Override

@@ -8,7 +8,7 @@ public interface ItemInternal {
 
 	/**
 	 * 
-	 * 改变道具数量
+	 * 改变道具数量,该方法是彻底删除和添加的方法
 	 * 
 	 * @param item
 	 * @param count
@@ -64,4 +64,14 @@ public interface ItemInternal {
 	 * @return
 	 */
 	Item removeItemByOnlyId(int onlyId);
+
+	/**
+	 * 根据道具类型移除
+	 * 
+	 * @param itemId
+	 * @param count
+	 * @return
+	 */
+	List<Item> extractItem(int itemId, int count);
+
 }

@@ -1,26 +1,19 @@
 package com.science.game.entity.village;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.science.game.entity.JobType;
+import com.science.game.entity.ProgressData;
 import com.science.game.service.work.IWork;
 import com.science.game.service.work.WorkTask;
 
 import lombok.Getter;
 import lombok.Setter;
 
-public class WorkData {
+public class WorkData extends ProgressData {
 	@Getter
 	private int vid;
 	@Getter
 	@Setter
 	private WorkTask task;
-
-	@Getter
-	private AtomicInteger current = new AtomicInteger();
-	@Getter
-	@Setter
-	private int total;
 
 	@Getter
 	private JobType jobType;

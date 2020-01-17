@@ -24,7 +24,7 @@ public class ModuleConfigCache implements IConfigCache {
 		config.setModuleId(i(2));
 		config.setModuleName(str(3));
 		config.setNeedItemId(i(4));
-		config.setNeedCount(i(5));
+		config.setTotal(i(5));
 
 		moduleMap.put(config.getOnlyId(), config);
 

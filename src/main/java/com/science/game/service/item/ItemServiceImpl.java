@@ -1,5 +1,6 @@
 package com.science.game.service.item;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import com.science.game.entity.scene.ItemData;
 import com.science.game.service.AbstractService;
 import com.science.game.service.item.module.AddItemModule;
 import com.science.game.service.item.module.CreateItemModule;
+import com.science.game.service.item.module.ExtractItemModule;
 import com.science.game.service.item.module.ItemInfoModule;
 
 @Service
@@ -25,6 +27,9 @@ public class ItemServiceImpl extends AbstractService implements ItemService, Ite
 
 	@Autowired
 	private ItemInfoModule ItemInfoModule;
+
+	@Autowired
+	private ExtractItemModule extractItemModule;
 
 	@Autowired
 	private DataCenter dataCenter;
@@ -98,6 +103,11 @@ public class ItemServiceImpl extends AbstractService implements ItemService, Ite
 			return item;
 		}
 		return null;
+	}
+
+	@Override
+	public List<Item> extractItem(int itemId, int count) {
+		return extractItemModule.extractItemByItemId(itemId, count);
 	}
 
 }

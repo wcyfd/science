@@ -11,7 +11,7 @@ import com.science.game.cache.config.ModuleConfigCache;
 import com.science.game.cache.data.DataCenter;
 import com.science.game.entity.Build;
 import com.science.game.entity.PlaceType;
-import com.science.game.entity.build.ModuleWorkData;
+import com.science.game.entity.build.InstallItem;
 import com.science.game.entity.config.ModuleConfig;
 import com.science.game.entity.scene.BuildData;
 import com.science.game.service.place.PlaceInternal;
@@ -47,7 +47,6 @@ public class ApplyBuildModule {
 	 * @param buildData
 	 */
 	private void registBuild(Build build) {
-
 		BuildData buildData = dataCenter.getScene().getBuildData();
 		int buildId = build.getId();
 		buildData.getOnlyIdBuildMap().put(build.getId(), build);// 加入唯一id表
@@ -67,8 +66,12 @@ public class ApplyBuildModule {
 	private void initBuild(Build build) {
 		List<ModuleConfig> moduleConfigList = moduleConfigCache.buildModuleMap.get(build.getProto().getBuildId());
 		for (ModuleConfig config : moduleConfigList) {
-			ModuleWorkData workData = new ModuleWorkData(build.getId());
-			build.getModuleData().getWorkDataMap().put(config.getModuleId(), workData);
+			InstallItem installItem = InstallItem.create(build.getProto().getBuildId(), config.getModuleId());
+			installItem.setBuild(build);
+			installItem.getCurrent().set(0);
+			installItem.setTotal(config.getTotal());
+
+			build.getModuleData().getInstallItems().put(config.getModuleId(), installItem);
 		}
 	}
 }

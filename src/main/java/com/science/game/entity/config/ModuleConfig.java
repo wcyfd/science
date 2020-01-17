@@ -9,5 +9,5 @@ public class ModuleConfig {
 	private int moduleId;
 	private String moduleName;
 	private int needItemId;
-	private int needCount;
+	private int total;
 }

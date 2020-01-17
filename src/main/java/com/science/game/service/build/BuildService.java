@@ -15,7 +15,7 @@ public interface BuildService extends ServiceInterface {
 	 * 
 	 * @param buildId
 	 */
-	void applyBuild(int buildId);
+	void apply(int buildId);
 
 	/**
 	 * 建造模块
@@ -31,6 +31,6 @@ public interface BuildService extends ServiceInterface {
 	 * @param vid
 	 * @param buildOnlyId
 	 */
-	void joinTeam(int vid, int buildOnlyId);
+	void join(int vid, int buildOnlyId);
 
 }

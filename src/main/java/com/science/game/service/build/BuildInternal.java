@@ -1,5 +1,12 @@
 package com.science.game.service.build;
 
-public interface BuildInternal {
+import com.science.game.entity.Build;
 
+public interface BuildInternal {
+	/**
+	 * 
+	 * @param build
+	 * @return
+	 */
+	void checkComplete(Build build);
 }

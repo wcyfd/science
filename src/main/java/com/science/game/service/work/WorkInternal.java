@@ -1,8 +1,14 @@
 package com.science.game.service.work;
 
 import com.science.game.entity.JobType;
+import com.science.game.entity.ProgressData;
 import com.science.game.entity.village.WorkData;
 
+/**
+ * 
+ * @author aimfd
+ *
+ */
 public interface WorkInternal {
 
 	/**
@@ -19,21 +25,21 @@ public interface WorkInternal {
 	 * @param v
 	 * @param delta
 	 */
-	void addWorkProgress(WorkData workData, int delta);
+	void addWorkProgress(ProgressData progressData, int delta);
 
 	/**
 	 * 工作是否完成
 	 * 
 	 * @param v
 	 */
-	boolean isWorkComplete(WorkData workData);
+	boolean isWorkComplete(ProgressData progressData);
 
 	/**
 	 * 重置进度
 	 * 
 	 * @param v
 	 */
-	void resetProgress(WorkData workData);
+	void resetProgress(ProgressData progressData);
 
 	/**
 	 * 设置进度
@@ -41,7 +47,7 @@ public interface WorkInternal {
 	 * @param workData
 	 * @param val
 	 */
-	void setProgress(WorkData workData, int val);
+	void setProgress(ProgressData progressData, int val);
 
 	/**
 	 * 退出工作

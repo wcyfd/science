@@ -4,19 +4,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 import lombok.Getter;
+import lombok.Setter;
 
+/**
+ * 模块数据
+ * 
+ * @author heyue
+ *
+ */
 public class ModuleData {
 	@Getter
 	private int id;
 	@Getter
-	private Map<Integer, ModuleWorkData> workDataMap = new HashMap<>();
+	@Setter
+	private boolean finish;
+	@Getter
+	private Map<Integer, InstallItem> installItems = new HashMap<>();
 
 	public ModuleData(int id) {
 		this.id = id;
 	}
 
-	public ModuleWorkData getWorkDataByModuleId(int id) {
-		return workDataMap.get(id);
+	public InstallItem getModuleId(int id) {
+		return installItems.get(id);
 	}
 
 }
