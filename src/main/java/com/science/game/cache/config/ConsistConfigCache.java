@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
+import com.science.game.I;
 import com.science.game.entity.config.ConsistConfig;
 
 @Component
@@ -17,11 +18,11 @@ public class ConsistConfigCache implements IConfigCache {
 	public Map<Integer, Set<Integer>> parentMap = new HashMap<>();
 
 	@Override
-	public void load() {
+	public void load(I i) {
 		ConsistConfig config = new ConsistConfig();
-		config.setItemId(i(0));
-		config.setNeedItemId(i(1));
-		config.setCount(i(2));
+		config.setItemId(i.i());
+		config.setNeedItemId(i.i());
+		config.setCount(i.i());
 
 		List<ConsistConfig> list = consistMap.get(config.getItemId());
 		if (list == null) {

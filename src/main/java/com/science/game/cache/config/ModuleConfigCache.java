@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
+import com.science.game.I;
 import com.science.game.entity.config.ModuleConfig;
 
 @Component
@@ -17,20 +18,20 @@ public class ModuleConfigCache implements IConfigCache {
 	public Map<Integer, Map<Integer, ModuleConfig>> buildModuleIdMap = new HashMap<>();
 
 	@Override
-	public void load() {
+	public void load(I i) {
 		ModuleConfig config = new ModuleConfig();
-		config.setOnlyId(i(0));
-		config.setBuildId(i(1));
-		config.setModuleId(i(2));
-		config.setModuleName(str(3));
-		config.setNeedItemId(i(4));
-		config.setTotal(i(5));
+		config.setOnlyId(i.i());
+		config.setBuildId(i.i());
+		config.setModuleId(i.i());
+		config.setModuleName(i.str());
+		config.setNeedItemId(i.i());
+		config.setTotal(i.i());
 
 		moduleMap.put(config.getOnlyId(), config);
 
 		if (!buildModuleMap.containsKey(config.getBuildId()))
 			buildModuleMap.putIfAbsent(config.getBuildId(), new ArrayList<>());
-		buildModuleMap.get(config.getOnlyId()).add(config);
+		buildModuleMap.get(config.getBuildId()).add(config);
 
 		if (!buildModuleIdMap.containsKey(config.getBuildId()))
 			buildModuleIdMap.putIfAbsent(config.getBuildId(), new HashMap<>());

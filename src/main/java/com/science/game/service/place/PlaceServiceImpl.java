@@ -1,12 +1,12 @@
 package com.science.game.service.place;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.science.game.I;
 import com.science.game.cache.data.DataCenter;
 import com.science.game.entity.Place;
 import com.science.game.entity.PlaceType;
@@ -28,7 +28,7 @@ public class PlaceServiceImpl extends AbstractService implements PlaceInternal {
 	private PlaceInternal placeInternal;
 
 	@Override
-	protected void dispatch(String cmd, List<String> args) {
+	protected void dispatch(String cmd, I i) {
 
 	}
 

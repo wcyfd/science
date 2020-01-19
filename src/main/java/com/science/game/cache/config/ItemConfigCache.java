@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
+import com.science.game.I;
 import com.science.game.entity.config.ItemConfig;
 
 @Component
@@ -13,18 +14,18 @@ public class ItemConfigCache implements IConfigCache {
 	public Map<Integer, ItemConfig> itemMap = new HashMap<>();
 
 	@Override
-	public void load() {
+	public void load(I i) {
 		ItemConfig config = new ItemConfig();
 
-		config.setItemId(i(0));
-		config.setName(str(1));
-		config.setType(ItemConfig.ItemType.valueOf(str(2)));
-		config.setPractice(i(3));
-		config.setDevelopPoint(i(4));
-		config.setEffect(i(5));
-		config.setAge(i(6));
-		config.setUnitTotal(i(7));
-		config.setUnitVelocity(i(8));
+		config.setItemId(i.i());
+		config.setName(i.str());
+		config.setType(ItemConfig.ItemType.valueOf(i.str()));
+		config.setPractice(i.i());
+		config.setDevelopPoint(i.i());
+		config.setEffect(i.i());
+		config.setAge(i.i());
+		config.setUnitTotal(i.i());
+		config.setUnitVelocity(i.i());
 
 		itemMap.put(config.getItemId(), config);
 	}

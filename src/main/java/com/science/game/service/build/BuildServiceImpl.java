@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.science.game.I;
 import com.science.game.cache.data.DataCenter;
 import com.science.game.entity.Build;
 import com.science.game.entity.Item;
@@ -53,16 +54,16 @@ public class BuildServiceImpl extends AbstractService implements BuildService, B
 	private BuildInternal buildInternal;
 
 	@Override
-	protected void dispatch(String cmd, List<String> args) {
+	protected void dispatch(String cmd, I i) {
 		switch (cmd) {
 		case "apply":
-			apply(getInt(args, 0));
+			apply(i.i());
 			break;
 		case "build":
-			build(getInt(args, 0), getInt(args, 1));
+			build(i.i(), i.i());
 			break;
 		case "join":
-			join(getInt(args, 0), getInt(args, 1));
+			join(i.i(),i.i());
 			break;
 		}
 

@@ -2,7 +2,6 @@ package com.science.game.service;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -10,6 +9,9 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.science.game.DefaultI;
+import com.science.game.I;
 
 import game.quick.window.GameWindows;
 import game.quick.window.Task;
@@ -19,14 +21,15 @@ public abstract class AbstractService {
 	@Autowired
 	private GameWindows gameWindows;
 
+	// 入参获取值的接口
+	private static final DefaultI REQUEST_PARAMS_INTERFACE = new DefaultI();
+
 	public static void dispatchCmd(String cmd) {
 		StringTokenizer cmdToken = new StringTokenizer(cmd);
 		String code = cmdToken.nextToken(" ");
 		if (code != null && HANDLE.containsKey(code)) {
-			List<String> args = new LinkedList<String>();
-			while (cmdToken.hasMoreTokens()) {
-				args.add(cmdToken.nextToken(" "));
-			}
+			List<String> args = REQUEST_PARAMS_INTERFACE.getParams();
+			injectParams(cmdToken, args);
 			cmdToken = null;
 
 			int idx = code.lastIndexOf(".");
@@ -34,7 +37,8 @@ public abstract class AbstractService {
 				String action = new String(code.substring(idx + 1, code.length()));
 				AbstractService service = HANDLE.get(code);
 				try {
-					service.dispatch(action, args);
+					service.dispatch(action, REQUEST_PARAMS_INTERFACE);
+					REQUEST_PARAMS_INTERFACE.cleanParams();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -42,7 +46,13 @@ public abstract class AbstractService {
 		}
 	}
 
-	protected abstract void dispatch(String cmd, List<String> args);
+	private static void injectParams(StringTokenizer cmdToken, List<String> args) {
+		while (cmdToken.hasMoreTokens()) {
+			args.add(cmdToken.nextToken(" "));
+		}
+	}
+
+	protected abstract void dispatch(String cmd, I params);
 
 	public void initService() {
 		registHandle();

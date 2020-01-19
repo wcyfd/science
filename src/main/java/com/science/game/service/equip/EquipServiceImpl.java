@@ -1,10 +1,9 @@
 package com.science.game.service.equip;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.science.game.I;
 import com.science.game.entity.Item;
 import com.science.game.entity.Village;
 import com.science.game.service.AbstractService;
@@ -24,13 +23,13 @@ public class EquipServiceImpl extends AbstractService implements EquipService {
 	private VillageInternal villageInternal;
 
 	@Override
-	protected void dispatch(String cmd, List<String> args) {
+	protected void dispatch(String cmd, I i) {
 		switch (cmd) {
 		case "equip":
-			this.equip(getInt(args, 0), getInt(args, 1));
+			this.equip(i.i(), i.i());
 			break;
 		case "unequip":
-			this.unequip(getInt(args, 0), getInt(args, 1));
+			this.unequip(i.i(), i.i());
 			break;
 		}
 	}

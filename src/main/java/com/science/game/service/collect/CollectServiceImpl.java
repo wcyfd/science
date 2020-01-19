@@ -1,10 +1,9 @@
 package com.science.game.service.collect;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.science.game.I;
 import com.science.game.cache.config.JobConfigCache;
 import com.science.game.cache.config.PlaceConfigCache;
 import com.science.game.cache.data.DataCenter;
@@ -46,7 +45,7 @@ public class CollectServiceImpl extends AbstractService implements CollectIntern
 	private DataCenter dataCenter;
 
 	@Override
-	protected void dispatch(String cmd, List<String> args) {
+	protected void dispatch(String cmd, I i) {
 
 	}
 

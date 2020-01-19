@@ -1,10 +1,9 @@
 package com.science.game.service.mine;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.science.game.I;
 import com.science.game.entity.JobType;
 import com.science.game.service.AbstractService;
 import com.science.game.service.collect.CollectInternal;
@@ -21,10 +20,10 @@ public class MineServiceImpl extends AbstractService implements MineService {
 	}
 
 	@Override
-	protected void dispatch(String cmd, List<String> args) {
+	protected void dispatch(String cmd, I i) {
 		switch (cmd) {
 		case "dig":
-			dig(getInt(args, 0), getInt(args, 1));
+			dig(i.i(),i.i());
 			break;
 		}
 	}

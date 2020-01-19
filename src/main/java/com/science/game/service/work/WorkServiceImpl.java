@@ -1,11 +1,10 @@
 package com.science.game.service.work;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.aimfd.game.tool.reserve.Reserve;
+import com.science.game.I;
 import com.science.game.entity.JobType;
 import com.science.game.entity.ProgressData;
 import com.science.game.entity.village.WorkData;
@@ -19,10 +18,10 @@ public class WorkServiceImpl extends AbstractService implements WorkInternal, Wo
 	private VillageInternal villageInternal;
 
 	@Override
-	protected void dispatch(String cmd, List<String> args) {
+	protected void dispatch(String cmd, I i) {
 		switch (cmd) {
 		case "stop":
-			stop(getInt(args, 0));
+			stop(i.i());
 			break;
 		}
 	}

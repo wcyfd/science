@@ -1,13 +1,13 @@
 package com.science.game.service.product;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.aimfd.game.tool.reserve.Reserve;
+import com.science.game.I;
 import com.science.game.cache.config.ConsistConfigCache;
 import com.science.game.cache.config.ItemConfigCache;
 import com.science.game.entity.JobType;
@@ -139,10 +139,10 @@ public class ProductServiceImpl extends AbstractService implements ProductServic
 	}
 
 	@Override
-	protected void dispatch(String cmd, List<String> args) {
+	protected void dispatch(String cmd, I i) {
 		switch (cmd) {
 		case "product":
-			product(getInt(args, 0), getInt(args, 1));
+			product(i.i(),i.i());
 			break;
 		}
 	}

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
+import com.science.game.I;
 import com.science.game.entity.config.JobConfig;
 
 @Component
@@ -13,13 +14,13 @@ public class JobConfigCache implements IConfigCache {
 	public Map<Integer, JobConfig> jobMap = new HashMap<>();
 
 	@Override
-	public void load() {
+	public void load(I i) {
 		JobConfig config = new JobConfig();
 
-		config.setId(i(0));
-		config.setJob(str(1));
-		config.setUnitTotal(i(2));
-		config.setUnitVelocity(i(3));
+		config.setId(i.i());
+		config.setJob(i.str());
+		config.setUnitTotal(i.i());
+		config.setUnitVelocity(i.i());
 
 		jobMap.put(config.getId(), config);
 	}

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
+import com.science.game.I;
 import com.science.game.entity.config.BuildConfig;
 
 @Component
@@ -13,10 +14,10 @@ public class BuildConfigCache implements IConfigCache {
 	public Map<Integer, BuildConfig> buildMap = new HashMap<>();
 
 	@Override
-	public void load() {
+	public void load(I i) {
 		BuildConfig config = new BuildConfig();
-		config.setBuildId(i(0));
-		config.setName(str(1));
+		config.setBuildId(i.i());
+		config.setName(i.str());
 
 		buildMap.put(config.getBuildId(), config);
 	}

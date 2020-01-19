@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.science.game.I;
 import com.science.game.cache.config.ConsistConfigCache;
 import com.science.game.cache.config.ItemConfigCache;
 import com.science.game.cache.data.DataCenter;
@@ -264,10 +265,10 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 	}
 
 	@Override
-	protected void dispatch(String cmd, List<String> args) {
+	protected void dispatch(String cmd, I i) {
 		switch (cmd) {
 		case "develop":
-			develop(getInt(args, 0), getInt(args, 1));
+			develop(i.i(),i.i());
 			break;
 		}
 	}

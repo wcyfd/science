@@ -1,10 +1,9 @@
 package com.science.game.service.assart;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.science.game.I;
 import com.science.game.cache.config.JobConfigCache;
 import com.science.game.cache.data.DataCenter;
 import com.science.game.entity.JobType;
@@ -46,10 +45,10 @@ public class AssartServiceImpl extends AbstractService implements AssartService,
 	private DataCenter dataCenter;
 
 	@Override
-	protected void dispatch(String cmd, List<String> args) {
+	protected void dispatch(String cmd, I i) {
 		switch (cmd) {
 		case "assart":
-			assart(getInt(args, 0));
+			assart(i.i());
 			break;
 		}
 	}
