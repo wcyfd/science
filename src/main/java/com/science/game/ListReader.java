@@ -3,7 +3,7 @@ package com.science.game;
 import java.util.LinkedList;
 import java.util.List;
 
-public class DefaultI implements I {
+public class ListReader implements ParamReader {
 	private ThreadLocal<List<String>> SAFE_REQUEST = new ThreadLocal<>();
 	private ThreadLocal<Integer> SAFE_REQUEST_IDX = new ThreadLocal<>();
 

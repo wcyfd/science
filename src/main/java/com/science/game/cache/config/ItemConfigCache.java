@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import com.science.game.I;
+import com.science.game.ParamReader;
 import com.science.game.entity.config.ItemConfig;
 
 @Component
@@ -14,7 +14,7 @@ public class ItemConfigCache implements IConfigCache {
 	public Map<Integer, ItemConfig> itemMap = new HashMap<>();
 
 	@Override
-	public void load(I i) {
+	public void load(ParamReader i) {
 		ItemConfig config = new ItemConfig();
 
 		config.setItemId(i.i());

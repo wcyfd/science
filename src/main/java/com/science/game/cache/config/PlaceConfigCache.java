@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import com.science.game.I;
+import com.science.game.ParamReader;
 import com.science.game.entity.config.PlaceConfig;
 
 @Component
@@ -14,7 +14,7 @@ public class PlaceConfigCache implements IConfigCache {
 	public Map<Integer, PlaceConfig> placeMap = new HashMap<>();
 
 	@Override
-	public void load(I i) {
+	public void load(ParamReader i) {
 		PlaceConfig config = new PlaceConfig();
 		config.setPlaceId(i.i());
 		config.setName(i.str());

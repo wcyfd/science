@@ -21,16 +21,9 @@ public interface BuildService extends ServiceInterface {
 	 * 建造模块
 	 * 
 	 * @param vid
+	 * @param buildOnlyId
 	 * @param moduleId
 	 */
-	void build(int vid, int moduleId);
-
-	/**
-	 * 加入团队
-	 * 
-	 * @param vid
-	 * @param buildOnlyId
-	 */
-	void join(int vid, int buildOnlyId);
+	void build(int vid, int buildOnlyId, int moduleId);
 
 }

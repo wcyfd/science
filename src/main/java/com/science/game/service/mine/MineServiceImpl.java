@@ -3,7 +3,7 @@ package com.science.game.service.mine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.science.game.I;
+import com.science.game.ParamReader;
 import com.science.game.entity.JobType;
 import com.science.game.service.AbstractService;
 import com.science.game.service.collect.CollectInternal;
@@ -20,7 +20,7 @@ public class MineServiceImpl extends AbstractService implements MineService {
 	}
 
 	@Override
-	protected void dispatch(String cmd, I i) {
+	protected void dispatch(String cmd, ParamReader i) {
 		switch (cmd) {
 		case "dig":
 			dig(i.i(),i.i());

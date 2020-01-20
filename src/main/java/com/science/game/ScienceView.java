@@ -14,13 +14,21 @@ import com.science.game.cache.config.ConfigCache;
 import com.science.game.cache.config.ItemConfigCache;
 import com.science.game.cache.config.PlaceConfigCache;
 import com.science.game.cache.data.DataCenter;
+import com.science.game.entity.Build;
 import com.science.game.entity.Item;
 import com.science.game.entity.JobType;
+import com.science.game.entity.Place;
+import com.science.game.entity.PlaceType;
 import com.science.game.entity.Scene;
 import com.science.game.entity.Village;
+import com.science.game.entity.build.InstallItem;
+import com.science.game.entity.build.ModuleData;
+import com.science.game.entity.build.TeamData;
 import com.science.game.entity.config.ItemConfig;
 import com.science.game.entity.config.ItemConfig.ItemType;
 import com.science.game.entity.config.JobConfig;
+import com.science.game.entity.scene.BuildData;
+import com.science.game.entity.scene.PlaceData;
 import com.science.game.entity.village.WorkData;
 import com.science.game.service.AbstractService;
 import com.science.game.service.ServiceInterface;
@@ -54,20 +62,27 @@ public class ScienceView implements IView, ApplicationContextAware {
 		sb.append(ScienceHandler.getCmd()).append("\n");
 		sb.append("===========\n");
 		village();
-		sb.append("\n");
 		item();
-		sb.append("\n");
 		area();
-		sb.append("\n");
 		think();
-		sb.append("\n");
+		build();
+		place();
 
 		return sb.toString();
 	}
 
+	private void br() {
+		sb.append("\n");
+	}
+
+	private void t() {
+		sb.append("\t");
+	}
+
 	private void village() {
 		Scene scene = dataCenter.getScene();
-		sb.append("Village").append("\n");
+		sb.append("村民数据");
+		t();
 		Map<Integer, JobConfig> jobMap = ConfigCache.job.jobMap;
 
 		for (Village v : scene.getVillageData().getVillages().values()) {
@@ -95,13 +110,15 @@ public class ScienceView implements IView, ApplicationContextAware {
 				}
 			}
 			sb.append("]");
-			sb.append("\t");
+			t();
 		}
+		br();
 	}
 
 	private void item() {
 		Scene scene = dataCenter.getScene();
-		sb.append("Item").append("\n");
+		sb.append("道具数据");
+		br();
 		for (Map.Entry<Integer, List<Item>> entrySet : scene.getItemData().getAllItemsByItemId().entrySet()) {
 			List<Item> items = entrySet.getValue();
 			ItemConfig config = itemConfigCache.itemMap.get(entrySet.getKey());
@@ -125,7 +142,8 @@ public class ScienceView implements IView, ApplicationContextAware {
 
 	private void area() {
 		Scene scene = dataCenter.getScene();
-		sb.append("area\n");
+		sb.append("地区数据");
+		t();
 		int size = scene.getPlaceData().getAreaId();
 		for (int i = 0; i < size; i++) {
 			sb.append(i).append(" ")
@@ -136,10 +154,61 @@ public class ScienceView implements IView, ApplicationContextAware {
 	}
 
 	private void think() {
-		sb.append("think\n");
+		sb.append("实验室数据");
+		t();
 		Scene scene = dataCenter.getScene();
 		for (Integer id : scene.getLabData().getIdeaList()) {
 			sb.append(id).append(" ").append(itemConfigCache.itemMap.get(id).getName()).append(" ");
+		}
+		br();
+	}
+
+	private void build() {
+		sb.append("建筑数据\n");
+		Scene scene = dataCenter.getScene();
+		BuildData buildData = scene.getBuildData();
+		Map<Integer, Map<Integer, Build>> typeBuildMap = buildData.getTypeBuildMap();
+		for (Map.Entry<Integer, Map<Integer, Build>> typeBuildEntry : typeBuildMap.entrySet()) {
+			int type = typeBuildEntry.getKey();
+			sb.append("type=").append(type);
+			br();
+			for (Map.Entry<Integer, Build> buildIdEntry : typeBuildEntry.getValue().entrySet()) {
+				int onlyId = buildIdEntry.getKey();
+				Build build = buildIdEntry.getValue();
+				sb.append("id:").append(onlyId).append("[member:");
+				TeamData teamData = build.getTeamData();
+				sb.append(teamData.getMembers()).append("]");
+				br();
+				ModuleData moduleData = build.getModuleData();
+				for (Map.Entry<Integer, InstallItem> entrySet : moduleData.getInstallItems().entrySet()) {
+					InstallItem installItem = entrySet.getValue();
+
+					sb.append(installItem.getProto().getModuleId()).append("=(").append(installItem.getCurrent())
+							.append("/").append(installItem.getTotal()).append(")");
+					t();
+				}
+				br();
+
+			}
+		}
+		br();
+	}
+
+	private void place() {
+		sb.append("空间数据");
+		br();
+		Scene scene = dataCenter.getScene();
+		PlaceData placeData = scene.getPlaceData();
+
+		for (PlaceType placeType : PlaceType.values()) {
+			Map<Integer, Place> placeMap = placeData.getPlaceMapByType(placeType);
+			sb.append(placeType);
+			t();
+			for (Place place : placeMap.values()) {
+				sb.append(place.getPlaceId()).append(":").append(place.getVillageIds());
+				t();
+			}
+			br();
 		}
 	}
 

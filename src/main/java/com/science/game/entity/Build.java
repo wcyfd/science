@@ -37,5 +37,6 @@ public class Build {
 
 	private Build() {
 		this.moduleData = new ModuleData(id);
+		this.teamData = new TeamData(id);
 	}
 }

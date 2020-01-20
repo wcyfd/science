@@ -1,8 +1,7 @@
 package com.science.game.service.build.module;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -48,13 +47,13 @@ public class ApplyBuildModule {
 	 */
 	private void registBuild(Build build) {
 		BuildData buildData = dataCenter.getScene().getBuildData();
-		int buildId = build.getId();
+		int buildType = build.getProto().getBuildId();
 		buildData.getOnlyIdBuildMap().put(build.getId(), build);// 加入唯一id表
 		Map<Integer, Map<Integer, Build>> typeMap = buildData.getTypeBuildMap();// 加入类型表
-		if (!typeMap.containsKey(buildId)) {
-			typeMap.putIfAbsent(buildId, new HashMap<>(16));
+		if (!typeMap.containsKey(buildType)) {
+			typeMap.putIfAbsent(buildType, new ConcurrentHashMap<>(16));
 		}
-		Map<Integer, Build> buildMap = typeMap.get(buildId);
+		Map<Integer, Build> buildMap = typeMap.get(buildType);
 		buildMap.put(build.getId(), build);
 	}
 
@@ -64,8 +63,8 @@ public class ApplyBuildModule {
 	 * @param build
 	 */
 	private void initBuild(Build build) {
-		List<ModuleConfig> moduleConfigList = moduleConfigCache.buildModuleMap.get(build.getProto().getBuildId());
-		for (ModuleConfig config : moduleConfigList) {
+		Map<Integer, ModuleConfig> map = moduleConfigCache.buildModuleIdMap.get(build.getProto().getBuildId());
+		for (ModuleConfig config : map.values()) {
 			InstallItem installItem = InstallItem.create(build.getProto().getBuildId(), config.getModuleId());
 			installItem.setBuild(build);
 			installItem.getCurrent().set(0);

@@ -3,7 +3,7 @@ package com.science.game.service.collect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.science.game.I;
+import com.science.game.ParamReader;
 import com.science.game.cache.config.JobConfigCache;
 import com.science.game.cache.config.PlaceConfigCache;
 import com.science.game.cache.data.DataCenter;
@@ -45,7 +45,7 @@ public class CollectServiceImpl extends AbstractService implements CollectIntern
 	private DataCenter dataCenter;
 
 	@Override
-	protected void dispatch(String cmd, I i) {
+	protected void dispatch(String cmd, ParamReader i) {
 
 	}
 
@@ -53,8 +53,10 @@ public class CollectServiceImpl extends AbstractService implements CollectIntern
 	public void collect(int vid, JobType jobType, int placeId) {
 		Village v = villageInternal.getVillage(vid);
 
-		placeInternal.enter(v, PlaceType.PLACE, placeId);
+		
+		workInternal.exitWork(v.getWorkData());
 
+		placeInternal.enter(v, PlaceType.PLACE, placeId);
 		workInternal.beginWork(v.getWorkData(), jobType, this);
 	}
 
@@ -85,6 +87,7 @@ public class CollectServiceImpl extends AbstractService implements CollectIntern
 	@Override
 	public void exitWork(WorkData workData) {
 		workData.setTotal(0);
+		placeInternal.exit(villageInternal.getVillage(workData.getVid()));
 	}
 
 }

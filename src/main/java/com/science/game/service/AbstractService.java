@@ -10,8 +10,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.science.game.DefaultI;
-import com.science.game.I;
+import com.science.game.ListReader;
+import com.science.game.ParamReader;
 
 import game.quick.window.GameWindows;
 import game.quick.window.Task;
@@ -22,7 +22,7 @@ public abstract class AbstractService {
 	private GameWindows gameWindows;
 
 	// 入参获取值的接口
-	private static final DefaultI REQUEST_PARAMS_INTERFACE = new DefaultI();
+	private static final ListReader REQUEST_PARAMS_INTERFACE = new ListReader();
 
 	public static void dispatchCmd(String cmd) {
 		StringTokenizer cmdToken = new StringTokenizer(cmd);
@@ -38,9 +38,10 @@ public abstract class AbstractService {
 				AbstractService service = HANDLE.get(code);
 				try {
 					service.dispatch(action, REQUEST_PARAMS_INTERFACE);
-					REQUEST_PARAMS_INTERFACE.cleanParams();
 				} catch (Exception e) {
 					e.printStackTrace();
+				} finally {
+					REQUEST_PARAMS_INTERFACE.cleanParams();
 				}
 			}
 		}
@@ -52,7 +53,7 @@ public abstract class AbstractService {
 		}
 	}
 
-	protected abstract void dispatch(String cmd, I params);
+	protected abstract void dispatch(String cmd, ParamReader params);
 
 	public void initService() {
 		registHandle();

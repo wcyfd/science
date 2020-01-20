@@ -9,21 +9,16 @@ import org.springframework.stereotype.Component;
 import com.science.game.cache.config.ItemConfigCache;
 import com.science.game.cache.data.DataCenter;
 import com.science.game.entity.Item;
-import com.science.game.entity.PlaceType;
 import com.science.game.entity.Scene;
 import com.science.game.entity.config.ItemConfig;
 import com.science.game.entity.config.ItemConfig.ItemType;
 import com.science.game.entity.scene.ItemData;
-import com.science.game.service.place.PlaceInternal;
 
 @Component
 public class CreateItemModule {
 
 	@Autowired
 	private ItemConfigCache itemConfigCache;
-
-	@Autowired
-	private PlaceInternal placeInternal;
 
 	@Autowired
 	private DataCenter dataCenter;
@@ -61,7 +56,6 @@ public class CreateItemModule {
 
 		if (config.getType() == ItemType.ITEM) {
 			itemData.getAllItemsByItemId().putIfAbsent(itemId, new LinkedList<>());
-			placeInternal.createIfAbsent(PlaceType.ITEM, itemId);// 资源型item不需要创建道具位
 		}
 
 	}

@@ -6,7 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.science.game.I;
+import com.science.game.ParamReader;
 import com.science.game.cache.data.DataCenter;
 import com.science.game.entity.Item;
 import com.science.game.entity.scene.ItemData;
@@ -35,7 +35,7 @@ public class ItemServiceImpl extends AbstractService implements ItemService, Ite
 	private DataCenter dataCenter;
 
 	@Override
-	protected void dispatch(String cmd, I i) {
+	protected void dispatch(String cmd, ParamReader i) {
 
 	}
 

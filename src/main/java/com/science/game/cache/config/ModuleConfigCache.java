@@ -1,24 +1,22 @@
 package com.science.game.cache.config;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import com.science.game.I;
+import com.science.game.ParamReader;
 import com.science.game.entity.config.ModuleConfig;
 
 @Component
 public class ModuleConfigCache implements IConfigCache {
 
 	public Map<Integer, ModuleConfig> moduleMap = new HashMap<>();
-	public Map<Integer, List<ModuleConfig>> buildModuleMap = new HashMap<>();
+
 	public Map<Integer, Map<Integer, ModuleConfig>> buildModuleIdMap = new HashMap<>();
 
 	@Override
-	public void load(I i) {
+	public void load(ParamReader i) {
 		ModuleConfig config = new ModuleConfig();
 		config.setOnlyId(i.i());
 		config.setBuildId(i.i());
@@ -29,12 +27,10 @@ public class ModuleConfigCache implements IConfigCache {
 
 		moduleMap.put(config.getOnlyId(), config);
 
-		if (!buildModuleMap.containsKey(config.getBuildId()))
-			buildModuleMap.putIfAbsent(config.getBuildId(), new ArrayList<>());
-		buildModuleMap.get(config.getBuildId()).add(config);
-
-		if (!buildModuleIdMap.containsKey(config.getBuildId()))
+		if (!buildModuleIdMap.containsKey(config.getBuildId())) {
 			buildModuleIdMap.putIfAbsent(config.getBuildId(), new HashMap<>());
+		}
+
 		buildModuleIdMap.get(config.getBuildId()).put(config.getModuleId(), config);
 	}
 

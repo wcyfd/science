@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.aimfd.game.tool.reserve.Reserve;
-import com.science.game.I;
+import com.science.game.ParamReader;
 import com.science.game.entity.JobType;
 import com.science.game.entity.ProgressData;
 import com.science.game.entity.village.WorkData;
@@ -18,7 +18,7 @@ public class WorkServiceImpl extends AbstractService implements WorkInternal, Wo
 	private VillageInternal villageInternal;
 
 	@Override
-	protected void dispatch(String cmd, I i) {
+	protected void dispatch(String cmd, ParamReader i) {
 		switch (cmd) {
 		case "stop":
 			stop(i.i());
@@ -35,8 +35,6 @@ public class WorkServiceImpl extends AbstractService implements WorkInternal, Wo
 				context.workLoop(workData);
 			}
 		};
-
-		exitWork(workData);
 
 		workData.setTask(task);
 		workData.setJobType(jobType);

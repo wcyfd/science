@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
-import com.science.game.I;
+import com.science.game.ParamReader;
 import com.science.game.entity.config.ConsistConfig;
 
 @Component
@@ -18,7 +18,7 @@ public class ConsistConfigCache implements IConfigCache {
 	public Map<Integer, Set<Integer>> parentMap = new HashMap<>();
 
 	@Override
-	public void load(I i) {
+	public void load(ParamReader i) {
 		ConsistConfig config = new ConsistConfig();
 		config.setItemId(i.i());
 		config.setNeedItemId(i.i());

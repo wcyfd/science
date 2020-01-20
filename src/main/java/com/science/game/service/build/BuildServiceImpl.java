@@ -7,7 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.science.game.I;
+import com.science.game.ParamReader;
 import com.science.game.cache.data.DataCenter;
 import com.science.game.entity.Build;
 import com.science.game.entity.Item;
@@ -25,6 +25,7 @@ import com.science.game.service.place.PlaceInternal;
 import com.science.game.service.village.VillageInternal;
 import com.science.game.service.work.IWork;
 import com.science.game.service.work.WorkInternal;
+import com.science.game.service.work.WorkService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -54,16 +55,13 @@ public class BuildServiceImpl extends AbstractService implements BuildService, B
 	private BuildInternal buildInternal;
 
 	@Override
-	protected void dispatch(String cmd, I i) {
+	protected void dispatch(String cmd, ParamReader i) {
 		switch (cmd) {
 		case "apply":
 			apply(i.i());
 			break;
 		case "build":
-			build(i.i(), i.i());
-			break;
-		case "join":
-			join(i.i(),i.i());
+			build(i.i(), i.i(), i.i());
 			break;
 		}
 
@@ -75,12 +73,10 @@ public class BuildServiceImpl extends AbstractService implements BuildService, B
 	}
 
 	@Override
-	public void build(int vid, int moduleId) {
+	public void build(int vid, int buildOnlyId, int moduleId) {
 
 		Village v = villageInternal.getVillage(vid);
 
-		v.getBuildData().setModuleId(moduleId);
-		int buildOnlyId = v.getBuildData().getBuildOnlyId();
 		InstallItem installItem = dataCenter.getScene().getBuildData().getOnlyIdBuildMap().get(buildOnlyId)
 				.getModuleData().getModuleId(moduleId);
 		if (workInternal.isWorkComplete(installItem)) {
@@ -88,27 +84,36 @@ public class BuildServiceImpl extends AbstractService implements BuildService, B
 			return;
 		}
 
-		v.getBuildData().setModuleId(moduleId);
-	}
-
-	@Override
-	public void join(int vid, int buildOnlyId) {
-
 		Build build = dataCenter.getScene().getBuildData().getOnlyIdBuildMap().get(buildOnlyId);
-		if (build == null) {
-			log.error("没有该建造物buildOnlyId={}", buildOnlyId);
-			return;
-		}
 
-		Village v = villageInternal.getVillage(vid);
+		workInternal.exitWork(v.getWorkData());
 
 		v.getBuildData().setBuildOnlyId(buildOnlyId);// 注册建筑
-		build.getTeamData().getMembers().add(vid);// 加入团队
+		v.getBuildData().setModuleId(moduleId);
 
-		placeInternal.enter(v, PlaceType.BUILD, build.getId());// 进入位置
+		build.getTeamData().getMembers().add(vid);// 加入团队
 
 		workInternal.beginWork(v.getWorkData(), JobType.BUILD, this);
 	}
+
+//	@Override
+//	public void join(int vid, int buildOnlyId) {
+//
+//		Build build = dataCenter.getScene().getBuildData().getOnlyIdBuildMap().get(buildOnlyId);
+//		if (build == null) {
+//			log.error("没有该建造物buildOnlyId={}", buildOnlyId);
+//			return;
+//		}
+//
+//		Village v = villageInternal.getVillage(vid);
+//
+//		v.getBuildData().setBuildOnlyId(buildOnlyId);// 注册建筑
+//		build.getTeamData().getMembers().add(vid);// 加入团队
+//
+//		placeInternal.enter(v, PlaceType.BUILD, build.getId());// 进入位置
+//
+//		workInternal.beginWork(v.getWorkData(), JobType.BUILD, this);
+//	}
 
 	@Override
 	public void workLoop(WorkData workData) {
@@ -137,12 +142,17 @@ public class BuildServiceImpl extends AbstractService implements BuildService, B
 		// 填充道具
 		this.fillItem(installItem);
 
+		WorkData workData = v.getWorkData();
+
 		if (!workInternal.isWorkComplete(installItem)) {
 			// 添加工作量
-			workInternal.addWorkProgress(installItem, 5);
+			workInternal.addWorkProgress(installItem, 1);
+			workInternal.addWorkProgress(workData, 1);
 			// 工作是否完成
 			if (workInternal.isWorkComplete(installItem)) {
 				v.getBuildData().setModuleId(0);
+				workInternal.resetProgress(workData);
+				workInternal.exitWork(workData);
 				// 建筑是否完成
 				buildInternal.checkComplete(build);
 				if (build.getModuleData().isFinish()) {
@@ -203,7 +213,13 @@ public class BuildServiceImpl extends AbstractService implements BuildService, B
 	public void enterWork(WorkData workData) {
 		int vid = workData.getVid();
 		Village v = villageInternal.getVillage(vid);
-		v.getBuildData().setModuleId(0);
+		Build build = dataCenter.getScene().getBuildData().getOnlyIdBuildMap().get(v.getBuildData().getBuildOnlyId());
+		InstallItem installItem = build.getModuleData().getModuleId(v.getBuildData().getModuleId());
+
+		workData.getCurrent().set(installItem.getCurrent().get());
+		workData.setTotal(installItem.getTotal());
+
+		placeInternal.enter(v, PlaceType.BUILD, build.getId());// 进入位置
 	}
 
 	@Override
@@ -216,7 +232,11 @@ public class BuildServiceImpl extends AbstractService implements BuildService, B
 			log.error("没有该建造物buildOnlyId={},退出团队失败", buildOnlyId);
 			return;
 		}
+
+		v.getBuildData().setBuildOnlyId(0);// 注册建筑
+		v.getBuildData().setModuleId(0);
 		build.getTeamData().getMembers().remove(vid);
+
 		placeInternal.exit(v);
 	}
 

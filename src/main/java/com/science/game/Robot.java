@@ -39,11 +39,14 @@ public class Robot implements ApplicationListener<ContextRefreshedEvent> {
 		c("village.recruite");
 		c("village.recruite");
 		c("village.recruite");
+		c("village.recruite");
 //		c("assart.assart 1");
 		c("mine.dig 1 1");
 		c("mine.dig 2 1");
 		c("forest.chop 3 2");
 		c("forest.chop 4 2");
+		c("build.apply 1");
+		c("build.apply 1");
 		until(() -> labInternal.getIdeaList().size() > 0);
 		int itemId = labInternal.getIdeaList().get(0);
 		c("lab.develop 5 " + itemId);

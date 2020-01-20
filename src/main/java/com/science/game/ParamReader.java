@@ -1,6 +1,6 @@
 package com.science.game;
 
-public interface I {
+public interface ParamReader {
 	default int i(int idx) {
 		return Integer.valueOf(v(idx));
 	}

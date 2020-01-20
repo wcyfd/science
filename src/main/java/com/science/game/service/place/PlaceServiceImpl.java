@@ -6,7 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.science.game.I;
+import com.science.game.ParamReader;
 import com.science.game.cache.data.DataCenter;
 import com.science.game.entity.Place;
 import com.science.game.entity.PlaceType;
@@ -28,7 +28,7 @@ public class PlaceServiceImpl extends AbstractService implements PlaceInternal {
 	private PlaceInternal placeInternal;
 
 	@Override
-	protected void dispatch(String cmd, I i) {
+	protected void dispatch(String cmd, ParamReader i) {
 
 	}
 
@@ -49,7 +49,6 @@ public class PlaceServiceImpl extends AbstractService implements PlaceInternal {
 
 	@Override
 	public void enter(Village v, PlaceType placeType, int placeId) {
-		exit(v);
 
 		log.info("村民 vid={} 进入位置 type={} ,placeId={}", v.getId(), placeType, placeId);
 		Place place = this.getPlace(placeType, placeId);

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.aimfd.game.tool.reserve.Reserve;
-import com.science.game.I;
+import com.science.game.ParamReader;
 import com.science.game.cache.config.ConsistConfigCache;
 import com.science.game.cache.config.ItemConfigCache;
 import com.science.game.entity.JobType;
@@ -56,10 +56,11 @@ public class ProductServiceImpl extends AbstractService implements ProductServic
 	public void product(int vid, int itemId) {
 		Village v = villageInternal.getVillage(vid);
 
-		placeInternal.enter(v, PlaceType.ITEM, itemId);
+		workInternal.exitWork(v.getWorkData());
 
 		v.getProductData().setItemId(itemId);
-
+		
+		placeInternal.enter(v, PlaceType.ITEM, itemId);
 		workInternal.beginWork(v.getWorkData(), JobType.PRODUCT, this);
 	}
 
@@ -77,6 +78,7 @@ public class ProductServiceImpl extends AbstractService implements ProductServic
 		Village v = villageInternal.getVillage(workData.getVid());
 		ProductData productData = v.getProductData();
 		productData.setNeedCostItem(false);
+		productData.setItemId(0);
 
 		placeInternal.exit(v);
 	}
@@ -139,10 +141,10 @@ public class ProductServiceImpl extends AbstractService implements ProductServic
 	}
 
 	@Override
-	protected void dispatch(String cmd, I i) {
+	protected void dispatch(String cmd, ParamReader i) {
 		switch (cmd) {
 		case "product":
-			product(i.i(),i.i());
+			product(i.i(), i.i());
 			break;
 		}
 	}

@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.science.game.I;
+import com.science.game.ParamReader;
 import com.science.game.cache.config.ConsistConfigCache;
 import com.science.game.cache.config.ItemConfigCache;
 import com.science.game.cache.data.DataCenter;
@@ -68,12 +68,13 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 
 		Village v = villageInternal.getVillage(vid);
 
-		placeInternal.createIfAbsent(PlaceType.DEVELOP, itemId);
-		placeInternal.enter(v, PlaceType.DEVELOP, itemId);
+		workInternal.exitWork(v.getWorkData());
 
 		DevelopData developData = v.getDevelopData();
 		developData.setItemId(itemId);
-
+		
+		placeInternal.createIfAbsent(PlaceType.DEVELOP, itemId);
+		placeInternal.enter(v, PlaceType.DEVELOP, itemId);
 		workInternal.beginWork(v.getWorkData(), JobType.DEVELOP, this);
 	}
 
@@ -158,6 +159,7 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 	 */
 	private void successFunc(int itemId) {
 		itemInternal.createEquipItemSpace(itemId);
+		placeInternal.createIfAbsent(PlaceType.ITEM, itemId);// 资源型item不需要创建道具位
 		itemInternal.addItem(itemId, 1);
 		Scene scene = dataCenter.getScene();
 		LabData labData = scene.getLabData();
@@ -250,7 +252,7 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 		developData.setItemId(-1);
 
 		log.info("退出研发团队 itemId={} vid={}", itemId, v.getId());
-		
+
 		placeInternal.exit(v);
 	}
 
@@ -265,10 +267,10 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 	}
 
 	@Override
-	protected void dispatch(String cmd, I i) {
+	protected void dispatch(String cmd, ParamReader i) {
 		switch (cmd) {
 		case "develop":
-			develop(i.i(),i.i());
+			develop(i.i(), i.i());
 			break;
 		}
 	}

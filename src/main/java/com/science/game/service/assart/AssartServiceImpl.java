@@ -3,7 +3,7 @@ package com.science.game.service.assart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.science.game.I;
+import com.science.game.ParamReader;
 import com.science.game.cache.config.JobConfigCache;
 import com.science.game.cache.data.DataCenter;
 import com.science.game.entity.JobType;
@@ -45,7 +45,7 @@ public class AssartServiceImpl extends AbstractService implements AssartService,
 	private DataCenter dataCenter;
 
 	@Override
-	protected void dispatch(String cmd, I i) {
+	protected void dispatch(String cmd, ParamReader i) {
 		switch (cmd) {
 		case "assart":
 			assart(i.i());
@@ -62,8 +62,9 @@ public class AssartServiceImpl extends AbstractService implements AssartService,
 
 		Village v = villageInternal.getVillage(vid);
 
-		placeInternal.enter(v, PlaceType.PLACE, -2);
+		workInternal.exitWork(v.getWorkData());
 
+		placeInternal.enter(v, PlaceType.PLACE, -2);
 		workInternal.beginWork(v.getWorkData(), JobType.ASSART, this);
 	}
 
@@ -92,13 +93,15 @@ public class AssartServiceImpl extends AbstractService implements AssartService,
 
 	@Override
 	public void enterWork(WorkData workData) {
+
 		JobConfig config = jobConfigCache.jobMap.get(workData.getJobType().getJobId());
 		workData.setTotal(config.getUnitTotal());
 	}
 
 	@Override
 	public void exitWork(WorkData workData) {
-
+		Village v = villageInternal.getVillage(workData.getVid());
+		placeInternal.exit(v);
 	}
 
 }

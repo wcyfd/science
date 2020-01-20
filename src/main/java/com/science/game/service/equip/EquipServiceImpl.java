@@ -3,7 +3,7 @@ package com.science.game.service.equip;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.science.game.I;
+import com.science.game.ParamReader;
 import com.science.game.entity.Item;
 import com.science.game.entity.Village;
 import com.science.game.service.AbstractService;
@@ -23,7 +23,7 @@ public class EquipServiceImpl extends AbstractService implements EquipService {
 	private VillageInternal villageInternal;
 
 	@Override
-	protected void dispatch(String cmd, I i) {
+	protected void dispatch(String cmd, ParamReader i) {
 		switch (cmd) {
 		case "equip":
 			this.equip(i.i(), i.i());

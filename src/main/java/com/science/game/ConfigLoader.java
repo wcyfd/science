@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ConfigLoader {
 
-	private static final DefaultI i = new DefaultI();
+	private static final ListReader i = new ListReader();
 
 	public static void load(String file, IConfigCache cache) {
 
