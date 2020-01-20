@@ -36,7 +36,7 @@ public class ModuleConfigCache implements IConfigCache {
 
 	@Override
 	public String getFileName() {
-		return "module.csv";
+		return "build_module.csv";
 	}
 
 	@Override
