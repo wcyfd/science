@@ -26,4 +26,13 @@ public interface BuildService extends ServiceInterface {
 	 */
 	void build(int vid, int buildOnlyId, int moduleId);
 
+	/**
+	 * 修理
+	 * 
+	 * @param vid
+	 * @param buildOnlyId
+	 * @param moduleId
+	 */
+	void repair(int vid, int buildOnlyId, int moduleId);
+
 }

@@ -3,6 +3,7 @@ package com.science.game;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.science.game.cache.config.ConfigCache;
 import com.science.game.cache.config.ItemConfigCache;
+import com.science.game.cache.config.JobConfigCache;
 import com.science.game.cache.config.PlaceConfigCache;
 import com.science.game.cache.data.DataCenter;
 import com.science.game.entity.Build;
@@ -49,6 +51,9 @@ public class ScienceView implements IView, ApplicationContextAware {
 	private ItemConfigCache itemConfigCache;
 
 	@Autowired
+	private JobConfigCache jobConfigCache;
+
+	@Autowired
 	private LabInternal labInternal;
 
 	@Autowired
@@ -82,36 +87,48 @@ public class ScienceView implements IView, ApplicationContextAware {
 	private void village() {
 		Scene scene = dataCenter.getScene();
 		sb.append("村民数据");
+		br();
+
+		scene.getVillageData().getVillages().values().forEach(v -> village_detail(v));
+		br();
+	}
+
+	private void village_detail(Village v) {
+		sb.append(v.getId()).append(" ");
+		sb.append("工作数据 [")
+				.append(v.getWorkData().getJobType() == null
+						|| !jobConfigCache.jobMap.containsKey(v.getWorkData().getJobType().getJobId()) ? "空闲"
+								: jobConfigCache.jobMap.get(v.getWorkData().getJobType().getJobId()).getJob())
+				.append("(").append(v.getWorkData().getCurrent()).append("/").append(v.getWorkData().getTotal())
+				.append(")").append(" callback=").append(v.getWorkData().getWork() != null).append("]");
 		t();
-		Map<Integer, JobConfig> jobMap = ConfigCache.job.jobMap;
-
-		for (Village v : scene.getVillageData().getVillages().values()) {
-			sb.append(v.getId()).append(" ");
-			WorkData workData = v.getWorkData();
-
-			JobType jobType = workData.getJobType();
-			JobConfig jobConfig = (jobType == null || jobType == JobType.NULL) ? null
-					: jobMap.get(workData.getJobType().getJobId());
-			sb.append(jobConfig == null ? "空闲" : jobConfig.getJob());
-			if (jobType != JobType.NULL) {
-				if (jobType != JobType.DEVELOP) {
-					sb.append(" (").append(workData.getCurrent()).append("/").append(workData.getTotal()).append(")");
-				} else {
-					sb.append("(").append(labInternal.getTryCount(v.getDevelopData().getItemId())).append(")");
-				}
-			}
-
-			sb.append("[");
-			for (Item item : v.getItemData().getEquips().values()) {
-				if (item != null) {
-					sb.append(item.getProto().getItemId()).append(" ");
-					sb.append(item.getProto().getName()).append("(").append(item.getId()).append(")");
-					sb.append(",");
-				}
-			}
-			sb.append("]");
+		sb.append("装备数据[");
+		for (Item item : v.getItemData().getEquips().values()) {
+			sb.append(item.getId()).append(item.getProto().getName()).append(" ").append("寿命=").append(item.getAge())
+					.append(",").append("数量=").append(item.getNum());
 			t();
 		}
+		sb.append("]");
+		t();
+		sb.append("生产数据 [")
+				.append(itemConfigCache.itemMap.containsKey(v.getProductData().getItemId())
+						? itemConfigCache.itemMap.get(v.getProductData().getItemId()).getName()
+						: null)
+				.append("]");
+		t();
+		sb.append("研发数据 [ ").append(v.getDevelopData().getItemId());
+		sb.append(" 熟练度:");
+		for (Map.Entry<Integer, AtomicInteger> entrySet : v.getDevelopData().getPracticeMap().entrySet()) {
+			sb.append(entrySet.getKey()).append(":").append(entrySet.getValue()).append(" ");
+		}
+		sb.append("]");
+		t();
+		sb.append("所在地 [").append(v.getPlaceData().getPlaceType()).append(" ")
+				.append(v.getPlaceData().getPlace() != null ? v.getPlaceData().getPlace().getPlaceId() : null)
+				.append("]");
+		t();
+		sb.append("建造数据 [").append("buildOnlyId=").append(v.getBuildData().getBuildOnlyId()).append(",模块id=")
+				.append(v.getBuildData().getModuleId()).append("]");
 		br();
 	}
 
@@ -124,7 +141,7 @@ public class ScienceView implements IView, ApplicationContextAware {
 			ItemConfig config = itemConfigCache.itemMap.get(entrySet.getKey());
 			sb.append(entrySet.getKey()).append(" ").append(config.getName()).append(" ")
 					.append(config.getType() == ItemType.ITEM ? items.size() : items.get(0).getNum()).append(" [");
-			int maxLength = 10;
+			int maxLength = 20;
 			int idx = 0;
 			for (Item item : items) {
 				if (idx < maxLength) {
@@ -136,8 +153,10 @@ public class ScienceView implements IView, ApplicationContextAware {
 				sb.append(",");
 				idx++;
 			}
-			sb.append("]\n");
+			sb.append("]");
+			t();
 		}
+		br();
 	}
 
 	private void area() {
@@ -164,18 +183,19 @@ public class ScienceView implements IView, ApplicationContextAware {
 	}
 
 	private void build() {
-		sb.append("建筑数据\n");
+		sb.append("建筑数据");
+		br();
 		Scene scene = dataCenter.getScene();
 		BuildData buildData = scene.getBuildData();
 		Map<Integer, Map<Integer, Build>> typeBuildMap = buildData.getTypeBuildMap();
 		for (Map.Entry<Integer, Map<Integer, Build>> typeBuildEntry : typeBuildMap.entrySet()) {
 			int type = typeBuildEntry.getKey();
-			sb.append("type=").append(type);
+			sb.append("建筑类型=").append(ConfigCache.build.buildMap.get(type).getName());
 			br();
 			for (Map.Entry<Integer, Build> buildIdEntry : typeBuildEntry.getValue().entrySet()) {
 				int onlyId = buildIdEntry.getKey();
 				Build build = buildIdEntry.getValue();
-				sb.append("id:").append(onlyId).append("[member:");
+				sb.append("id:").append(onlyId).append("[参与人员:");
 				TeamData teamData = build.getTeamData();
 				sb.append(teamData.getMembers()).append("]");
 				br();
@@ -183,8 +203,10 @@ public class ScienceView implements IView, ApplicationContextAware {
 				for (Map.Entry<Integer, InstallItem> entrySet : moduleData.getInstallItems().entrySet()) {
 					InstallItem installItem = entrySet.getValue();
 
-					sb.append(installItem.getProto().getModuleId()).append("=(").append(installItem.getCurrent())
-							.append("/").append(installItem.getTotal()).append(")");
+					//TODO 重写一下视图
+//					sb.append(installItem.getProto().getModuleId()).append(installItem.getProto().getModuleName())
+//							.append("=(").append(installItem.getCurrent()).append("/").append(installItem.getTotal())
+//							.append(")");
 					t();
 				}
 				br();

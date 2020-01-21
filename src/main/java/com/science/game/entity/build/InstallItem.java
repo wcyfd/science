@@ -3,18 +3,17 @@ package com.science.game.entity.build;
 import com.science.game.cache.config.ConfigCache;
 import com.science.game.entity.Build;
 import com.science.game.entity.Item;
-import com.science.game.entity.ProgressData;
 import com.science.game.entity.config.ModuleConfig;
 
 import lombok.Getter;
 
 /**
- * 用来记录道具和工作量的数据
+ * 用来记录道具
  * 
  * @author aimfd
  *
  */
-public class InstallItem extends ProgressData {
+public class InstallItem {
 
 	private Item item;
 
@@ -22,9 +21,9 @@ public class InstallItem extends ProgressData {
 	@Getter
 	private ModuleConfig proto;
 
-	public static InstallItem create(int buildId, int moduleId) {
+	public static InstallItem create(int onlyId) {
 		InstallItem item = new InstallItem();
-		item.proto = ConfigCache.module.buildModuleIdMap.get(buildId).get(moduleId);
+		item.proto = ConfigCache.module.moduleMap.get(onlyId);
 		return item;
 	}
 

@@ -10,7 +10,9 @@ import com.science.game.cache.config.ModuleConfigCache;
 import com.science.game.cache.data.DataCenter;
 import com.science.game.entity.Build;
 import com.science.game.entity.PlaceType;
+import com.science.game.entity.ProgressData;
 import com.science.game.entity.build.InstallItem;
+import com.science.game.entity.build.ModuleData;
 import com.science.game.entity.config.ModuleConfig;
 import com.science.game.entity.scene.BuildData;
 import com.science.game.service.place.PlaceInternal;
@@ -63,14 +65,38 @@ public class ApplyBuildModule {
 	 * @param build
 	 */
 	private void initBuild(Build build) {
-		Map<Integer, ModuleConfig> map = moduleConfigCache.buildModuleIdMap.get(build.getProto().getBuildId());
-		for (ModuleConfig config : map.values()) {
-			InstallItem installItem = InstallItem.create(build.getProto().getBuildId(), config.getModuleId());
-			installItem.setBuild(build);
-			installItem.getCurrent().set(0);
-			installItem.setTotal(config.getTotal());
+		Map<Integer, Map<Integer, ModuleConfig>> map = moduleConfigCache.moduleItemMap
+				.get(build.getProto().getBuildId());
+		ModuleData moduleData = build.getModuleData();
 
-			build.getModuleData().getInstallItems().put(config.getModuleId(), installItem);
+		for (Map.Entry<Integer, Map<Integer, ModuleConfig>> moduleEntrySet : map.entrySet()) {
+			Map<Integer, ModuleConfig> installItemMap = moduleEntrySet.getValue();
+			for (ModuleConfig config : installItemMap.values()) {
+				InstallItem installItem = InstallItem.create(config.getOnlyId());
+				installItem.setBuild(build);
+
+				// 添加进度
+				moduleData.getInstallItems().put(config.getOnlyId(), installItem);
+				// 添加模块进度
+				if (!moduleData.getProgressMap().containsKey(config.getModuleId())) {
+					ProgressData progressData = new ProgressData();
+					progressData.getCurrent().set(0);
+					progressData.setTotal(config.getTotal());
+					moduleData.getProgressMap().putIfAbsent(config.getModuleId(), progressData);
+				}
+			}
 		}
+//
+//		for (Map.Entry<Integer, Integer> entrySet : map.entrySet()) {
+//			int moduleId = entrySet.getKey();
+//			int total = entrySet.getValue();
+//
+//			InstallItem installItem = InstallItem.create(build.getProto().getBuildId(), config.getModuleId());
+//			installItem.setBuild(build);
+//			installItem.getCurrent().set(0);
+//			installItem.setTotal(total);
+//
+//			build.getModuleData().getInstallItems().put(config.getModuleId(), installItem);
+//		}
 	}
 }

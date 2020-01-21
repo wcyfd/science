@@ -13,6 +13,7 @@ import com.science.game.entity.Build;
 import com.science.game.entity.Item;
 import com.science.game.entity.JobType;
 import com.science.game.entity.PlaceType;
+import com.science.game.entity.ProgressData;
 import com.science.game.entity.Village;
 import com.science.game.entity.build.InstallItem;
 import com.science.game.entity.build.ModuleData;
@@ -76,9 +77,9 @@ public class BuildServiceImpl extends AbstractService implements BuildService, B
 
 		Village v = villageInternal.getVillage(vid);
 
-		InstallItem installItem = dataCenter.getScene().getBuildData().getOnlyIdBuildMap().get(buildOnlyId)
-				.getModuleData().getModuleId(moduleId);
-		if (workInternal.isWorkComplete(installItem)) {
+		ProgressData progressData = dataCenter.getScene().getBuildData().getOnlyIdBuildMap().get(buildOnlyId)
+				.getModuleData().getProgressByModuleId(moduleId);
+		if (workInternal.isWorkComplete(progressData)) {
 			log.info("该模块已经完成了vid={}, moduleId={}", vid, moduleId);
 			return;
 		}
@@ -94,25 +95,6 @@ public class BuildServiceImpl extends AbstractService implements BuildService, B
 
 		workInternal.beginWork(v.getWorkData(), JobType.BUILD, this);
 	}
-
-//	@Override
-//	public void join(int vid, int buildOnlyId) {
-//
-//		Build build = dataCenter.getScene().getBuildData().getOnlyIdBuildMap().get(buildOnlyId);
-//		if (build == null) {
-//			log.error("没有该建造物buildOnlyId={}", buildOnlyId);
-//			return;
-//		}
-//
-//		Village v = villageInternal.getVillage(vid);
-//
-//		v.getBuildData().setBuildOnlyId(buildOnlyId);// 注册建筑
-//		build.getTeamData().getMembers().add(vid);// 加入团队
-//
-//		placeInternal.enter(v, PlaceType.BUILD, build.getId());// 进入位置
-//
-//		workInternal.beginWork(v.getWorkData(), JobType.BUILD, this);
-//	}
 
 	@Override
 	public void workLoop(WorkData workData) {
@@ -137,18 +119,23 @@ public class BuildServiceImpl extends AbstractService implements BuildService, B
 	 */
 	private void building(Village v, int moduleId, Build build) {
 		// 工作流程
-		InstallItem installItem = build.getModuleData().getModuleId(moduleId);
+		ProgressData modulePD = build.getModuleData().getProgressByModuleId(moduleId);
 		// 填充道具
-		this.fillItem(installItem);
+		this.fillItem(moduleId);
 
 		WorkData workData = v.getWorkData();
 
-		if (!workInternal.isWorkComplete(installItem)) {
+		if (!workInternal.isWorkComplete(modulePD)) {
+			// TODO 消耗材料，逻辑是每消耗一次道具，进度条+1，否则等待
+
 			// 添加工作量
-			workInternal.addWorkProgress(installItem, 1);
+			workInternal.addWorkProgress(modulePD, 1);
 			workInternal.addWorkProgress(workData, 1);
+			// 思考
+			villageInternal.think(v.getId());
+
 			// 工作是否完成
-			if (workInternal.isWorkComplete(installItem)) {
+			if (workInternal.isWorkComplete(modulePD)) {
 				v.getBuildData().setModuleId(0);
 				workInternal.resetProgress(workData);
 				workInternal.exitWork(workData);
@@ -157,6 +144,7 @@ public class BuildServiceImpl extends AbstractService implements BuildService, B
 				if (build.getModuleData().isFinish()) {
 					successFunc(build);
 				}
+
 			}
 		}
 	}
@@ -166,28 +154,27 @@ public class BuildServiceImpl extends AbstractService implements BuildService, B
 	 * 
 	 * @param item
 	 */
-	private void fillItem(InstallItem item) {
-		// 填充道具,如果没有填充过的话
-		if (item.getItem() != null)
-			return;
-
-		ModuleConfig cf = item.getProto();
-		List<Item> list = itemInternal.extractItem(cf.getNeedItemId(), 1);
-		if (list.size() != 0) {
-			item.setItem(list.get(0));
-		} else {
-			log.info("道具抽取不足 buildId={},itemId={},moduleId={}", item.getBuild().getId(), cf.getNeedItemId(),
-					cf.getModuleId());
-		}
+	private void fillItem(int moduleId) {
+		// TODO 填充道具,如果没有填充过的话
+//		if (item.getItem() != null)
+//			return;
+//
+//		ModuleConfig cf = item.getProto();
+//		List<Item> list = itemInternal.extractItem(cf.getNeedItemId(), 1);
+//		if (list.size() != 0) {
+//			item.setItem(list.get(0));
+//		} else {
+//			log.info("道具抽取不足 buildId={},itemId={},moduleId={}", item.getBuild().getId(), cf.getNeedItemId(),
+//					cf.getModuleId());
+//		}
 
 	}
 
 	@Override
 	public void checkComplete(Build build) {
 		ModuleData moduleData = build.getModuleData();
-		Map<Integer, InstallItem> installItems = moduleData.getInstallItems();
-		for (InstallItem item : installItems.values()) {
-			if (!workInternal.isWorkComplete(item)) {
+		for (ProgressData data : moduleData.getProgressMap().values()) {
+			if (!workInternal.isWorkComplete(data)) {
 				return;
 			}
 		}
@@ -213,10 +200,10 @@ public class BuildServiceImpl extends AbstractService implements BuildService, B
 		int vid = workData.getVid();
 		Village v = villageInternal.getVillage(vid);
 		Build build = dataCenter.getScene().getBuildData().getOnlyIdBuildMap().get(v.getBuildData().getBuildOnlyId());
-		InstallItem installItem = build.getModuleData().getModuleId(v.getBuildData().getModuleId());
+		ProgressData progressData = build.getModuleData().getProgressByModuleId(v.getBuildData().getModuleId());
 
-		workData.getCurrent().set(installItem.getCurrent().get());
-		workData.setTotal(installItem.getTotal());
+		workData.getCurrent().set(progressData.getCurrent().get());
+		workData.setTotal(progressData.getTotal());
 
 		placeInternal.enter(v, PlaceType.BUILD, build.getId());// 进入位置
 	}
@@ -237,6 +224,12 @@ public class BuildServiceImpl extends AbstractService implements BuildService, B
 		build.getTeamData().getMembers().remove(vid);
 
 		placeInternal.exit(v);
+	}
+
+	@Override
+	public void repair(int vid, int buildOnlyId, int moduleId) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
