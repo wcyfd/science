@@ -8,4 +8,5 @@ public class ConfigCache {
 	public static ThinkConfigCache think;
 	public static BuildConfigCache build;
 	public static ModuleConfigCache module;
+	public static ClimateConfigCache climate;
 }

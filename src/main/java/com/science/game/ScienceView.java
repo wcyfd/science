@@ -18,20 +18,18 @@ import com.science.game.cache.config.PlaceConfigCache;
 import com.science.game.cache.data.DataCenter;
 import com.science.game.entity.Build;
 import com.science.game.entity.Item;
-import com.science.game.entity.JobType;
 import com.science.game.entity.Place;
 import com.science.game.entity.PlaceType;
+import com.science.game.entity.ProgressData;
 import com.science.game.entity.Scene;
 import com.science.game.entity.Village;
 import com.science.game.entity.build.InstallItem;
 import com.science.game.entity.build.ModuleData;
-import com.science.game.entity.build.TeamData;
 import com.science.game.entity.config.ItemConfig;
 import com.science.game.entity.config.ItemConfig.ItemType;
-import com.science.game.entity.config.JobConfig;
 import com.science.game.entity.scene.BuildData;
+import com.science.game.entity.scene.ClimateData;
 import com.science.game.entity.scene.PlaceData;
-import com.science.game.entity.village.WorkData;
 import com.science.game.service.AbstractService;
 import com.science.game.service.ServiceInterface;
 import com.science.game.service.lab.LabInternal;
@@ -54,9 +52,6 @@ public class ScienceView implements IView, ApplicationContextAware {
 	private JobConfigCache jobConfigCache;
 
 	@Autowired
-	private LabInternal labInternal;
-
-	@Autowired
 	private DataCenter dataCenter;
 
 	@Override
@@ -66,12 +61,14 @@ public class ScienceView implements IView, ApplicationContextAware {
 		sb.append("===========\n");
 		sb.append(ScienceHandler.getCmd()).append("\n");
 		sb.append("===========\n");
-		village();
-		item();
-		area();
-		think();
-		build();
-		place();
+		Scene scene = dataCenter.getScene();
+		village(scene);
+		item(scene);
+		area(scene);
+		think(scene);
+		build(scene);
+		place(scene);
+		climate(scene);
 
 		return sb.toString();
 	}
@@ -84,9 +81,8 @@ public class ScienceView implements IView, ApplicationContextAware {
 		sb.append("\t");
 	}
 
-	private void village() {
-		Scene scene = dataCenter.getScene();
-		sb.append("村民数据");
+	private void village(Scene scene) {
+		sb.append("村民");
 		br();
 
 		scene.getVillageData().getVillages().values().forEach(v -> village_detail(v));
@@ -95,14 +91,14 @@ public class ScienceView implements IView, ApplicationContextAware {
 
 	private void village_detail(Village v) {
 		sb.append(v.getId()).append(" ");
-		sb.append("工作数据 [")
+		sb.append("工作 [")
 				.append(v.getWorkData().getJobType() == null
 						|| !jobConfigCache.jobMap.containsKey(v.getWorkData().getJobType().getJobId()) ? "空闲"
 								: jobConfigCache.jobMap.get(v.getWorkData().getJobType().getJobId()).getJob())
 				.append("(").append(v.getWorkData().getCurrent()).append("/").append(v.getWorkData().getTotal())
 				.append(")").append(" callback=").append(v.getWorkData().getWork() != null).append("]");
 		t();
-		sb.append("装备数据[");
+		sb.append("装备[");
 		for (Item item : v.getItemData().getEquips().values()) {
 			sb.append(item.getId()).append(item.getProto().getName()).append(" ").append("寿命=").append(item.getAge())
 					.append(",").append("数量=").append(item.getNum());
@@ -110,13 +106,13 @@ public class ScienceView implements IView, ApplicationContextAware {
 		}
 		sb.append("]");
 		t();
-		sb.append("生产数据 [")
+		sb.append("生产 [")
 				.append(itemConfigCache.itemMap.containsKey(v.getProductData().getItemId())
 						? itemConfigCache.itemMap.get(v.getProductData().getItemId()).getName()
 						: null)
 				.append("]");
 		t();
-		sb.append("研发数据 [ ").append(v.getDevelopData().getItemId());
+		sb.append("研发 [ ").append(v.getDevelopData().getItemId());
 		sb.append(" 熟练度:");
 		for (Map.Entry<Integer, AtomicInteger> entrySet : v.getDevelopData().getPracticeMap().entrySet()) {
 			sb.append(entrySet.getKey()).append(":").append(entrySet.getValue()).append(" ");
@@ -127,14 +123,13 @@ public class ScienceView implements IView, ApplicationContextAware {
 				.append(v.getPlaceData().getPlace() != null ? v.getPlaceData().getPlace().getPlaceId() : null)
 				.append("]");
 		t();
-		sb.append("建造数据 [").append("buildOnlyId=").append(v.getBuildData().getBuildOnlyId()).append(",模块id=")
+		sb.append("建造 [").append("buildOnlyId=").append(v.getBuildData().getBuildOnlyId()).append(",模块id=")
 				.append(v.getBuildData().getModuleId()).append("]");
 		br();
 	}
 
-	private void item() {
-		Scene scene = dataCenter.getScene();
-		sb.append("道具数据");
+	private void item(Scene scene) {
+		sb.append("道具");
 		br();
 		for (Map.Entry<Integer, List<Item>> entrySet : scene.getItemData().getAllItemsByItemId().entrySet()) {
 			List<Item> items = entrySet.getValue();
@@ -159,9 +154,8 @@ public class ScienceView implements IView, ApplicationContextAware {
 		br();
 	}
 
-	private void area() {
-		Scene scene = dataCenter.getScene();
-		sb.append("地区数据");
+	private void area(Scene scene) {
+		sb.append("地区");
 		t();
 		int size = scene.getPlaceData().getAreaId();
 		for (int i = 0; i < size; i++) {
@@ -172,20 +166,18 @@ public class ScienceView implements IView, ApplicationContextAware {
 		sb.append("\n");
 	}
 
-	private void think() {
-		sb.append("实验室数据");
+	private void think(Scene scene) {
+		sb.append("实验室");
 		t();
-		Scene scene = dataCenter.getScene();
 		for (Integer id : scene.getLabData().getIdeaList()) {
 			sb.append(id).append(" ").append(itemConfigCache.itemMap.get(id).getName()).append(" ");
 		}
 		br();
 	}
 
-	private void build() {
-		sb.append("建筑数据");
+	private void build(Scene scene) {
+		sb.append("建筑");
 		br();
-		Scene scene = dataCenter.getScene();
 		BuildData buildData = scene.getBuildData();
 		Map<Integer, Map<Integer, Build>> typeBuildMap = buildData.getTypeBuildMap();
 		for (Map.Entry<Integer, Map<Integer, Build>> typeBuildEntry : typeBuildMap.entrySet()) {
@@ -196,19 +188,28 @@ public class ScienceView implements IView, ApplicationContextAware {
 				int onlyId = buildIdEntry.getKey();
 				Build build = buildIdEntry.getValue();
 				sb.append("id:").append(onlyId).append("[参与人员:");
-				TeamData teamData = build.getTeamData();
-				sb.append(teamData.getMembers()).append("]");
+				sb.append(build.getTeamData().getMembers()).append("]");
+				t();
+				sb.append("建造状态=").append(build.getModuleData().isFinish() ? "完成" : "建设中");
 				br();
 				ModuleData moduleData = build.getModuleData();
-				for (Map.Entry<Integer, InstallItem> entrySet : moduleData.getInstallItems().entrySet()) {
-					InstallItem installItem = entrySet.getValue();
 
-					//TODO 重写一下视图
-//					sb.append(installItem.getProto().getModuleId()).append(installItem.getProto().getModuleName())
-//							.append("=(").append(installItem.getCurrent()).append("/").append(installItem.getTotal())
-//							.append(")");
+				Map<Integer, ProgressData> progressDataMap = moduleData.getProgressMap();
+				for (Map.Entry<Integer, ProgressData> entrySet : progressDataMap.entrySet()) {
+					int moduleId = entrySet.getKey();
+					ProgressData data = entrySet.getValue();
+					sb.append("模块编号=").append(moduleId).append(" (").append(data.getCurrent().get()).append("/")
+							.append(data.getTotal()).append(")");
 					t();
 				}
+				br();
+
+				for (InstallItem item : moduleData.getInstallItems().values()) {
+					sb.append(item.getProto().getOnlyId()).append(" ")
+							.append(item.getItem() == null ? null : item.getItem().getProto().getName());
+					t();
+				}
+
 				br();
 
 			}
@@ -216,10 +217,9 @@ public class ScienceView implements IView, ApplicationContextAware {
 		br();
 	}
 
-	private void place() {
-		sb.append("空间数据");
+	private void place(Scene scene) {
+		sb.append("空间");
 		br();
-		Scene scene = dataCenter.getScene();
 		PlaceData placeData = scene.getPlaceData();
 
 		for (PlaceType placeType : PlaceType.values()) {
@@ -231,6 +231,19 @@ public class ScienceView implements IView, ApplicationContextAware {
 				t();
 			}
 			br();
+		}
+	}
+
+	private void climate(Scene scene) {
+		sb.append("气候");
+		t();
+		ClimateData climateData = scene.getClimateData();
+		for (Map.Entry<Integer, AtomicInteger> entrySet : climateData.getParams().entrySet()) {
+			int id = entrySet.getKey();
+			int val = entrySet.getValue().get();
+			String name = ConfigCache.climate.map.get(id).getName();
+			sb.append(name).append("=").append(val);
+			t();
 		}
 	}
 

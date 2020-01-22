@@ -59,7 +59,7 @@ public class ProductServiceImpl extends AbstractService implements ProductServic
 		workInternal.exitWork(v.getWorkData());
 
 		v.getProductData().setItemId(itemId);
-		
+
 		placeInternal.enter(v, PlaceType.ITEM, itemId);
 		workInternal.beginWork(v.getWorkData(), JobType.PRODUCT, this);
 	}
@@ -132,6 +132,7 @@ public class ProductServiceImpl extends AbstractService implements ProductServic
 				// 增加熟练度
 				labInternal.addPractice(v.getDevelopData(), itemId, 2);
 				productData.setNeedCostItem(true);
+				workInternal.resetProgress(workData);
 			}
 		} else {
 			workInternal.resetProgress(workData);

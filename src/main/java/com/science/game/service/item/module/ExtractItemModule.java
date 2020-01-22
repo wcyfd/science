@@ -42,6 +42,8 @@ public class ExtractItemModule {
 				if (r.transfer()) {
 					for (int i = 0; i < count; i++) {
 						// 资源型道具在分离之后不用注册到全局道具表中
+						center.get(0).getNumRef().decrementAndGet();
+						
 						Item item = Item.create(itemId);
 						item.getNumRef().set(1);
 						list.add(item);

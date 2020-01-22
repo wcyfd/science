@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.science.game.ParamReader;
+import com.science.game.cache.config.ModuleConfigCache;
 import com.science.game.cache.data.DataCenter;
 import com.science.game.entity.Build;
 import com.science.game.entity.Item;
@@ -53,6 +54,9 @@ public class BuildServiceImpl extends AbstractService implements BuildService, B
 
 	@Autowired
 	private BuildInternal buildInternal;
+
+	@Autowired
+	private ModuleConfigCache moduleConfigCache;
 
 	@Override
 	protected void dispatch(String cmd, ParamReader i) {
@@ -120,31 +124,30 @@ public class BuildServiceImpl extends AbstractService implements BuildService, B
 	private void building(Village v, int moduleId, Build build) {
 		// 工作流程
 		ProgressData modulePD = build.getModuleData().getProgressByModuleId(moduleId);
-		// 填充道具
-		this.fillItem(moduleId);
 
 		WorkData workData = v.getWorkData();
 
 		if (!workInternal.isWorkComplete(modulePD)) {
-			// TODO 消耗材料，逻辑是每消耗一次道具，进度条+1，否则等待
+			// 检查道具是否完备,完备才可以开始作业
+			if (this.tryFillItem(build, moduleId)) {
+				// 添加工作量
+				workInternal.addWorkProgress(modulePD, 1);
+				workInternal.addWorkProgress(workData, 1);
+				// 思考
+				villageInternal.think(v.getId());
 
-			// 添加工作量
-			workInternal.addWorkProgress(modulePD, 1);
-			workInternal.addWorkProgress(workData, 1);
-			// 思考
-			villageInternal.think(v.getId());
+				// 工作是否完成
+				if (workInternal.isWorkComplete(modulePD)) {
+					v.getBuildData().setModuleId(0);
+					workInternal.resetProgress(workData);
+					workInternal.exitWork(workData);
+					// 建筑是否完成
+					buildInternal.checkComplete(build);
+					if (build.getModuleData().isFinish()) {
+						successFunc(build);
+					}
 
-			// 工作是否完成
-			if (workInternal.isWorkComplete(modulePD)) {
-				v.getBuildData().setModuleId(0);
-				workInternal.resetProgress(workData);
-				workInternal.exitWork(workData);
-				// 建筑是否完成
-				buildInternal.checkComplete(build);
-				if (build.getModuleData().isFinish()) {
-					successFunc(build);
 				}
-
 			}
 		}
 	}
@@ -152,21 +155,37 @@ public class BuildServiceImpl extends AbstractService implements BuildService, B
 	/**
 	 * 填充道具,如果没有填充过的话
 	 * 
-	 * @param item
+	 * @param build
+	 * @param moduleId
+	 * @return 材料备齐返回 true
 	 */
-	private void fillItem(int moduleId) {
-		// TODO 填充道具,如果没有填充过的话
-//		if (item.getItem() != null)
-//			return;
-//
-//		ModuleConfig cf = item.getProto();
-//		List<Item> list = itemInternal.extractItem(cf.getNeedItemId(), 1);
-//		if (list.size() != 0) {
-//			item.setItem(list.get(0));
-//		} else {
-//			log.info("道具抽取不足 buildId={},itemId={},moduleId={}", item.getBuild().getId(), cf.getNeedItemId(),
-//					cf.getModuleId());
-//		}
+	private boolean tryFillItem(Build build, int moduleId) {
+
+		int buildId = build.getProto().getBuildId();
+		boolean fill = true;
+
+		Map<Integer, ModuleConfig> itemMap = moduleConfigCache.moduleItemMap.get(buildId).get(moduleId);
+		for (Map.Entry<Integer, ModuleConfig> entrySet : itemMap.entrySet()) {
+			ModuleConfig config = entrySet.getValue();
+			int onlyId = config.getOnlyId();
+
+			// 获得安装位置
+			InstallItem installItem = build.getModuleData().getInstallItemById(onlyId);
+			if (installItem.getItem() == null) {
+				// 扣除道具
+				config.getNeedItemId();
+				List<Item> list = itemInternal.extractItem(config.getNeedItemId(), 1);
+				if (list.size() != 0) {// 如果抽取道具成功
+					installItem.setItem(list.get(0));
+				} else {
+					log.info("道具抽取不足 buildId={},itemId={},moduleId={}", installItem.getBuild().getId(),
+							config.getNeedItemId(), config.getModuleId());
+					fill = false;
+				}
+			}
+		}
+
+		return fill;
 
 	}
 

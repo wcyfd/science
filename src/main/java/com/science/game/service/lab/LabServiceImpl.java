@@ -249,7 +249,7 @@ public class LabServiceImpl extends AbstractService implements LabService, LabIn
 		DevelopData developData = v.getDevelopData();
 		int itemId = developData.getItemId();
 		dataCenter.getScene().getLabData().getTeamMap().get(itemId).remove(v.getId());
-		developData.setItemId(-1);
+		developData.setItemId(0);
 
 		log.info("退出研发团队 itemId={} vid={}", itemId, v.getId());
 

@@ -53,7 +53,7 @@ public abstract class AbstractService {
 		}
 	}
 
-	protected abstract void dispatch(String cmd, ParamReader params);
+	protected abstract void dispatch(String cmd, ParamReader i);
 
 	public void initService() {
 		registHandle();

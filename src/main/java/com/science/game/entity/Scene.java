@@ -4,10 +4,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.stereotype.Component;
 
+import com.science.game.entity.scene.BuildData;
+import com.science.game.entity.scene.ClimateData;
 import com.science.game.entity.scene.ItemData;
 import com.science.game.entity.scene.LabData;
 import com.science.game.entity.scene.PlaceData;
-import com.science.game.entity.scene.BuildData;
 import com.science.game.entity.scene.VillageData;
 
 import lombok.Getter;
@@ -34,6 +35,9 @@ public class Scene {
 	@Getter
 	private BuildData buildData;
 
+	@Getter
+	private ClimateData climateData;
+
 	public Scene() {
 		id = ID.incrementAndGet();
 		labData = new LabData();
@@ -41,6 +45,7 @@ public class Scene {
 		itemData = new ItemData();
 		villageData = new VillageData();
 		buildData = new BuildData();
+		climateData = new ClimateData();
 	}
 
 }
