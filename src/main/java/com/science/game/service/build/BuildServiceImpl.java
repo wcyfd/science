@@ -22,6 +22,8 @@ import com.science.game.entity.config.ModuleConfig;
 import com.science.game.entity.village.WorkData;
 import com.science.game.service.AbstractService;
 import com.science.game.service.build.module.ApplyBuildModule;
+import com.science.game.service.damage.DamageInternal;
+import com.science.game.service.damage.IDamage;
 import com.science.game.service.item.ItemInternal;
 import com.science.game.service.place.PlaceInternal;
 import com.science.game.service.village.VillageInternal;
@@ -32,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class BuildServiceImpl extends AbstractService implements BuildService, BuildInternal, IWork {
+public class BuildServiceImpl extends AbstractService implements BuildService, BuildInternal, IWork, IDamage<Build> {
 
 	@Autowired
 	private VillageInternal villageInternal;
@@ -57,6 +59,9 @@ public class BuildServiceImpl extends AbstractService implements BuildService, B
 
 	@Autowired
 	private ModuleConfigCache moduleConfigCache;
+
+	@Autowired
+	private DamageInternal damageInternal;
 
 	@Override
 	protected void dispatch(String cmd, ParamReader i) {
@@ -207,11 +212,20 @@ public class BuildServiceImpl extends AbstractService implements BuildService, B
 	 * @param build
 	 */
 	private void successFunc(Build build) {
+
 		build.getTeamData().getMembers()
 				.forEach(vid -> workInternal.exitWork(villageInternal.getVillage(vid).getWorkData()));
 
 		new HashSet<>(placeInternal.getPlace(PlaceType.BUILD, build.getId()).getVillageIds()).stream()
 				.forEach(vid -> placeInternal.exit(villageInternal.getVillage(vid)));
+
+		damageInternal.regist(build, this);
+
+	}
+
+	@Override
+	public void damageLoop(Build build) {
+		
 	}
 
 	@Override

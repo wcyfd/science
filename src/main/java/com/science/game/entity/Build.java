@@ -6,14 +6,13 @@ import com.science.game.cache.config.ConfigCache;
 import com.science.game.entity.build.ModuleData;
 import com.science.game.entity.build.TeamData;
 import com.science.game.entity.config.BuildConfig;
-import com.science.game.entity.scene.ClimateData;
 
 import lombok.Getter;
 
 /**
  * 建筑物
  * 
- * @author heyue
+ * @author aimfd
  *
  */
 public class Build {

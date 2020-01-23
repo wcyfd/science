@@ -19,6 +19,9 @@ public class ClimateServiceImpl extends AbstractService implements ClimateServic
 	@Autowired
 	private DataCenter dataCenter;
 
+	@Autowired
+	private ClimateInternal climateInternal;
+
 	@Override
 	protected void dispatch(String cmd, ParamReader i) {
 		switch (cmd) {
@@ -44,6 +47,11 @@ public class ClimateServiceImpl extends AbstractService implements ClimateServic
 
 	@Override
 	public void value(int id, int val) {
+		climateInternal.setValue(id, val);
+	}
+
+	@Override
+	public void setValue(int id, int val) {
 		dataCenter.getScene().getClimateData().getRefById(id).set(val);
 	}
 

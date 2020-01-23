@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.science.game.entity.scene.BuildData;
 import com.science.game.entity.scene.ClimateData;
+import com.science.game.entity.scene.DamageData;
 import com.science.game.entity.scene.ItemData;
 import com.science.game.entity.scene.LabData;
 import com.science.game.entity.scene.PlaceData;
@@ -38,6 +39,9 @@ public class Scene {
 	@Getter
 	private ClimateData climateData;
 
+	@Getter
+	private DamageData damageData;
+
 	public Scene() {
 		id = ID.incrementAndGet();
 		labData = new LabData();
@@ -46,6 +50,7 @@ public class Scene {
 		villageData = new VillageData();
 		buildData = new BuildData();
 		climateData = new ClimateData();
+		damageData = new DamageData();
 	}
 
 }
